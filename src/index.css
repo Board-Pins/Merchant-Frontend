@@ -1,0 +1,15 @@
+@import '@fontsource/poppins';
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.gradient-bg {
+  background: linear-gradient(0deg, #6161FF -0.23%, rgba(255, 255, 255, 0) 187.21%);
+}
+.poppins-thin {
+  font-family: "Poppins", sans-serif !important;
+  font-weight: 100 !important;
+  font-style: normal !important;
+}
+
