@@ -3,10 +3,10 @@ import React, { useEffect } from 'react';
 import goagle from '../../../assets/icons/goagle.png';
 
 function CustomGoagleBtn({ nameBtn }) {
-  
+
 
   const handleGoogleAuth = () => {
-    window.location.href = 'https://api.boardpins.com/users-service/auth/google/init/';
+    window.location.href = 'https://api.boardpins.com/users-service/auth/google/init/?frontend=merchant';
   };
 
   return (
