@@ -6,16 +6,27 @@ import x from "../../assets/images/x.png";
 import { useFetchCategoriesQuery } from "../../services/userSingleServicesProviderApi";
 import { useCreateProfileMutation } from "../../services/userApi";
 import { PendingModal } from "./Pending";
+import { useGetUserProfileQuery } from "../../services/userApi";
 
 export default function WelcomeModal() {
-  const [open, setOpen] = useState(true);
+  const [open, setOpen] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef(null);
+  const { data: userProfile } = useGetUserProfileQuery();
 
   const { data: categories = [], isLoading: isLoadingCategories } =
     useFetchCategoriesQuery();
   const [createProfile, { isLoading, isSuccess, isError, error }] =
     useCreateProfileMutation();
+
+  // Show modal only if user doesn't have a profile
+  useEffect(() => {
+    if (!userProfile) {
+      setOpen(true);
+    } else {
+      setOpen(false);
+    }
+  }, [userProfile]);
 
   // Close dropdown when clicking outside
   useEffect(() => {
