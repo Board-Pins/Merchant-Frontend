@@ -11,7 +11,7 @@ import CustomSubmitBtn from '../../components/auth/Atoms/CustomSubmitBtn';
 import CustomGoagleBtn from '../../components/auth/Atoms/CustomGoagleBtn';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { toast, ToastContainer } from 'react-toastify';
-import { baseUrl, useLoginMutation, useResendOtpMutation } from '../../services/userApi';
+import { useLoginMutation, useResendOtpMutation } from '../../services/userApi';
 import CustomTextNav from '../../components/auth/Atoms/CustomTextNav';
 
 const Login = () => {
@@ -52,12 +52,19 @@ const Login = () => {
     try {
       const response = await login(values).unwrap();
  
-      toast.success(t(response.message) );
+      toast.success(t(response.message));
 
+      // Store tokens properly
       localStorage.setItem('accessToken', response.data.tokens.access);
       localStorage.setItem('refreshToken', response.data.tokens.refresh);
       
-      navigate("/myboard");
+      // Add console log to debug
+      console.log("Login successful, navigating to myboard");
+      
+      // Add a small delay before navigation
+      setTimeout(() => {
+        navigate("/myboard");
+      }, 100);
     } catch (error) {
       if (error.status === 403 && error.data.message === 'Please activate email'  || error.status === 401 && error.data.data.errors.en === "User account is not verified"  ) {
         const userEmail = values.email;
@@ -128,3 +135,4 @@ const Login = () => {
 };
 
 export default Login;
+

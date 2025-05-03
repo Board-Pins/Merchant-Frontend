@@ -45,11 +45,12 @@ const Signup = () => {
       email: values.email,
       password: values.password,
       terms: values.terms,
-      role: "Provider",
+      role: "Merchant",
     };
 
     try {
       const response = await signup(payload).unwrap();
+      console.log("Signup response:", response); // Debug log
       
       // Set initial profile data
       localStorage.setItem('profileData', JSON.stringify({
@@ -60,19 +61,46 @@ const Signup = () => {
       // Remove this flag only after profile setup is complete
       localStorage.removeItem('hasCompletedSetup');
       
+      // Store tokens if they exist in the response - with proper null checks
+      const responseData = response?.data || response;
+      console.log("Response data for tokens:", responseData); // Debug log
+      
+      if (responseData && responseData.tokens) {
+        localStorage.setItem('accessToken', responseData.tokens.access);
+        localStorage.setItem('refreshToken', responseData.tokens.refresh);
+      } else {
+        console.log("No tokens found in response"); // Debug log
+      }
+      
       toast.success(t('signup.successSignup'), {
         position: 'top-right',
       });
 
-      setResponse(response);
+      // Only set response if it's not undefined
+      if (responseData) {
+        setResponse(responseData);
+      }
 
+      // Navigate to verify email page
       setTimeout(() => {
         navigate(`/verifymail/${values.email}`);
       }, 2000);
     } catch (err) {
-      const errorMessage = Array.isArray(err.data.email) 
-        ? err.data.email.join(', ') 
-        : err.data.email || t('signup.errorSignup');
+      console.error('Signup error:', err);
+      
+      // Check if there's a specific error message from the API
+      let errorMessage = t('signup.errorSignup');
+      
+      if (err.data) {
+        if (Array.isArray(err.data.email)) {
+          errorMessage = err.data.email.join(', ');
+        } else if (err.data.email) {
+          errorMessage = err.data.email;
+        } else if (err.data.message) {
+          errorMessage = err.data.message;
+        }
+      }
+      
       toast.error(errorMessage, {
         position: 'top-right',
       });
@@ -83,9 +111,14 @@ const Signup = () => {
 
   useEffect(() => {
     if (response) {
-
-      localStorage.setItem('accessToken', response.data.tokens.access);
-      localStorage.setItem('refreshToken', response.data.tokens.refresh);
+      // Add null checks here
+      if (response.data && response.data.tokens) {
+        localStorage.setItem('accessToken', response.data.tokens.access);
+        localStorage.setItem('refreshToken', response.data.tokens.refresh);
+      } else if (response.tokens) {
+        localStorage.setItem('accessToken', response.tokens.access);
+        localStorage.setItem('refreshToken', response.tokens.refresh);
+      }
     }
   }, [response]);
 
@@ -143,3 +176,7 @@ const Signup = () => {
 };
 
 export default Signup;
+
+
+
+
