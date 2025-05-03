@@ -1,6 +1,7 @@
 // userApi.js
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
-export const baseUrl = `${import.meta.env.VITE_BASE_URL}`;
+export const baseUrl = import.meta.env.VITE_BASE_URL ? `${import.meta.env.VITE_BASE_URL}` : 'https://api.boardpins.com';
+
 
 export const userApi = createApi({
   reducerPath: 'userApi',
@@ -87,3 +88,5 @@ export const {
   useForgotPasswordMutation,
   useCreateProfileMutation 
 } = userApi;
+
+
