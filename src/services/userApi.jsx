@@ -1,11 +1,12 @@
 // userApi.js
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
+import Cookies from 'js-cookie';
 
 export const baseUrl = import.meta.env.VITE_BASE_URL ? `${import.meta.env.VITE_BASE_URL}` : 'https://api.boardpins.com';
 
 // Helper function to handle token refresh
 const refreshToken = async () => {
-  const refreshToken = localStorage.getItem('refreshToken');
+  const refreshToken = Cookies.get('refreshToken');
   if (!refreshToken) return false;
 
   try {
@@ -13,16 +14,21 @@ const refreshToken = async () => {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ refresh: refreshToken }),
+      credentials: 'include', // Important for cookies
     });
 
     if (!response.ok) throw new Error('Refresh failed');
 
     const data = await response.json();
-    localStorage.setItem('accessToken', data.access);
+    Cookies.set('accessToken', data.access, { 
+      secure: true, 
+      sameSite: 'strict',
+      expires: 1 // 1 day
+    });
     return true;
   } catch (error) {
-    localStorage.removeItem('accessToken');
-    localStorage.removeItem('refreshToken');
+    Cookies.remove('accessToken');
+    Cookies.remove('refreshToken');
     return false;
   }
 };
@@ -32,12 +38,13 @@ export const userApi = createApi({
   baseQuery: fetchBaseQuery({
     baseUrl,
     prepareHeaders: (headers) => {
-      const token = localStorage.getItem('accessToken');
+      const token = Cookies.get('accessToken') || localStorage.getItem('accessToken');
       if (token) {
         headers.set('Authorization', `Bearer ${token}`);
       }
       return headers;
     },
+    credentials: 'include', // Important for cookies
     responseHandler: async (response) => {
       // Handle token expiration
       if (response.status === 401) {
@@ -48,9 +55,10 @@ export const userApi = createApi({
             method: response.request.method,
             headers: {
               ...response.request.headers,
-              Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
+              Authorization: `Bearer ${Cookies.get('accessToken')}`,
             },
             body: response.request.body,
+            credentials: 'include',
           });
           return retryResponse.json();
         }
@@ -105,6 +113,20 @@ export const userApi = createApi({
     getUserProfile: builder.query({
       query: () => 'users-service/profiles',
       method: 'GET',
+      // Add error handling
+      async onQueryStarted(arg, { dispatch, queryFulfilled }) {
+        try {
+          await queryFulfilled;
+        } catch (error) {
+          console.error('Error fetching user profile:', error);
+          // If unauthorized, you might want to clear tokens
+          if (error?.error?.status === 401) {
+            console.log('Unauthorized access, clearing tokens');
+            Cookies.remove('accessToken');
+            Cookies.remove('refreshToken');
+          }
+        }
+      },
     }),
 
     resendOtp: builder.mutation({
@@ -157,6 +179,10 @@ export const {
   useCreateProfileMutation,
   useRefreshTokenMutation
 } = userApi;
+
+
+
+
 
 
 
