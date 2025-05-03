@@ -17,20 +17,31 @@ export default function VerifyMail() {
   const [verifyEmail, { isLoading: isVerifying, isError, isSuccess }] = useVerifyEmailMutation();
   const [resendOtp, { isLoading: isResending, isError: resendError, isSuccess: resendSuccess }] = useResendOtpMutation();
   const { data: userInfo, refetch: refetchUserInfo, error: userInfoError, isLoading: isUserInfoLoading } = useGetUserInfoQuery(undefined, {
-   skip: !localStorage.getItem('accessToken'),
- });
-
- 
-const validationSchema = Yup.object().shape({
-  otp1: Yup.string().matches(/^\d{1}$/, t("invalid_otp")).required(t("required")),
-  otp2: Yup.string().matches(/^\d{1}$/, t("invalid_otp")).required(t("required")),
-  otp3: Yup.string().matches(/^\d{1}$/, t("invalid_otp")).required(t("required")),
-  otp4: Yup.string().matches(/^\d{1}$/, t("invalid_otp")).required(t("required")),
-  otp5: Yup.string().matches(/^\d{1}$/, t("invalid_otp")).required(t("required")),
-  otp6: Yup.string().matches(/^\d{1}$/, t("invalid_otp")).required(t("required"))
-});
+    skip: !localStorage.getItem('accessToken'),
+  });
 
   const navigate = useNavigate();
+  const { email } = useParams();
+  
+  console.log("Email from params:", email); // Debug log
+  
+  // Add a check to ensure email is available
+  useEffect(() => {
+    if (!email) {
+      console.error("Email parameter is missing");
+      // Redirect to login if email is missing
+      navigate('/login');
+    }
+  }, [email, navigate]);
+
+  const validationSchema = Yup.object().shape({
+    otp1: Yup.string().matches(/^\d{1}$/, t("invalid_otp")).required(t("required")),
+    otp2: Yup.string().matches(/^\d{1}$/, t("invalid_otp")).required(t("required")),
+    otp3: Yup.string().matches(/^\d{1}$/, t("invalid_otp")).required(t("required")),
+    otp4: Yup.string().matches(/^\d{1}$/, t("invalid_otp")).required(t("required")),
+    otp5: Yup.string().matches(/^\d{1}$/, t("invalid_otp")).required(t("required")),
+    otp6: Yup.string().matches(/^\d{1}$/, t("invalid_otp")).required(t("required"))
+  });
 
   useEffect(() => {
     if (isSuccess) {
@@ -92,30 +103,31 @@ const validationSchema = Yup.object().shape({
     }
   };
 
-  const { email } = useParams();
-
   const handleResendCode = async (resetForm) => {
-    if (userInfo?.email || email) {
+    console.log("Resending OTP to email:", email);
+    
+    if (email) {
       try {
         await resendOtp(email).unwrap();
         resetForm();
       } catch (error) {
+        console.error("Resend error:", error);
         toast.error(t('resend_error'));
       }
     } else {
+      console.error("No email found for resending OTP");
       toast.error(t('no_email_found'));
     }
   };
-  console.log("emaill",userInfo?.email)
-  console.log("emaill para",email)
   const handleSubmit = async (values) => {
     const otp = values.otp1 + values.otp2 + values.otp3 + values.otp4 + values.otp5 + values.otp6;
- 
-  
+    console.log("Submitting OTP:", otp, "for email:", email);
+
     try {
-      await verifyEmail({ email , otp:otp }).unwrap();
+      await verifyEmail({ email, otp }).unwrap();
     } catch (error) {
-      const errorMessage = error?.data?.data.errors.en || t('verification_failed');
+      console.error("Verification error:", error);
+      const errorMessage = error?.data?.data?.errors?.en || t('verification_failed');
       toast.error(errorMessage);
     }
   };
@@ -189,3 +201,7 @@ const validationSchema = Yup.object().shape({
     </section>
   );
 }
+
+
+
+
