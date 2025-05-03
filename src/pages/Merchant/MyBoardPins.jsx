@@ -1,6 +1,8 @@
-import { useState } from 'react';
-import InprogressProject from '../../components/provider/myboard/InprogressProject';
+import React, { useState, useEffect } from 'react';
+import { useGetUserProfileQuery } from '../../services/userApi';
+import { toast, ToastContainer } from 'react-toastify';
 
+// Import your components
 import MerchantsConnect from '../../components/provider/myboard/MerchantsConnect';
 import ProductionGroups from '../../components/provider/myboard/ProductionGroups';
 import ProjectTsks from '../../components/provider/myboard/ProjectTsks';
@@ -10,46 +12,52 @@ import Table from '../../components/provider/myboard/table';
 import TaskModal from '../../components/provider/myboard/TaskModal';
 import ManageCardSideBar from '../../components/provider/myboard/MangeCardSideBar';
 import WelcomeModal from '../../components/provider/WelcomeModal';
+import InprogressProject from '../../components/provider/myboard/InprogressProject';
 
-function MyBoardPins() {
+export default function MyBoardPins() {
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const { data: userProfile, isLoading, error } = useGetUserProfileQuery();
 
+  // Toggle sidebar function
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
   };
 
+  // Add error handling
+  useEffect(() => {
+    if (error) {
+      console.error("Error fetching user profile:", error);
+      toast.error("Failed to load user profile. Please try again later.");
+    }
+  }, [error]);
+
+  // Show loading state
+  if (isLoading) {
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+      </div>
+    );
+  }
+
+  // Get user name from profile or use default
+  const userName = userProfile?.first_name || "User";
+
   return (
-    <div className='bg-white rounded-[30px] px-3 font-poppins shadow'>
- 
-      <WelcomeModal/>
+    <div className="container mx-auto">
+      <ToastContainer />
+      <WelcomeModal />
       <div className='py-3 lg:flex justify-center items-center gap-2'>
         <ManageCardSideBar isOpenMangeCard={isSidebarOpen} toggleSidebar={toggleSidebar} />
 
         <TaskModal
           isOpen={modalIsOpen}
-          onClose={() => setModalIsOpen(false)
-            
-          }
+          onClose={() => setModalIsOpen(false)}
         />
         <div className='flex-grow px-5'>
-          <h5 className='text-[#1E1E1E] font-[500] text-[30px]'>Hey, Kirolos 👋</h5>
+          <h5 className='text-[#1E1E1E] font-[500] text-[30px]'>Hey, {userName} 👋</h5>
           <p className='text-[#1E1E1E] font-[400] text-[15px]'>What would you like to create today?</p>
-        </div>
-
-        <div className='flex gap-4 lg:mt-5 lg:mx-12 mt-6 justify-center col-span-12'>
-          <button
-            className="bg-[#6161FF] my-2 mt-1 text-[#FDFDFD] md:py-3 py-2 rounded-xl px-5"
-            onClick={() => setModalIsOpen(true)}
-          >
-            Add Task
-          </button>
-          <button
-            className='bg-[#6161FF] my-2 mt-1 text-[#FDFDFD] md:py-3 py-2 rounded-xl px-5'
-            onClick={toggleSidebar}
-          >
-             Manage Cards
-          </button>
         </div>
       </div>
 
@@ -78,8 +86,6 @@ function MyBoardPins() {
           <Reminder />
         </div>
 
-     
-
         <div className='w-full shadow-custom rounded-xl col-span-12 px-5'>
           <ProductionGroups />
         </div>
@@ -88,4 +94,3 @@ function MyBoardPins() {
   );
 }
 
-export default MyBoardPins;

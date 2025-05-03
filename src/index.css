@@ -13,3 +13,31 @@
   font-style: normal !important;
 }
 
+/* Logo animation */
+@keyframes logo-float {
+  0% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-15px);
+  }
+  100% {
+    transform: translateY(0px);
+  }
+}
+
+.logo-animation {
+  animation: logo-float 3s ease-in-out infinite;
+}
+
+/* Dots animation */
+@keyframes fade-in-out {
+  0%, 100% { opacity: 0.3; }
+  50% { opacity: 1; }
+}
+
+.dot-animation {
+  animation: fade-in-out 1.5s infinite;
+}
+
+

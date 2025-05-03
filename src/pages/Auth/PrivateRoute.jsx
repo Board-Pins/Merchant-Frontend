@@ -1,15 +1,29 @@
 import { Navigate } from "react-router-dom";
+import { useEffect, useState } from "react";
 
 const PrivateRoute = ({ children }) => {
-  const accessToken = localStorage.getItem("accessToken");
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
-  if (!accessToken) {
+  useEffect(() => {
+    const accessToken = localStorage.getItem("accessToken");
+    console.log("PrivateRoute checking token:", !!accessToken);
+    setIsAuthenticated(!!accessToken);
+    setIsLoading(false);
+  }, []);
 
-    return <Navigate to="/login" replace />;
+  if (isLoading) {
+    return <div>Loading...</div>;
   }
 
+  if (!isAuthenticated) {
+    console.log("Not authenticated, redirecting to login");
+    return <Navigate to="/login" replace />;
+  }
 
   return children;
 };
 
 export default PrivateRoute;
+
+
