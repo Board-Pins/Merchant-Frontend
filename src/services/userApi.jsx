@@ -6,7 +6,7 @@ export const baseUrl = import.meta.env.VITE_BASE_URL ? `${import.meta.env.VITE_B
 
 // Helper function to handle token refresh
 const refreshToken = async () => {
-  const refreshToken = Cookies.get('refreshToken');
+  const refreshToken = Cookies.get('refreshToken') || localStorage.getItem('refreshToken');
   if (!refreshToken) return false;
 
   try {
@@ -20,15 +20,31 @@ const refreshToken = async () => {
     if (!response.ok) throw new Error('Refresh failed');
 
     const data = await response.json();
-    Cookies.set('accessToken', data.access, { 
-      secure: true, 
+
+    // Store in both cookie and localStorage for better compatibility
+    Cookies.set('accessToken', data.access, {
+      secure: true,
       sameSite: 'strict',
       expires: 1 // 1 day
     });
+    localStorage.setItem('accessToken', data.access);
+
+    if (data.refresh) {
+      Cookies.set('refreshToken', data.refresh, {
+        secure: true,
+        sameSite: 'strict',
+        expires: 7 // 7 days
+      });
+      localStorage.setItem('refreshToken', data.refresh);
+    }
+
     return true;
   } catch (error) {
+    // Clear tokens from both storage mechanisms
     Cookies.remove('accessToken');
     Cookies.remove('refreshToken');
+    localStorage.removeItem('accessToken');
+    localStorage.removeItem('refreshToken');
     return false;
   }
 };
@@ -114,16 +130,18 @@ export const userApi = createApi({
       query: () => 'users-service/profiles',
       method: 'GET',
       // Add error handling
-      async onQueryStarted(arg, { dispatch, queryFulfilled }) {
+      async onQueryStarted(_, { queryFulfilled }) {
         try {
           await queryFulfilled;
         } catch (error) {
           console.error('Error fetching user profile:', error);
           // If unauthorized, you might want to clear tokens
           if (error?.error?.status === 401) {
-            console.log('Unauthorized access, clearing tokens');
+            // Clear tokens from both storage mechanisms
             Cookies.remove('accessToken');
             Cookies.remove('refreshToken');
+            localStorage.removeItem('accessToken');
+            localStorage.removeItem('refreshToken');
           }
         }
       },
@@ -151,7 +169,7 @@ export const userApi = createApi({
       }),
     }),
     resetPassword: builder.mutation({
-      query: ({ otp, email, password, confirmPassword }) => ({
+      query: ({ otp, email, password }) => ({
         url: `/users-service/auth/password/reset/confirm/`,
         method: 'POST',
         body: { email, password, otp },
