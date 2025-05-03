@@ -6,6 +6,8 @@ import { Toaster } from 'react-hot-toast';
 import { store } from './redux/store';
 import { Provider } from 'react-redux';
 import { initI18n } from '../i18n';
+import { LoadingProvider } from './context/LoadingContext';
+import LoadingScreen from './components/common/LoadingScreen';
 
 const Root = () => {
   useEffect(() => {
@@ -18,11 +20,14 @@ const Root = () => {
 
   return (
     <Provider store={store}>
-    <Suspense fallback={<div>Loading...</div>}>
-      <App />
-    </Suspense>
-  </Provider>
+      <LoadingProvider>
+        <Suspense fallback={<LoadingScreen />}>
+          <App />
+        </Suspense>
+      </LoadingProvider>
+    </Provider>
   );
 };
 
 ReactDOM.createRoot(document.getElementById('root')).render(<Root />);
+

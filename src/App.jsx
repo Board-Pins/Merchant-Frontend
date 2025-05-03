@@ -1,4 +1,5 @@
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, useLocation, useNavigate } from "react-router-dom";
+import { useState, useEffect, Suspense } from 'react';
 import Layout from "./utils/LayoutDashboard";
 import LayoutLanding from "./utils/LayoutLanding";
 import LayoutAuth from "./utils/LayoutAuth";
@@ -14,6 +15,8 @@ import ForgetPassword from "./pages/Auth/ForgotPassword";
 import NewPassword from "./pages/Auth/NewPassword";
 import VerifyMail from "./pages/Auth/VerfiyMail";
 import RecoverySuccess from "./pages/Auth/RecoverySuccess";
+import EmailVerification from "./pages/Auth/EmailVerification";
+import GoogleCallback from "./pages/Auth/GoogleCallback";
 
 import Dashboard from "./pages/Merchant/Dashboard";
 import MyBoardPins from "./pages/Merchant/MyBoardPins";
@@ -46,35 +49,107 @@ import Chat from "./pages/Merchant/Chat";
 import ChatWelcome from "./components/provider/Chat/ChatWelcome";
 import ChatMessages from "./components/provider/Chat/ChatMessages";
 import PrivateRoute from "./pages/Auth/PrivateRoute";
+import { useLoading } from './context/LoadingContext';
 
+// Import error and loading components
+import RouteErrorBoundary from './components/common/RouteErrorBoundary';
+import LoadingScreen from './components/common/LoadingScreen';
+import NotFoundScreen from './components/common/NotFoundScreen';
+
+// ErrorBoundary wrapper component
+const ErrorBoundaryWrapper = ({ children }) => {
+  return (
+    <Suspense fallback={<LoadingScreen />}>
+      {children}
+    </Suspense>
+  );
+};
+
+// Route change loading handler
+const RouteChangeHandler = () => {
+  const { showLoading, hideLoading } = useLoading();
+  const location = useLocation();
+  const navigate = useNavigate();
+  
+  useEffect(() => {
+    const handleStart = () => {
+      showLoading();
+    };
+    
+    const handleComplete = () => {
+      hideLoading();
+    };
+    
+    handleStart();
+    
+    // Simulate navigation delay
+    const timer = setTimeout(() => {
+      handleComplete();
+    }, 500);
+    
+    return () => clearTimeout(timer);
+  }, [location.pathname]);
+  
+  return null;
+};
 
 const App = () => {
+  const [isLoading, setIsLoading] = useState(true);
+  
+  useEffect(() => {
+    // Simulate initial loading
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+    }, 1500);
+    
+    return () => clearTimeout(timer);
+  }, []);
+
+  // Show loading screen while app is initializing
+  if (isLoading) {
+    return <LoadingScreen />;
+  }
+  
   return (
     <Router>
+      <RouteChangeHandler />
       <Routes>
-
         {/* Auth Routes */}
-        <Route path="/" element={<LayoutAuth />}>
+        <Route path="/" element={
+          <ErrorBoundaryWrapper>
+            <LayoutAuth />
+          </ErrorBoundaryWrapper>
+        } errorElement={<RouteErrorBoundary />}>
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
           <Route path="/forgetpassword" element={<ForgetPassword />} />
           <Route path="/reset/emails" element={<NewPassword />} />
-          <Route path="/verifymail" element={<VerifyMail />} />
+          <Route path="/verifymail/:email" element={<VerifyMail />} />
+          <Route path="/emails/reset/" element={<NewPassword />} />
           <Route path="/recoverysuccess" element={<RecoverySuccess />} />
+          <Route path="/emails/verify" element={<EmailVerification />} />
         </Route>
 
         {/* Landing Routes */}
-        <Route path="/" element={<LayoutLanding />}>
+        <Route path="/" element={
+          <ErrorBoundaryWrapper>
+            <LayoutLanding />
+          </ErrorBoundaryWrapper>
+        } errorElement={<RouteErrorBoundary />}>
           <Route index element={<Home />} />
           <Route path="/home" element={<Home />} />
           <Route path="/pricing" element={<Pricing />} />
           <Route path="/about" element={<About />} />
           <Route path="/SearchResult" element={<SearchResult />} />
         </Route>
-    
+
         {/* Protected Routes */}
-        <Route element={<PrivateRoute />}>
-          <Route path="/" element={<Layout />}>
+        <Route element={<PrivateRoute />} errorElement={<RouteErrorBoundary />}>
+          <Route path="/" element={
+            <ErrorBoundaryWrapper>
+              <Layout />
+            </ErrorBoundaryWrapper>
+          }>
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/knowledgebase" element={<KnowledgeBase />} />
             <Route path="/myboard" element={<MyBoardPins />} />
@@ -118,11 +193,19 @@ const App = () => {
         </Route>
 
         {/* Public Single Page */}
-        <Route path="/ordering-billing" element={<OrderBilling />} />
+        <Route path="/ordering-billing" element={<OrderBilling />} errorElement={<RouteErrorBoundary />} />
 
+        {/* Google Callback Route */}
+        <Route path="/auth/callback" element={<GoogleCallback />} errorElement={<RouteErrorBoundary />} />
+
+        {/* 404 Route - Must be last */}
+        <Route path="*" element={<NotFoundScreen />} />
       </Routes>
     </Router>
   );
 };
 
 export default App;
+
+
+
