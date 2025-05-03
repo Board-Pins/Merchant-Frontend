@@ -46,7 +46,7 @@ import Chat from "./pages/Merchant/Chat";
 import ChatWelcome from "./components/provider/Chat/ChatWelcome";
 import ChatMessages from "./components/provider/Chat/ChatMessages";
 import PrivateRoute from "./pages/Auth/PrivateRoute";
-
+import EmailVerification from "./pages/Auth/EmailVerification";
 
 const App = () => {
   return (
@@ -60,9 +60,11 @@ const App = () => {
           <Route path="/forgetpassword" element={<ForgetPassword />} />
           <Route path="/reset/emails" element={<NewPassword />} />
           <Route path="/verifymail" element={<VerifyMail />} />
+          <Route path="/emails/reset/" element={<NewPassword />} />
           <Route path="/recoverysuccess" element={<RecoverySuccess />} />
+          <Route path="/emails/verify" element={<EmailVerification />} />
         </Route>
-
+       
         {/* Landing Routes */}
         <Route path="/" element={<LayoutLanding />}>
           <Route index element={<Home />} />
