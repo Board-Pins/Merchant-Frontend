@@ -49,7 +49,6 @@ import Chat from "./pages/Merchant/Chat";
 import ChatWelcome from "./components/provider/Chat/ChatWelcome";
 import ChatMessages from "./components/provider/Chat/ChatMessages";
 import PrivateRoute from "./pages/Auth/PrivateRoute";
-import EmailVerification from "./pages/Auth/EmailVerification";
 import { useLoading } from './context/LoadingContext';
 
 // Import error and loading components
@@ -207,6 +206,7 @@ const App = () => {
 };
 
 export default App;
+
 
 
 
