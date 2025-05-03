@@ -19,8 +19,8 @@ const GoogleCallback = () => {
       if (userProfile) {
         navigate('/myboard', { replace: true });
       } else if (!isLoading && !error) {
-        // No profile yet - new user, redirect to profile setup
-        navigate('/signup', { replace: true });
+        // No profile yet - new user, show WelcomeModal on myboard
+        navigate('/myboard', { replace: true });
       }
     } else {
       // No token, redirect to login
@@ -37,3 +37,5 @@ const GoogleCallback = () => {
 };
 
 export default GoogleCallback;
+
+
