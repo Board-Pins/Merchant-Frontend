@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import PlanCard from '../../provider/Upgrage/PlanPriceCard';
+import PlanCard from '../../merchant/Upgrage/PlanPriceCard';
 
 function Section2Price() {
   const [selectedPlan, setSelectedPlan] = useState('Monthly');
