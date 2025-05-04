@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Routes, Route, useLocation } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, useLocation, useNavigate } from "react-router-dom";
 import { useState, useEffect, Suspense } from 'react';
 import Layout from "./utils/LayoutDashboard";
 import LayoutLanding from "./utils/LayoutLanding";
@@ -69,38 +69,39 @@ const ErrorBoundaryWrapper = ({ children }) => {
 const RouteChangeHandler = () => {
   const { showLoading, hideLoading } = useLoading();
   const location = useLocation();
-
+  const navigate = useNavigate();
+  
   useEffect(() => {
     const handleStart = () => {
       showLoading();
     };
-
+    
     const handleComplete = () => {
       hideLoading();
     };
-
+    
     handleStart();
-
+    
     // Simulate navigation delay
     const timer = setTimeout(() => {
       handleComplete();
     }, 500);
-
+    
     return () => clearTimeout(timer);
-  }, [location.pathname, showLoading, hideLoading]);
-
+  }, [location.pathname]);
+  
   return null;
 };
 
 const App = () => {
   const [isLoading, setIsLoading] = useState(true);
-
+  
   useEffect(() => {
     // Simulate initial loading
     const timer = setTimeout(() => {
       setIsLoading(false);
     }, 1500);
-
+    
     return () => clearTimeout(timer);
   }, []);
 
@@ -108,7 +109,7 @@ const App = () => {
   if (isLoading) {
     return <LoadingScreen />;
   }
-
+  
   return (
     <Router>
       <RouteChangeHandler />
@@ -128,7 +129,7 @@ const App = () => {
           <Route path="/recoverysuccess" element={<RecoverySuccess />} />
           <Route path="/emails/verify" element={<EmailVerification />} />
         </Route>
-
+       
         {/* Landing Routes */}
         <Route path="/" element={
           <ErrorBoundaryWrapper>
@@ -144,7 +145,7 @@ const App = () => {
 
         {/* Protected Routes */}
         <Route element={<PrivateRoute />} errorElement={<RouteErrorBoundary />}>
-          <Route element={
+          <Route path="/" element={
             <ErrorBoundaryWrapper>
               <Layout />
             </ErrorBoundaryWrapper>
@@ -156,9 +157,9 @@ const App = () => {
             <Route path="/services-provider-pinned" element={<MerchantPinned />} />
 
             {/* Chat Nested Routes */}
-            <Route path="/chat" element={<Chat />}>
-              <Route index element={<ChatWelcome />} />
-              <Route path="messages" element={<ChatMessages />} />
+            <Route path="/" element={<Chat />}>
+              <Route path="chat" element={<ChatWelcome />} />
+              <Route path="chatmessages" element={<ChatMessages />} />
             </Route>
 
             {/* Project Management */}
