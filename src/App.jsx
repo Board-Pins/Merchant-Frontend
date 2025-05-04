@@ -46,8 +46,8 @@ import SavedProductionGroup from "./pages/Merchant/SavedProductionGroup";
 import MyRequestsProductionGroup from "./pages/Merchant/MyRequestsProductionGroup";
 
 import Chat from "./pages/Merchant/Chat";
-import ChatWelcome from "./components/provider/Chat/ChatWelcome";
-import ChatMessages from "./components/provider/Chat/ChatMessages";
+import ChatWelcome from "./components/merchant/Chat/ChatWelcome";
+import ChatMessages from "./components/merchant/Chat/ChatMessages";
 import PrivateRoute from "./pages/Auth/PrivateRoute";
 import { useLoading } from './context/LoadingContext';
 
@@ -70,38 +70,38 @@ const RouteChangeHandler = () => {
   const { showLoading, hideLoading } = useLoading();
   const location = useLocation();
   const navigate = useNavigate();
-  
+
   useEffect(() => {
     const handleStart = () => {
       showLoading();
     };
-    
+
     const handleComplete = () => {
       hideLoading();
     };
-    
+
     handleStart();
-    
+
     // Simulate navigation delay
     const timer = setTimeout(() => {
       handleComplete();
     }, 500);
-    
+
     return () => clearTimeout(timer);
   }, [location.pathname]);
-  
+
   return null;
 };
 
 const App = () => {
   const [isLoading, setIsLoading] = useState(true);
-  
+
   useEffect(() => {
     // Simulate initial loading
     const timer = setTimeout(() => {
       setIsLoading(false);
     }, 1500);
-    
+
     return () => clearTimeout(timer);
   }, []);
 
@@ -109,7 +109,7 @@ const App = () => {
   if (isLoading) {
     return <LoadingScreen />;
   }
-  
+
   return (
     <Router>
       <RouteChangeHandler />
@@ -129,7 +129,7 @@ const App = () => {
           <Route path="/recoverysuccess" element={<RecoverySuccess />} />
           <Route path="/emails/verify" element={<EmailVerification />} />
         </Route>
-       
+
         {/* Landing Routes */}
         <Route path="/" element={
           <ErrorBoundaryWrapper>
