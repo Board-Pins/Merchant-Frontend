@@ -1,9 +1,9 @@
 import React, { useState } from "react";
-import HeaderBiddingProject from "../../components/provider/BiddingProject/HeaderBiddingProject";
-import SidebardBiddingProject from "../../components/provider/BiddingProject/SidebardBiddingProject";
-import BiddingProjectsCards from "../../components/provider/BiddingProject/BiddingProjectsCards";
-import MyBidsCards from "../../components/provider/BiddingProject/MyBidsCards";
-import EditorFully from "../../components/provider/atoms/atomsEditor/EditorFully";
+import HeaderBiddingProject from "../../components/merchant/BiddingProject/HeaderBiddingProject";
+import SidebardBiddingProject from "../../components/merchant/BiddingProject/SidebardBiddingProject";
+import BiddingProjectsCards from "../../components/merchant/BiddingProject/BiddingProjectsCards";
+import MyBidsCards from "../../components/merchant/BiddingProject/MyBidsCards";
+import EditorFully from "../../components/merchant/atoms/atomsEditor/EditorFully";
 
 function MyBids() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);

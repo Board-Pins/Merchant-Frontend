@@ -1,10 +1,10 @@
 import React, { useState } from "react";
-import HeaderProductionsGroup from "../../components/provider/ProductionGroup/HeaderProductionsGroup";
-import HeaderConnectedMerchants from "../../components/provider/ServicesProvider/HeaderPinnedServicesProvider";
-import SelectProductionsGroup from "../../components/provider/ProductionGroup/SelectProductionsGroup";
-import MerchantCards from "../../components/provider/ServicesProvider/ServicesProviderCards";
-import CardProductionsGroup from "../../components/provider/ProductionGroup/CardProductionsGroup";
-import CreateProductionGroupModal from "../../components/provider/ProductionGroup/CreateProductionGroupModal";
+import HeaderProductionsGroup from "../../components/merchant/ProductionGroup/HeaderProductionsGroup";
+import HeaderConnectedMerchants from "../../components/merchant/ServicesProvider/HeaderPinnedServicesProvider";
+import SelectProductionsGroup from "../../components/merchant/ProductionGroup/SelectProductionsGroup";
+import MerchantCards from "../../components/merchant/ServicesProvider/ServicesProviderCards";
+import CardProductionsGroup from "../../components/merchant/ProductionGroup/CardProductionsGroup";
+import CreateProductionGroupModal from "../../components/merchant/ProductionGroup/CreateProductionGroupModal";
 import { GrGroup } from "react-icons/gr";
 import { TbTargetArrow } from "react-icons/tb";
 import { GoPerson } from "react-icons/go";
@@ -251,19 +251,19 @@ function ProductionGroup() {
     },
     // Add more items as needed
   ];
-    const [isOpen, setisOpen] = useState(false)
-    const onClose=()=>{
-        setisOpen(false)
-    }
+  const [isOpen, setisOpen] = useState(false)
+  const onClose = () => {
+    setisOpen(false)
+  }
   return (
     <div className=" bg-white p-6 rounded-xl min-h-full font-poppins">
-<HeaderProductionsGroup setisOpen={setisOpen}/>
+      <HeaderProductionsGroup setisOpen={setisOpen} />
 
 
-<SelectProductionsGroup />
+      <SelectProductionsGroup />
 
- <CardProductionsGroup setisOpen={setisOpen} productionData={productionData} requsetbutton={"true"}/>
- <CreateProductionGroupModal isOpen={isOpen} onClose={onClose}/>
+      <CardProductionsGroup setisOpen={setisOpen} productionData={productionData} requsetbutton={"true"} />
+      <CreateProductionGroupModal isOpen={isOpen} onClose={onClose} />
     </div>
   );
 }

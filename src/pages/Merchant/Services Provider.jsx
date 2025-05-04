@@ -1,7 +1,7 @@
 import correct from '../../assets/icons/Group 165.png'
-import HeaderServiceProvider from '../../components/provider/ServicesProvider/HeaderServiceProvider';
-import ServicesProviderCards from '../../components/provider/ServicesProvider/ServicesProviderCards';
-import StyledPagination from '../../components/provider/atoms/commonatoms/StyledPagination'; // Adjust the import path as necessary
+import HeaderServiceProvider from '../../components/merchant/ServicesProvider/HeaderServiceProvider';
+import ServicesProviderCards from '../../components/merchant/ServicesProvider/ServicesProviderCards';
+import StyledPagination from '../../components/merchant/atoms/commonatoms/StyledPagination'; // Adjust the import path as necessary
 
 function ServicesProvider() {
   return (
@@ -10,7 +10,7 @@ function ServicesProvider() {
         <img src={correct} className='w-[35px]' />
         <h3 className='font-bold text-lg'>Connected Service Providers</h3>
       </div>
-    
+
       <HeaderServiceProvider />
       <main className='py-8'>
         <ServicesProviderCards />

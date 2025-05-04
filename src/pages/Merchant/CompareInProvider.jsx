@@ -1,14 +1,14 @@
 import React from 'react'
 
-import CommonComparison from '../../components/provider/CompareInProvider/Compare/CommonComparison'
-import SearchCompare from '../../components/provider/CompareInProvider/Compare/SearchCompare'
+import CommonComparison from '../../components/merchant/CompareInProvider/Compare/CommonComparison'
+import SearchCompare from '../../components/merchant/CompareInProvider/Compare/SearchCompare'
 
 function CompareInProvider() {
   return (
     <div className='p-6 bg-white rounded-2xl'>
-<SearchCompare/>
-<CommonComparison  />
-  
+      <SearchCompare />
+      <CommonComparison />
+
     </div>
   )
 }

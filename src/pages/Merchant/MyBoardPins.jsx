@@ -3,16 +3,16 @@ import { useGetUserProfileQuery } from '../../services/userApi';
 import { toast, ToastContainer } from 'react-toastify';
 
 // Import your components
-import MerchantsConnect from '../../components/provider/myboard/MerchantsConnect';
-import ProductionGroups from '../../components/provider/myboard/ProductionGroups';
-import ProjectTsks from '../../components/provider/myboard/ProjectTsks';
-import Recents from '../../components/provider/myboard/Recents';
-import Reminder from '../../components/provider/myboard/Reminder';
-import Table from '../../components/provider/myboard/table';
-import TaskModal from '../../components/provider/myboard/TaskModal';
-import ManageCardSideBar from '../../components/provider/myboard/MangeCardSideBar';
-import WelcomeModal from '../../components/provider/WelcomeModal';
-import InprogressProject from '../../components/provider/myboard/InprogressProject';
+import MerchantsConnect from '../../components/merchant/myboard/MerchantsConnect';
+import ProductionGroups from '../../components/merchant/myboard/ProductionGroups';
+import ProjectTsks from '../../components/merchant/myboard/ProjectTsks';
+import Recents from '../../components/merchant/myboard/Recents';
+import Reminder from '../../components/merchant/myboard/Reminder';
+import Table from '../../components/merchant/myboard/table';
+import TaskModal from '../../components/merchant/myboard/TaskModal';
+import ManageCardSideBar from '../../components/merchant/myboard/MangeCardSideBar';
+import WelcomeModal from '../../components/merchant/WelcomeModal';
+import InprogressProject from '../../components/merchant/myboard/InprogressProject';
 
 export default function MyBoardPins() {
   const [modalIsOpen, setModalIsOpen] = useState(false);

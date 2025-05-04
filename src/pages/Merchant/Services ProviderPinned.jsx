@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import correct from '../../assets/icons/Group 165.svg';
-import StyledPagination from '../../components/provider/atoms/commonatoms/StyledPagination';
-import PinnedCards from '../../components/provider/ServicesProvider/PinnedCards';
-import HeaderPinnedServicesProvider from '../../components/provider/ServicesProvider/HeaderPinnedServicesProvider';
-import PinnedCollections from '../../components/provider/ServicesProvider/PinnedCollections';
+import StyledPagination from '../../components/merchant/atoms/commonatoms/StyledPagination';
+import PinnedCards from '../../components/merchant/ServicesProvider/PinnedCards';
+import HeaderPinnedServicesProvider from '../../components/merchant/ServicesProvider/HeaderPinnedServicesProvider';
+import PinnedCollections from '../../components/merchant/ServicesProvider/PinnedCollections';
 
 function MerchantPinned() {
   const [activeButton, setActiveButton] = useState('All Pinned');

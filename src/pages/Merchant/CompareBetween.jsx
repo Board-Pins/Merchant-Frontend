@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import { GoPlusCircle } from "react-icons/go";
-import Modal from "./../../components/provider/atoms/commonatoms/Modal";
-import SelectCompare from "../../components/provider/CompareInProvider/ComparBetween/SelectCompare";
-import ProgressRing from "../../components/provider/atoms/commonatoms/ProgressRing";
+import Modal from "../../components/merchant/atoms/commonatoms/Modal";
+import SelectCompare from "../../components/merchant/CompareInProvider/ComparBetween/SelectCompare";
+import ProgressRing from "../../components/merchant/atoms/commonatoms/ProgressRing";
 import { MinimizeOutlined, MinimizeRounded } from "@mui/icons-material";
 import { FaMinus } from "react-icons/fa";
 
@@ -41,10 +41,10 @@ function CompareBetween() {
                   </div>
                 )}
                 <div className="flex flex-col items-center relative">
- <div className=" w-full flex   justify-end px-6 absolute">               <FaMinus className=" rounded-full border font-bold border-[#FFB8B8] bg-white p-1" size={20} color="#FFB8B8"/></div>
+                  <div className=" w-full flex   justify-end px-6 absolute">               <FaMinus className=" rounded-full border font-bold border-[#FFB8B8] bg-white p-1" size={20} color="#FFB8B8" /></div>
                   <div className="compare border border-gray-200 bg-[#EDEDED] rounded-full lg:h-[150px] lg:w-[150px] h-[100px] w-[100px] flex justify-center items-center">
-                
-                   <img
+
+                    <img
                       src={item.src}
                       alt={`Selected ${index}`}
                       className="rounded-full h-full w-full object-cover"

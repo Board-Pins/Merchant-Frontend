@@ -1,5 +1,5 @@
 import React from "react";
-import AccordionList from "../../components/provider/atoms/commonatoms/AccordionList";
+import AccordionList from "../../components/merchant/atoms/commonatoms/AccordionList";
 import { HiOutlineDocumentMinus } from "react-icons/hi2";
 
 function CompareForms() {

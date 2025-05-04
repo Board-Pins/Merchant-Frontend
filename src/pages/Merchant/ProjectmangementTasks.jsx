@@ -1,20 +1,20 @@
 import React, { useState } from 'react';
-import DatePicker from '../../components/provider/ProjectMangent/kanban/DatePicker';
-import HeaderProjectmangementTasks from '../../components/provider/ProjectMangent/HeaderProjectmangementTasks';
-import KanbanTodoList from '../../components/provider/ProjectMangent/KanbanTodoList';
-import NavigationItem from '../../components/provider/ProjectMangent/NavigationItem';
+import DatePicker from '../../components/merchant/ProjectMangent/kanban/DatePicker';
+import HeaderProjectmangementTasks from '../../components/merchant/ProjectMangent/HeaderProjectmangementTasks';
+import KanbanTodoList from '../../components/merchant/ProjectMangent/KanbanTodoList';
+import NavigationItem from '../../components/merchant/ProjectMangent/NavigationItem';
 import filterIcon from '../../assets/icons/vertical-slider-square--adjustment-adjust-controls-fader-vertical-settings-slider-square.svg';
 import listBtnIcon from '../../assets/icons/listleft.svg';
-import MenuButton from '../../components/provider/atoms/atomsProjectMangemant/MenuButton';
-import ProgressBar from '../../components/provider/atoms/commonatoms/Progressbar';
-import ProgressChart from '../../components/provider/atoms/atomsProjectMangemant/ProgressChart';
-import SidebarProjectManagement from '../../components/provider/ProjectMangent/SidebarProjectManagement';
-import ListProjectMangementTable from '../../components/provider/ProjectMangent/list/ListProjectMangementTasks';
+import MenuButton from '../../components/merchant/atoms/atomsProjectMangemant/MenuButton';
+import ProgressBar from '../../components/merchant/atoms/commonatoms/Progressbar';
+import ProgressChart from '../../components/merchant/atoms/atomsProjectMangemant/ProgressChart';
+import SidebarProjectManagement from '../../components/merchant/ProjectMangent/SidebarProjectManagement';
+import ListProjectMangementTable from '../../components/merchant/ProjectMangent/list/ListProjectMangementTasks';
 import { data } from "../../utils/helpers/constants";
 import { views } from "../../utils/helpers/constants";
-import TableMangementTask from '../../components/provider/ProjectMangent/table/TableMangementTask';
-import Calendar from '../../components/provider/ProjectMangent/celender/Calender';
-import NewTaskModal from '../../components/provider/ProjectMangent/NewTask/NewTaskModal';
+import TableMangementTask from '../../components/merchant/ProjectMangent/table/TableMangementTask';
+import Calendar from '../../components/merchant/ProjectMangent/celender/Calender';
+import NewTaskModal from '../../components/merchant/ProjectMangent/NewTask/NewTaskModal';
 
 const ProjectMangementTasks = () => {
   const [selectedView, setSelectedView] = useState('kanban');

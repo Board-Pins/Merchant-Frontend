@@ -1,52 +1,52 @@
 import React, { useState } from 'react'
-import HeaderSettingProfile from '../../components/provider/Setting/HeaderSetting'
+import HeaderSettingProfile from '../../components/merchant/Setting/HeaderSetting'
 import { viewsSetting } from '../../utils/helpers/constants'
-import NavigationItem from '../../components/provider/ProjectMangent/NavigationItem'
-import Settingoverview from '../../components/provider/Setting/SettingProfile/Settingoverview';
-import SettingAbout from '../../components/provider/Setting/SettingProfile/SettingAbout';
-import SettingServices from '../../components/provider/Setting/SettingProfile/SettingServices';
-import SettingPhotos from '../../components/provider/Setting/SettingProfile/SettingPhotos';
-import SettingDocuments from '../../components/provider/Setting/SettingProfile/SettingDocuments';
+import NavigationItem from '../../components/merchant/ProjectMangent/NavigationItem'
+import Settingoverview from '../../components/merchant/Setting/SettingProfile/Settingoverview';
+import SettingAbout from '../../components/merchant/Setting/SettingProfile/SettingAbout';
+import SettingServices from '../../components/merchant/Setting/SettingProfile/SettingServices';
+import SettingPhotos from '../../components/merchant/Setting/SettingProfile/SettingPhotos';
+import SettingDocuments from '../../components/merchant/Setting/SettingProfile/SettingDocuments';
 import { IoEyeOutline } from 'react-icons/io5';
-import HeaderSetting from '../../components/provider/Setting/HeaderSetting';
+import HeaderSetting from '../../components/merchant/Setting/HeaderSetting';
 
 function SettingProfile() {
 
-    const [selectedView, setSelectedView] = useState('overview');
-    const [isModalOpen, setIsModalOpen] = useState(false);
-    const renderView = () => {
+  const [selectedView, setSelectedView] = useState('overview');
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const renderView = () => {
     switch (selectedView) {
       case 'overview':
         return <Settingoverview />;
       case 'About':
-        return <SettingAbout/>;
+        return <SettingAbout />;
       case 'Services':
-        return <SettingServices/>;
+        return <SettingServices />;
       case 'Photos':
         return <SettingPhotos />;
-        case 'Documents':
-            return <SettingDocuments />;
+      case 'Documents':
+        return <SettingDocuments />;
       default:
         return null;
     }
   };
 
-    const handleItemSelect = (item) => {
-      setSelectedView(item.key);
-    };
+  const handleItemSelect = (item) => {
+    setSelectedView(item.key);
+  };
   return (
     <div className=' bg-white rounded-lg p-6'>
-<HeaderSetting subtitle={"profile"}/>
+      <HeaderSetting subtitle={"profile"} />
 
-<main  className=' glex justify-center items-center w-full lg:px-16  pt-12'>
+      <main className=' glex justify-center items-center w-full lg:px-16  pt-12'>
 
-<div  className=' lg:flex '>
-<ul className="items-center flex-grow flex gap-6  font-poppins">
+        <div className=' lg:flex '>
+          <ul className="items-center flex-grow flex gap-6  font-poppins">
             {viewsSetting.map(view => (
               <NavigationItem
                 key={view.key}
                 label={view.label}
-              hideIcon={true}
+                hideIcon={true}
                 isSelected={selectedView === view.key}
                 onClick={() => setSelectedView(view.key)}
               />
@@ -59,14 +59,14 @@ function SettingProfile() {
           </div>
 
 
-</div>
+        </div>
 
-<div className='  '>
+        <div className='  '>
 
-{renderView()}
+          {renderView()}
 
-</div>
-</main>
+        </div>
+      </main>
 
     </div>
   )
