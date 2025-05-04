@@ -68,10 +68,9 @@ export default function WelcomeModal() {
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
       {/* Welcome Modal - hidden when success */}
-      <div 
-        className={`bg-white rounded-lg shadow-xl w-full max-w-4xl py-12 h-[80vh] overflow-hidden transition-all duration-300 ${
-          isSuccess ? "opacity-0 pointer-events-none" : "opacity-100"
-        }`}
+      <div
+        className={`bg-white rounded-lg shadow-xl w-full max-w-4xl py-12 h-[80vh] overflow-hidden transition-all duration-300 ${isSuccess ? "opacity-0 pointer-events-none" : "opacity-100"
+          }`}
       >
         <form
           onSubmit={formik.handleSubmit}
@@ -168,9 +167,8 @@ export default function WelcomeModal() {
                       viewBox="0 0 24 24"
                       fill="none"
                       xmlns="http://www.w3.org/2000/svg"
-                      className={`transition-transform ${
-                        dropdownOpen ? "rotate-180" : ""
-                      }`}
+                      className={`transition-transform ${dropdownOpen ? "rotate-180" : ""
+                        }`}
                     >
                       <path
                         d="M6 9L12 15L18 9"
@@ -241,9 +239,8 @@ export default function WelcomeModal() {
       </div>
 
       {/* Pending Modal - shown when success */}
-      <div className={`fixed inset-0 flex items-center justify-center transition-all duration-300 ${
-        isSuccess ? "opacity-100" : "opacity-0 pointer-events-none"
-      }`}>
+      <div className={`fixed inset-0 flex items-center justify-center transition-all duration-300 ${isSuccess ? "opacity-100" : "opacity-0 pointer-events-none"
+        }`}>
         <PendingModal />
       </div>
     </div>
