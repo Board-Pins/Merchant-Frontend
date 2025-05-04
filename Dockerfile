@@ -1,4 +1,4 @@
-FROM node:16-alpine
+FROM node:18-alpine
 
 # Set the working directory in the container
 WORKDIR /boardpins
@@ -16,8 +16,7 @@ COPY . .
 
 # Debug the file structure to ensure all files are present
 RUN ls -la && \
-    ls -la src/ && \
-    ls -la src/store/ || mkdir -p src/store/
+    ls -la src/
 
 # Build the Vite project with more verbose output
 RUN npm run build || (echo "Build failed, showing directory structure:" && find src -type f | sort)
