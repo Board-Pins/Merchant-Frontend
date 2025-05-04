@@ -135,20 +135,21 @@ const SidebarProvider = ({ handleIsopen }) => {
     <>
       <button
         onClick={toggleSidebar}
-        className={`fixed ${isOpen ? "top-[1%]" : "top-[3%]"} ${
-          isOpen ? "left-[48%]" : "left-[5%]"
-        } p-2 rounded-lg z-50 md:hidden bg-white`}
+        className={`fixed ${isOpen ? "top-[1%]" : "top-[3%]"} ${isOpen ? "left-[48%]" : "left-[5%]"
+          } p-2 rounded-lg z-50 md:hidden bg-white`}
       >
         {isOpen ? <IoMdExit /> : <MenuIcon color="#000" />}
       </button>
 
       <div
-        className={`fixed inset-x-0 font-poppins px-4 h-full left-0 md:bg-transparent bg-white text-white w-72 transform ${
-          isOpen ? "translate-x-0" : "-translate-x-full"
-        } transition-transform duration-300 ease-in-out z-40 md:static md:translate-x-0 py-4 top-0 md:py-0 md:h-full md:w-[19%]`}
+        className={`fixed inset-x-0 font-poppins px-4 h-full left-0 md:bg-transparent bg-white text-white w-72 transform ${isOpen ? "translate-x-0" : "-translate-x-full"
+          } transition-transform duration-300 ease-in-out z-40 md:static md:translate-x-0 py-4 top-0 md:py-0 md:h-full md:w-[19%]`}
       >
         <div className="flex justify-between items-center w-full">
-          <img src={Logo} className="w-[200px] pt-4" alt="Logo" />
+          <Link to={"/"}>
+            <img src={Logo} className="w-[200px] pt-4" alt="Logo" />
+          </Link>
+
         </div>
 
         <ul
@@ -171,11 +172,10 @@ const SidebarProvider = ({ handleIsopen }) => {
             <Link
               to={item.path}
               key={item.id}
-              className={`flex flex-col gap-1  px-2 py-2  ${
-                selectedItem === item.id
-                  ? "bg-white shadow-custom2 rounded-lg py-3  text-[#6161FF]"
-                  : " text-dark"
-              }`}
+              className={`flex flex-col gap-1  px-2 py-2  ${selectedItem === item.id
+                ? "bg-white shadow-custom2 rounded-lg py-3  text-[#6161FF]"
+                : " text-dark"
+                }`}
               onClick={() => {
                 handleItemClick(item.id);
                 if (item.onClick) item.onClick(); // Trigger onClick if available
