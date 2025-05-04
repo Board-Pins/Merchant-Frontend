@@ -1,13 +1,93 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/src/assets/images/chat/model.png"  type="image/x-icon" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>BoardPins</title>
-  </head>
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.jsx"></script>
-  </body>
+
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/svg+xml" href="/src/assets/images/chat/model.png" type="image/x-icon" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BoardPins</title>
+  <!-- Add a simple loading style to prevent blank screen -->
+  <style>
+    #initial-loading {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      width: 100vw;
+      background-color: white;
+      position: fixed;
+      top: 0;
+      left: 0;
+      z-index: 9999;
+      opacity: 1;
+      transition: opacity 0.3s ease-out;
+    }
+
+    #initial-loading.fade-out {
+      opacity: 0;
+    }
+
+    .spinner {
+      width: 40px;
+      height: 40px;
+      border: 4px solid rgba(0, 0, 0, 0.1);
+      border-radius: 50%;
+      border-top-color: #6161FF;
+      animation: spin 1s ease-in-out infinite;
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Initial loading indicator that shows before React loads -->
+  <div id="initial-loading">
+    <div class="spinner"></div>
+  </div>
+  <!-- React root element -->
+  <div id="root"></div>
+  <!-- Hide the initial loading indicator once React starts rendering -->
+  <script>
+    // Hide initial loading immediately when React starts rendering
+    // This prevents overlap with React's loading screen
+    document.addEventListener('DOMContentLoaded', function () {
+      const observer = new MutationObserver(function (mutations) {
+        mutations.forEach(function (mutation) {
+          if (mutation.addedNodes.length && document.getElementById('root').children.length > 0) {
+            const loader = document.getElementById('initial-loading');
+            if (loader) {
+              // Add fade-out class first
+              loader.classList.add('fade-out');
+              // Then remove after transition completes
+              setTimeout(() => {
+                loader.style.display = 'none';
+              }, 300);
+            }
+            observer.disconnect();
+          }
+        });
+      });
+
+      observer.observe(document.getElementById('root'), { childList: true });
+    });
+
+    // Safety timeout to hide the loader if it gets stuck
+    setTimeout(function () {
+      const loader = document.getElementById('initial-loading');
+      if (loader && loader.style.display !== 'none') {
+        loader.classList.add('fade-out');
+        setTimeout(() => {
+          loader.style.display = 'none';
+        }, 300);
+      }
+    }, 3000);
+  </script>
+  <script type="module" src="/src/main.jsx"></script>
+</body>
+
 </html>
