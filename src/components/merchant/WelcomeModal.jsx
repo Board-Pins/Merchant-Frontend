@@ -80,7 +80,9 @@ export default function WelcomeModal() {
           <div className="p-8 flex items-center justify-center md:w-2/5 relative h-full">
             <div className="absolute top-[-60px] left-4">
               <div className="flex items-center gap-2">
-                <img src={logo} className="w-[150px]" alt="Logo" />
+                <Link to={"/"}>
+                  <img src={logo} className="w-[200px]" alt="Logo" />
+                </Link>
               </div>
             </div>
             <div className="relative w-full h-[300px]">

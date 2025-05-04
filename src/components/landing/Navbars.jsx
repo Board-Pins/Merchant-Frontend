@@ -16,26 +16,28 @@ const Navbar = () => {
       <div className="mx-auto flex items-center">
         <div className="flex flex-grow gap-12 items-center">
           <div className="text-[#8E8E8E] text-xl font-bold">
-            <img src={logo} className="w-[200px]" alt="Logo"/>
+            <Link to={"/"}>
+              <img src={logo} className="w-[200px]" alt="Logo" />
+            </Link>
           </div>
           <div className="hidden md:flex space-x-4">
-            <NavLink 
-              to="/" 
+            <NavLink
+              to="/"
               className={({ isActive }) => isActive ? 'text-[#6161FF]' : 'text-[#8E8E8E]'}
               activeClassName="text-[#6161FF]"
             >
               Home
             </NavLink>
-            <NavLink 
-              to="/about" 
+            <NavLink
+              to="/about"
               className={({ isActive }) => isActive ? 'text-[#6161FF]' : 'text-[#8E8E8E]'}
               activeClassName="text-[#6161FF]"
             >
               About
             </NavLink>
-            <NavLink 
-              to="" 
-              className={ 'hover:text-[#6161FF] text-[#8E8E8E]'}
+            <NavLink
+              to=""
+              className={'hover:text-[#6161FF] text-[#8E8E8E]'}
               activeClassName="text-[#6161FF]"
             >
               How it works
@@ -43,15 +45,15 @@ const Navbar = () => {
           </div>
         </div>
         <div className="hidden md:flex space-x-6 items-center">
-          <NavLink 
-            to="/pricing" 
+          <NavLink
+            to="/pricing"
             className={({ isActive }) => isActive ? 'text-[#6161FF]' : 'text-[#8E8E8E]'}
             activeClassName="text-[#6161FF]"
           >
             Pricing
           </NavLink>
-          <NavLink 
-            to="/login" 
+          <NavLink
+            to="/login"
             className={({ isActive }) => isActive ? 'text-[#6161FF]' : 'text-[#8E8E8E]'}
             activeClassName="text-[#6161FF]"
           >
@@ -59,12 +61,12 @@ const Navbar = () => {
           </NavLink >
           <NavLink to="signup">
 
-          <button className="text-white hover:text-[#8E8E8E] bg-[#6161FF] rounded-3xl py-3 px-5">
-            Get Started
-          </button>
+            <button className="text-white hover:text-[#8E8E8E] bg-[#6161FF] rounded-3xl py-3 px-5">
+              Get Started
+            </button>
           </NavLink>
 
-      
+
         </div>
         <div className="md:hidden">
           <button onClick={toggleMenu} className="text-gray-300 hover:text-[#8E8E8E] focus:outline-none">
@@ -87,26 +89,26 @@ const Navbar = () => {
       </div>
       {isOpen && (
         <div className="md:hidden">
-          <NavLink 
-            to="#home" 
+          <NavLink
+            to="#home"
             className={({ isActive }) => isActive ? 'block px-2 py-1 text-[#6161FF]' : 'block px-2 py-1 text-gray-300 hover:text-[#6161FF]'}
           >
             Home
           </NavLink>
-          <NavLink 
-            to="about" 
+          <NavLink
+            to="about"
             className={({ isActive }) => isActive ? 'block px-2 py-1 text-[#6161FF]' : 'block px-2 py-1 text-gray-300 hover:text-[#6161FF]'}
           >
             About
           </NavLink>
-          <NavLink 
-            to="#services" 
+          <NavLink
+            to="#services"
             className={({ isActive }) => isActive ? 'block px-2 py-1 text-[#6161FF]' : 'block px-2 py-1 text-gray-300 hover:text-[#6161FF]'}
           >
             Services
           </NavLink>
-          <NavLink 
-            to="#contact" 
+          <NavLink
+            to="#contact"
             className={({ isActive }) => isActive ? 'block px-2 py-1 text-[#6161FF]' : 'block px-2 py-1 text-gray-300 hover:text-[#6161FF]'}
           >
             Contact

@@ -84,7 +84,9 @@ const OrderBilling = () => (
   <div className="bg-[#F5F6FA] flex items-center justify-center ">
     <div>
       <div className="flex w-full justify-center py-12">
-        <img src={logo} className="w-[300px]" alt="Logo" />
+        <Link to={"/"}>
+          <img src={logo} className="w-[300px]" alt="Logo" />
+        </Link>
       </div>
       <div className="shadow-custom lg:w-[1100px] lg:h-[900px] bg-white rounded-3xl mx-4">
         <div className="grid lg:grid-cols-8 grid-cols-1 h-full">
