@@ -30,6 +30,7 @@ jobs:
               sudo git reset --hard origin/main  # Force reset to match remote
               sudo git clean -fd  # Remove untracked files
             else
+              echo "start cloning repo"
               sudo git clone https://${{ secrets.TOKEN_GIT }}@github.com/${{ github.repository }} "$REPO_DIR"
             fi
 
