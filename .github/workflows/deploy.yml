@@ -1,0 +1,53 @@
+name: marchent pipeline
+on:
+  push:
+    branches: [ main ]
+env:
+  AWS_REGION: ${{ secrets.AWS_REGION }}
+  SERVICE_NAME: ${{ vars.SERVICE_NAME }}
+  
+jobs:
+  trigger:
+    runs-on: ubuntu-latest
+    steps:
+    
+      - name: Add SSH key
+        uses: webfactory/ssh-agent@v0.5.3
+        with:
+          ssh-private-key: ${{ secrets.EC2_SSH_PRIVATE_KEY }}
+
+      - name: Connect and deploy to EC2
+        run: |
+          REPO_DIR=/home/${{ vars.SERVICE_NAME }}
+          ssh -o StrictHostKeyChecking=no ${{ secrets.EC2_USER }}@${{ secrets.EC2_IP }} << EOF   
+            echo "Connection successful"
+            REPO_DIR=/home/${{ vars.SERVICE_NAME }}
+
+            if [ -d "$REPO_DIR" ]; then
+              cd "$REPO_DIR"
+              sudo git config --global --add safe.directory "$REPO_DIR"
+              sudo git fetch origin main
+              sudo git reset --hard origin/main  # Force reset to match remote
+              sudo git clean -fd  # Remove untracked files
+            else
+              sudo git clone https://${{ secrets.TOKEN_GIT }}@github.com/${{ github.repository }} "$REPO_DIR"
+            fi
+
+            
+      # - name: Trigger user repo pipeline
+      #   env:
+      #     PAT_TOKEN: ${{ secrets.GIT_TOKEN }}
+      #   run: |
+      #     response=$(curl -s -w "%{http_code}" \
+      #       -X POST \
+      #       -H "Accept: application/vnd.github.v3+json" \
+      #       -H "Authorization: Bearer $PAT_TOKEN" \
+      #       https://api.github.com/repos/Board-Pins/User_Management/dispatches \
+      #       -d '{"event_type":"trigger-ci"}')
+      #     echo "HTTP Status: $response"
+      #     if [ "$response" -eq 204 ]; then
+      #       echo "Successfully sent repository_dispatch to Repo A"
+      #     else
+      #       echo "Failed to send repository_dispatch. Status: $response"
+      #       exit 1
+      #     fi
