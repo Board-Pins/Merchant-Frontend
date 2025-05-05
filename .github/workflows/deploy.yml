@@ -35,20 +35,20 @@ jobs:
             fi
 
             
-      # - name: Trigger user repo pipeline
-      #   env:
-      #     PAT_TOKEN: ${{ secrets.GIT_TOKEN }}
-      #   run: |
-      #     response=$(curl -s -w "%{http_code}" \
-      #       -X POST \
-      #       -H "Accept: application/vnd.github.v3+json" \
-      #       -H "Authorization: Bearer $PAT_TOKEN" \
-      #       https://api.github.com/repos/Board-Pins/User_Management/dispatches \
-      #       -d '{"event_type":"trigger-ci"}')
-      #     echo "HTTP Status: $response"
-      #     if [ "$response" -eq 204 ]; then
-      #       echo "Successfully sent repository_dispatch to Repo A"
-      #     else
-      #       echo "Failed to send repository_dispatch. Status: $response"
-      #       exit 1
-      #     fi
+      - name: Trigger user repo pipeline
+        env:
+          PAT_TOKEN: ${{ secrets.GIT_TOKEN }}
+        run: |
+          response=$(curl -s -w "%{http_code}" \
+            -X POST \
+            -H "Accept: application/vnd.github.v3+json" \
+            -H "Authorization: Bearer $PAT_TOKEN" \
+            https://api.github.com/repos/Board-Pins/User_Management/dispatches \
+            -d '{"event_type":"trigger-ci-from-merchant"}')
+          echo "HTTP Status: $response"
+          if [ "$response" -eq 204 ]; then
+            echo "Successfully sent repository_dispatch to user_managment ci/cd"
+          else
+            echo "Failed to send repository_dispatch. Status: $response"
+            exit 1
+          fi
