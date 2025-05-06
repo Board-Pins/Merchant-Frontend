@@ -32,7 +32,27 @@ export default defineConfig({
       }
     }
   },
+  build: {
+    // Optimize chunk size
+    chunkSizeWarningLimit: 1000,
+    // Improve long-term caching with deterministic hashes
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          vendor: ['react', 'react-dom', 'react-router-dom'],
+          // Add other large dependencies as needed
+        },
+        // Customize asset filenames for better caching
+        assetFileNames: 'assets/[name].[hash].[ext]',
+      }
+    },
+    // Ensure assets are properly hashed for cache busting
+    assetsInlineLimit: 4096, // 4kb - default value
+  },
 })
+
+
+
 
 
 
