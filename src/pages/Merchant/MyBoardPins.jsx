@@ -47,6 +47,8 @@ export default function MyBoardPins() {
   return (
     <div className="container mx-auto">
       <ToastContainer />
+      {/* Add a console log to verify the component is rendering */}
+      {console.log("MyBoardPins rendering, userProfile:", userProfile)}
       <WelcomeModal />
       <div className='py-3 lg:flex justify-center items-center gap-2'>
         <ManageCardSideBar isOpenMangeCard={isSidebarOpen} toggleSidebar={toggleSidebar} />
@@ -93,4 +95,8 @@ export default function MyBoardPins() {
     </div>
   );
 }
+
+
+
+
 
