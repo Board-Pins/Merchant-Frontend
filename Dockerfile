@@ -1,25 +1,35 @@
-FROM node:16-alpine
+FROM node:20.19.1-alpine AS build
 
-# Set the working directory in the container
+# Set working directory
 WORKDIR /boardpins
 
-# Copy package.json and package-lock.json to the working directory
-COPY package.json package-lock.json ./
+# Copy package files first for better caching
+COPY package*.json ./
 
-# Install dependencies
-RUN npm install
+# Install dependencies with production flag
+RUN npm ci --production=false
 
-# Copy the rest of the application code to the working directory
+# Copy the rest of the application
 COPY . .
 
 # Build the Vite project
 RUN npm run build
 
-# Install a lightweight web server
+# Production stage
+FROM node:20-alpine AS production
+
+# Set working directory
+WORKDIR /app
+
+# Install serve for production
 RUN npm install -g serve
+
+# Copy built assets from build stage
+COPY --from=build /boardpins/dist ./dist
 
 # Expose the port the app runs on
 EXPOSE 5000
 
 # Command to run the app
 CMD ["serve", "-s", "dist", "-l", "5000"]
+
