@@ -75,3 +75,4 @@ const NavbarProvider = ({handleIsopen}) => {
 };
 
 export default NavbarProvider;
+
