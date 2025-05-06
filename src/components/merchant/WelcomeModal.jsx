@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { useFormik } from "formik";
 import * as Yup from "yup";
+import { Link } from "react-router-dom";
 import logo from "../../assets/images/Logo.png";
 import x from "../../assets/images/x.png";
 import { useFetchCategoriesQuery } from "../../services/userSingleServicesProviderApi";
@@ -12,21 +13,30 @@ export default function WelcomeModal() {
   const [open, setOpen] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef(null);
-  const { data: userProfile } = useGetUserProfileQuery();
+  const { data: userProfile, isLoading: profileLoading, error: profileError } = useGetUserProfileQuery();
+
+  // Add console logs to debug
+  useEffect(() => {
+    console.log("WelcomeModal - userProfile:", userProfile);
+    console.log("WelcomeModal - profileLoading:", profileLoading);
+    console.log("WelcomeModal - profileError:", profileError);
+  }, [userProfile, profileLoading, profileError]);
 
   const { data: categories = [], isLoading: isLoadingCategories } =
     useFetchCategoriesQuery();
   const [createProfile, { isLoading, isSuccess, isError, error }] =
     useCreateProfileMutation();
 
-  // Show modal only if user doesn't have a profile
+  // Show modal only if user doesn't have a profile and we're not loading
   useEffect(() => {
-    if (!userProfile) {
+    if (!profileLoading && !userProfile) {
+      console.log("Setting modal open to TRUE");
       setOpen(true);
     } else {
+      console.log("Setting modal open to FALSE");
       setOpen(false);
     }
-  }, [userProfile]);
+  }, [userProfile, profileLoading]);
 
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -248,3 +258,6 @@ export default function WelcomeModal() {
     </div>
   );
 }
+
+
+
