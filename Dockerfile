@@ -21,8 +21,6 @@ FROM node:20-alpine AS production
 # Set working directory
 WORKDIR /app
 
-mkdir -p /home/test
-
 # Install serve for production
 RUN npm install -g serve
 
