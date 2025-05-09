@@ -16,8 +16,6 @@ RUN npm ci
 # Copy the rest of the application
 COPY . .
 
-sudo mkdir -p /home/test
-
 # Expose the port Vite uses in development mode
 EXPOSE 5000
 
