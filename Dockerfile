@@ -5,6 +5,9 @@ WORKDIR /boardpins
 # Copy package files first for better caching
 COPY package*.json ./
 
+# Install required rollup package explicitly
+RUN npm install @rollup/rollup-linux-x64-musl
+
 # Use npm install instead of npm ci to resolve dependency issues
 RUN npm install
 
