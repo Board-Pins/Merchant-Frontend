@@ -17,9 +17,21 @@ export default function WelcomeModal() {
 
   // Add console logs to debug
   useEffect(() => {
+    // Add more detailed logging
     console.log("WelcomeModal - userProfile:", userProfile);
     console.log("WelcomeModal - profileLoading:", profileLoading);
     console.log("WelcomeModal - profileError:", profileError);
+    
+    // Only show modal when we've confirmed user has no profile
+    if (!profileLoading) {
+      if (!userProfile) {
+        console.log("No user profile found, showing welcome modal");
+        setOpen(true);
+      } else {
+        console.log("User profile exists, hiding welcome modal");
+        setOpen(false);
+      }
+    }
   }, [userProfile, profileLoading, profileError]);
 
   const { data: categories = [], isLoading: isLoadingCategories } =
@@ -258,6 +270,7 @@ export default function WelcomeModal() {
     </div>
   );
 }
+
 
 
 

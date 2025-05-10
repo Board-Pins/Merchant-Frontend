@@ -14,13 +14,11 @@ const GoogleCallback = () => {
     if (accessToken) {
       // Store the token
       localStorage.setItem('accessToken', accessToken);
-
-      // If we have profile data, user exists - go to myboard
-      if (userProfile) {
+      
+      // If we're not loading and there's no error, proceed with navigation
+      if (!isLoading && !error) {
+        // Always navigate to myboard - the WelcomeModal will handle profile check
         navigate('/myboard', { replace: true });
-      } else if (!isLoading && !error) {
-        // No profile yet - new user, redirect to profile setup
-        navigate('/signup', { replace: true });
       }
     } else {
       // No token, redirect to login
@@ -37,3 +35,4 @@ const GoogleCallback = () => {
 };
 
 export default GoogleCallback;
+
