@@ -44,12 +44,23 @@ export default defineConfig({
         },
         // Customize asset filenames for better caching
         assetFileNames: 'assets/[name].[hash].[ext]',
-      }
+      },
+      // Add external dependencies that shouldn't be bundled
+      external: [
+        'react',
+        'react-dom',
+        'react-router-dom',
+        '@emotion/react',
+        '@emotion/styled',
+        '@mui/material',
+        '@mui/icons-material'
+      ]
     },
     // Ensure assets are properly hashed for cache busting
     assetsInlineLimit: 4096, // 4kb - default value
   },
 })
+
 
 
 
