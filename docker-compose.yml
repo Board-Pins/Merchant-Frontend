@@ -19,5 +19,3 @@ services:
       - CHOKIDAR_USEPOLLING=true
       - COMPOSE_BAKE=true
       - NODE_OPTIONS=--max-old-space-size=4096
-
-

@@ -1,22 +1,12 @@
-FROM node:20.19.1-alpine
+FROM node:20.19.1-alpine AS build
 
 # Set working directory
 WORKDIR /boardpins
-
-# Install dependencies needed for node-gyp
-RUN apk add --no-cache python3 make g++
-
 # Copy package files first for better caching
 COPY package*.json ./
 
-# Use npm ci for faster, more reliable builds
-RUN npm ci --no-audit --no-fund
-
-# Install rollup explicitly to avoid platform-specific issues
-RUN npm install --save-dev @rollup/rollup-linux-x64-musl
-
-# Install terser required by Vite
-RUN npm install --save-dev terser
+# Use npm install instead of npm ci to resolve dependency issues
+RUN npm install
 
 # Copy the rest of the application
 COPY . .
@@ -24,10 +14,20 @@ COPY . .
 # Build the Vite project
 RUN npm run build
 
-# Expose the Vite development port
+# Production stage
+FROM node:20-alpine AS production
+
+# Set working directory
+WORKDIR /app
+
+# Install serve for production
+RUN npm install -g serve
+
+# Copy built assets from build stage
+COPY --from=build /boardpins/dist ./dist
+
+# Expose the port the app runs on
 EXPOSE 5000
 
-# Start the development server
-CMD ["npm", "run", "dev", "--", "--host", "0.0.0.0"]
-
-
+# Command to run the app
+CMD ["serve", "-s", "dist", "-l", "5000"]
