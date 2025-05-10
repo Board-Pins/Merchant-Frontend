@@ -1,4 +1,4 @@
-FROM node:20.19.1-alpine AS build
+FROM node:20.19.1-alpine
 
 # Set working directory
 WORKDIR /boardpins
@@ -24,19 +24,10 @@ COPY . .
 # Build the Vite project
 RUN npm run build
 
-# Production stage - using nginx for better performance
-FROM nginx:alpine AS production
+# Expose the Vite development port
+EXPOSE 5000
 
-# Copy nginx configuration
-COPY nginx.conf /etc/nginx/conf.d/default.conf
-
-# Copy built assets from build stage
-COPY --from=build /boardpins/dist /usr/share/nginx/html
-
-# Expose the port the app runs on
-EXPOSE 80
-
-# Command to run nginx in foreground
-CMD ["nginx", "-g", "daemon off;"]
+# Start the development server
+CMD ["npm", "run", "dev", "--", "--host", "0.0.0.0"]
 
 
