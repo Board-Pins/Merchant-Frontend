@@ -1,11 +1,13 @@
-import { defineConfig } from 'vite'
+import { defineConfig, loadEnv } from 'vite'
 import react from '@vitejs/plugin-react'
 
 export default defineConfig(({ mode }) => {
   // Load env variables based on mode
+  const env = loadEnv(mode, process.cwd());
   const isProd = mode === 'production';
 
   return {
+    base: env.VITE_BASE_URL || '/',
     plugins: [
       react({
         jsxImportSource: '@emotion/react',
@@ -16,25 +18,18 @@ export default defineConfig(({ mode }) => {
     ],
     css: {
       postcss: './postcss.config.js',
+      // Add minification options to handle problematic comments
+      minify: 'lightningcss',
+      lightningcss: {
+        drafts: {
+          customMedia: true,
+        },
+        // Preserve comments that might be causing issues
+        cssModules: true,
+      },
     },
     optimizeDeps: {
       include: ['@emotion/react', '@emotion/styled', '@emotion/cache']
-    },
-    server: {
-      // Improve hot module replacement
-      hmr: {
-        overlay: true,
-        protocol: 'ws',
-        host: 'localhost',
-        port: 5000,
-        clientPort: 5000
-      },
-      // Handle client-side routing
-      historyApiFallback: true,
-      // Configure for Docker networking
-      host: true,
-      port: 5000,
-      strictPort: true,
     },
     build: {
       // Only generate sourcemaps in development
@@ -67,4 +62,6 @@ export default defineConfig(({ mode }) => {
     }
   };
 });
+
+
 
