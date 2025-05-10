@@ -10,8 +10,11 @@ import { initI18n } from '../i18n';
 import { LoadingProvider } from './context/LoadingContext';
 import LoadingScreen from './components/common/LoadingScreen';
 
-// Create a new cache instance for emotion
-const emotionCache = createCache({ key: 'css' });
+// Fix emotion cache configuration
+const emotionCache = createCache({
+  key: 'css',
+  prepend: true // Ensure styles are prepended to the <head> for faster rendering
+});
 
 const Root = () => {
   useEffect(() => {
@@ -36,6 +39,7 @@ const Root = () => {
 };
 
 ReactDOM.createRoot(document.getElementById('root')).render(<Root />);
+
 
 
 
