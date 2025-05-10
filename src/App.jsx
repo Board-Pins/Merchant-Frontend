@@ -1,5 +1,5 @@
 import { BrowserRouter as Router, Routes, Route, useLocation, useNavigate } from "react-router-dom";
-import { useState, useEffect, Suspense } from 'react';
+import { useState, useEffect, Suspense, lazy } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
 import Layout from "./utils/LayoutDashboard";
 import LayoutLanding from "./utils/LayoutLanding";

@@ -2,14 +2,22 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/src/assets/images/chat/model.png"  type="image/x-icon" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <!-- Improve stylesheet loading -->
+    <meta name="description" content="BoardPins - Connect with service providers and manage your projects" />
+    <meta name="theme-color" content="#6161FF" />
+    
+    <!-- Favicon - fixing the path to use public folder instead of src -->
+    <link rel="icon" type="image/png" href="/model.png" />
+    
+    <!-- Preload critical resources -->
     <link rel="preload" href="/src/index.css" as="style">
     <link rel="stylesheet" href="/src/index.css">
-    <!-- Add preload for emotion styles -->
+    
+    <!-- Font preconnect for performance -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
     <title>BoardPins</title>
   </head>
   <body>
