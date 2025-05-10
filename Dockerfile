@@ -3,11 +3,16 @@ FROM node:20.19.1-alpine AS build
 # Set working directory
 WORKDIR /boardpins
 
+# Clean npm cache and add temporary space-saving measures
+RUN npm cache clean --force && \
+    rm -rf /tmp/* /var/cache/apk/*
+
 # Copy package files first for better caching
 COPY package*.json ./
 
 # Use npm install instead of npm ci to resolve dependency issues
-RUN npm install
+# The --legacy-peer-deps flag helps with compatibility issues
+RUN npm install --legacy-peer-deps
 
 # Copy the rest of the application
 COPY . .
@@ -32,5 +37,10 @@ EXPOSE 5000
 
 # Command to run the app
 CMD ["serve", "-s", "dist", "-l", "5000"]
+
+
+
+
+
 
 

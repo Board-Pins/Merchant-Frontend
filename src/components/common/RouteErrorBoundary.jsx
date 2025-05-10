@@ -1,10 +1,12 @@
 import React from 'react';
-import { useRouteError, isRouteErrorResponse, Link } from 'react-router-dom';
+import { useRouteError, isRouteErrorResponse } from 'react-router-dom';
 import NotFoundScreen from './NotFoundScreen';
 import ErrorScreen from './ErrorScreen';
 
 function RouteErrorBoundary() {
   const error = useRouteError();
+  
+  console.error('Route error caught:', error);
   
   // Handle 404 errors
   if (isRouteErrorResponse(error) && error.status === 404) {
@@ -21,6 +23,10 @@ function RouteErrorBoundary() {
     message = error.data?.message || message;
   } else if (error instanceof Error) {
     message = error.message;
+    // Add stack trace to console in development
+    if (process.env.NODE_ENV === 'development') {
+      console.error('Error details:', error.stack);
+    }
   }
   
   return (
