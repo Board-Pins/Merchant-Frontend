@@ -19,17 +19,26 @@ export default defineConfig({
   build: {
     sourcemap: true,
     rollupOptions: {
-      external: ['i18next'],
+      external: [
+        'i18next',
+        '@tiptap/pm/state',
+        '@tiptap/pm/view',
+        '@tiptap/pm/model',
+        '@tiptap/pm/transform',
+        '@tiptap/pm/commands'
+      ],
       output: {
         manualChunks: {
           vendor: ['react-router-dom'],
           mui: ['@mui/material', '@mui/icons-material'],
           emotion: ['@emotion/react', '@emotion/styled', '@emotion/cache'],
           charts: ['apexcharts', 'react-apexcharts', '@mui/x-charts'],
+          tiptap: ['@tiptap/core', '@tiptap/react', '@tiptap/starter-kit']
         }
       }
     }
   }
 })
+
 
 
