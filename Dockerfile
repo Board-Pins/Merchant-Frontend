@@ -15,6 +15,9 @@ RUN npm ci --no-audit --no-fund
 # Install rollup explicitly to avoid platform-specific issues
 RUN npm install --save-dev @rollup/rollup-linux-x64-musl
 
+# Install terser required by Vite
+RUN npm install --save-dev terser
+
 # Copy the rest of the application
 COPY . .
 
