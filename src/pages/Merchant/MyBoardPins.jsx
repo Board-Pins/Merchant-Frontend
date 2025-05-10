@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useGetUserProfileQuery } from '../../services/userApi';
 import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 // Import your components
 import MerchantsConnect from '../../components/merchant/myboard/MerchantsConnect';

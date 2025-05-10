@@ -22,17 +22,30 @@ export default function WelcomeModal() {
     console.log("WelcomeModal - profileLoading:", profileLoading);
     console.log("WelcomeModal - profileError:", profileError);
     
-    // Only show modal when we've confirmed user has no profile
-    if (!profileLoading) {
-      if (!userProfile) {
-        console.log("No user profile found, showing welcome modal");
-        setOpen(true);
-      } else {
-        console.log("User profile exists, hiding welcome modal");
-        setOpen(false);
+    try {
+      // Only show modal when we've confirmed user has no profile
+      if (!profileLoading) {
+        if (profileError) {
+          console.error("Error loading profile:", profileError);
+          setOpen(false); // Don't show modal on error
+        } else if (!userProfile) {
+          console.log("No user profile found, showing welcome modal");
+          setOpen(true);
+        } else {
+          console.log("User profile exists, hiding welcome modal");
+          setOpen(false);
+        }
       }
+    } catch (error) {
+      console.error("Error in WelcomeModal useEffect:", error);
+      setOpen(false); // Safety fallback
     }
   }, [userProfile, profileLoading, profileError]);
+  
+  // Handle errors gracefully
+  if (profileError) {
+    console.error("Profile error in WelcomeModal:", profileError);
+  }
 
   const { data: categories = [], isLoading: isLoadingCategories } =
     useFetchCategoriesQuery();
