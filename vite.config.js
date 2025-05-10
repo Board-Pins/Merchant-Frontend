@@ -21,6 +21,14 @@ export default defineConfig(({ mode }) => {
     optimizeDeps: {
       include: ['@emotion/react', '@emotion/styled', '@emotion/cache']
     },
+    server: {
+      // Improve hot module replacement
+      hmr: {
+        overlay: true,
+      },
+      // Handle client-side routing
+      historyApiFallback: true,
+    },
     build: {
       // Only generate sourcemaps in development
       sourcemap: !isProd,
