@@ -24,6 +24,10 @@ export default defineConfig(({ mode }) => {
       // Improve hot module replacement
       hmr: {
         overlay: true,
+        protocol: 'ws',
+        host: 'localhost',
+        port: 5000,
+        clientPort: 5000
       },
       // Handle client-side routing
       historyApiFallback: true,
