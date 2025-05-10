@@ -23,7 +23,7 @@ const Login = () => {
   useEffect(() => {
     const accessToken = searchParams.get('access_token');
     console.log("acesss====>", accessToken)
-    if (!accessToken === null) {
+   if (accessToken !== null)  {
 
       localStorage.setItem('accessToken', accessToken);
     }

@@ -14,7 +14,7 @@ const LayoutDashboard = () => {
     setIsOpen(false)
   }
   return (
-    <div className="flex h-screen overflow-hidden bg-[#F5F6FA] relative">
+    <div className="flex h-screen  overflow-hidden bg-[#F5F6FA] relative">
 
       <Sidebar className="z-10" handleIsopen={handleIsopen} />
       <div className="flex flex-col flex-1">

@@ -10,38 +10,28 @@ import { PendingModal } from "./Pending";
 import { useGetUserProfileQuery } from "../../services/userApi";
 
 export default function WelcomeModal() {
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(true);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef(null);
   const { data: userProfile, isLoading: profileLoading, error: profileError } = useGetUserProfileQuery();
 
   // Add console logs to debug
-  useEffect(() => {
-    // Add more detailed logging
-    console.log("WelcomeModal - userProfile:", userProfile);
-    console.log("WelcomeModal - profileLoading:", profileLoading);
-    console.log("WelcomeModal - profileError:", profileError);
-    
-    try {
-      // Only show modal when we've confirmed user has no profile
-      if (!profileLoading) {
-        if (profileError) {
-          console.error("Error loading profile:", profileError);
-          setOpen(false); // Don't show modal on error
-        } else if (!userProfile) {
-          console.log("No user profile found, showing welcome modal");
-          setOpen(true);
-        } else {
-          console.log("User profile exists, hiding welcome modal");
-          setOpen(false);
-        }
-      }
-    } catch (error) {
-      console.error("Error in WelcomeModal useEffect:", error);
-      setOpen(false); // Safety fallback
+useEffect(() => {
+  if (!profileLoading) {
+    if (profileError && profileError.status === 404) {
+      console.log("No profile exists, showing welcome modal.");
+      setOpen(true);
+    } else if (userProfile) {
+      console.log("User profile found, hiding welcome modal.");
+      setOpen(false);
+    } else if (profileError) {
+      // Handle other errors
+      console.error("Unexpected profile error:", profileError);
+      setOpen(true);
     }
-  }, [userProfile, profileLoading, profileError]);
-  
+  }
+}, [userProfile, profileLoading, profileError]);
+
   // Handle errors gracefully
   if (profileError) {
     console.error("Profile error in WelcomeModal:", profileError);
@@ -51,7 +41,7 @@ export default function WelcomeModal() {
     useFetchCategoriesQuery();
   const [createProfile, { isLoading, isSuccess, isError, error }] =
     useCreateProfileMutation();
-
+console.log("categories====>",categories)
   // Show modal only if user doesn't have a profile and we're not loading
   useEffect(() => {
     if (!profileLoading && !userProfile) {
@@ -104,7 +94,7 @@ export default function WelcomeModal() {
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
       {/* Welcome Modal - hidden when success */}
       <div
-        className={`bg-white rounded-lg shadow-xl w-full max-w-4xl py-12 h-[80vh] overflow-hidden transition-all duration-300 ${isSuccess ? "opacity-0 pointer-events-none" : "opacity-100"
+        className={`bg-white  rounded-lg shadow-xl w-full max-w-4xl py-12 h-[90vh] overflow-scroll transition-all duration-300 ${isSuccess ? "opacity-0 pointer-events-none" : "opacity-100"
           }`}
       >
         <form
@@ -113,7 +103,7 @@ export default function WelcomeModal() {
         >
           {/* Left section */}
           <div className="p-8 flex items-center justify-center md:w-2/5 relative h-full">
-            <div className="absolute top-[-60px] left-4">
+            <div className="absolute top-[-00px] left-4">
               <div className="flex items-center gap-2">
                 <Link to={"/"}>
                   <img src={logo} className="w-[200px]" alt="Logo" />
@@ -195,7 +185,7 @@ export default function WelcomeModal() {
                     onClick={() => setDropdownOpen(!dropdownOpen)}
                   >
                     <span className="text-gray-700">
-                      {categories.find((c) => c.id === formik.values.category)
+                      {categories.data?.results?.find((c) => c.id === formik.values.category)
                         ?.name || "Select Category"}
                     </span>
                     <svg
@@ -220,7 +210,7 @@ export default function WelcomeModal() {
                   {dropdownOpen && (
                     <div className="absolute z-10 w-full mt-1 bg-white border border-gray-200 rounded-md shadow-lg">
                       <div className="p-2">
-                        {categories.map((category) => (
+                        {categories.data.results.map((category) => (
                           <div
                             key={category.id}
                             className="flex items-center p-2 hover:bg-slate-50 cursor-pointer rounded-md"

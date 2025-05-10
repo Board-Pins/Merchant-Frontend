@@ -1,10 +1,10 @@
-import { Navigate } from "react-router-dom";
+import { Navigate, Outlet } from "react-router-dom";
 import { useEffect, useState } from "react";
 import LoadingScreen from "../../components/common/LoadingScreen";
 
-const PrivateRoute = ({ children }) => {
+const PrivateRoute = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(true); // ✅ fix typo here
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -16,11 +16,10 @@ const PrivateRoute = ({ children }) => {
         console.error("Error checking authentication:", error);
         setIsAuthenticated(false);
       } finally {
-        // Add a small delay to ensure proper state updates
         setTimeout(() => setIsLoading(false), 300);
       }
     };
-    
+
     checkAuth();
   }, []);
 
@@ -33,9 +32,7 @@ const PrivateRoute = ({ children }) => {
     return <Navigate to="/login" replace />;
   }
 
-  return children;
+  return <Outlet />; // ✅ render nested routes
 };
 
 export default PrivateRoute;
-
-

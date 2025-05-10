@@ -11,15 +11,7 @@ import { LoadingProvider } from './context/LoadingContext';
 import LoadingScreen from './components/common/LoadingScreen';
 
 // Add performance monitoring in development
-if (import.meta.env.DEV) {
-  const reportWebVitals = async () => {
-    const { onCLS, onFID, onLCP } = await import('web-vitals');
-    onCLS(console.log);
-    onFID(console.log);
-    onLCP(console.log);
-  };
-  reportWebVitals();
-}
+
 
 // Optimize emotion cache configuration
 const emotionCache = createCache({
@@ -29,34 +21,34 @@ const emotionCache = createCache({
 });
 
 const Root = () => {
-  useEffect(() => {
-    // Initialize i18n with a small delay to prioritize UI rendering
-    const setupI18n = async () => {
-      // Small timeout to prioritize initial render
-      setTimeout(async () => {
-        await initI18n();
-      }, 100);
-    };
+  // useEffect(() => {
+  //   // Initialize i18n with a small delay to prioritize UI rendering
+  //   const setupI18n = async () => {
+  //     // Small timeout to prioritize initial render
+  //     setTimeout(async () => {
+  //       await initI18n();
+  //     }, 100);
+  //   };
 
-    setupI18n();
+  //   setupI18n();
     
-    // Preload critical assets after initial render
-    if ('requestIdleCallback' in window) {
-      window.requestIdleCallback(() => {
-        // Preload important routes
-        import('./pages/Merchant/Dashboard');
-        import('./pages/Merchant/MyBoardPins');
-      });
-    }
-  }, []);
+  //   // Preload critical assets after initial render
+  //   if ('requestIdleCallback' in window) {
+  //     window.requestIdleCallback(() => {
+  //       // Preload important routes
+  //       import('./pages/Merchant/Dashboard');
+  //       import('./pages/Merchant/MyBoardPins');
+  //     });
+  //   }
+  // }, []);
 
   return (
     <CacheProvider value={emotionCache}>
       <Provider store={store}>
         <LoadingProvider>
-          <Suspense fallback={<LoadingScreen />}>
+         
             <App />
-          </Suspense>
+     
         </LoadingProvider>
       </Provider>
     </CacheProvider>
