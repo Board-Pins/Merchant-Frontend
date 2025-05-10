@@ -14,11 +14,12 @@ export default defineConfig({
     postcss: './postcss.config.js',
   },
   optimizeDeps: {
-    include: ['@emotion/react', '@emotion/styled', '@emotion/cache']
+    include: ['@emotion/react', '@emotion/styled', '@emotion/cache', 'i18next']
   },
   build: {
     sourcemap: true,
     rollupOptions: {
+      external: ['i18next'],
       output: {
         manualChunks: {
           vendor: ['react-router-dom'],
@@ -30,4 +31,5 @@ export default defineConfig({
     }
   }
 })
+
 
