@@ -1,9 +1,7 @@
 import React, { Suspense, useEffect } from 'react';
 import ReactDOM from 'react-dom/client';
-import { Link } from 'react-dom';
 import App from './App';
 import './index.css';
-import { Toaster } from 'react-hot-toast';
 import { store } from './redux/store';
 import { Provider } from 'react-redux';
 import { initI18n } from '../i18n';
