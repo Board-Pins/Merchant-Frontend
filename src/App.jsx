@@ -1,5 +1,6 @@
 import { BrowserRouter as Router, Routes, Route, useLocation, useNavigate } from "react-router-dom";
 import { useState, useEffect, Suspense } from 'react';
+import { ErrorBoundary } from 'react-error-boundary';
 import Layout from "./utils/LayoutDashboard";
 import LayoutLanding from "./utils/LayoutLanding";
 import LayoutAuth from "./utils/LayoutAuth";
@@ -93,6 +94,29 @@ const RouteChangeHandler = () => {
   return null;
 };
 
+const FallbackComponent = () => {
+  return (
+    <div className="fixed inset-0 bg-white flex flex-col items-center justify-center z-50 p-4">
+      <h1 className="text-2xl font-bold text-gray-800 mb-3">Something went wrong</h1>
+      <p className="text-gray-600 mb-8">We're having trouble loading the application.</p>
+      <div className="flex flex-col sm:flex-row gap-3 justify-center">
+        <button
+          onClick={() => window.location.href = '/'}
+          className="px-6 py-2 bg-primary text-white rounded-lg font-medium hover:bg-primary/90 transition-colors"
+        >
+          Go to Home
+        </button>
+        <button
+          onClick={() => window.location.reload()}
+          className="px-6 py-2 border border-gray-300 text-gray-700 rounded-lg font-medium hover:bg-gray-50 transition-colors"
+        >
+          Refresh Page
+        </button>
+      </div>
+    </div>
+  );
+};
+
 const App = () => {
   const [isLoading, setIsLoading] = useState(true);
 
@@ -111,101 +135,104 @@ const App = () => {
   }
 
   return (
-    <Router>
-      <RouteChangeHandler />
-      <Routes>
-        {/* Auth Routes */}
-        <Route path="/" element={
-          <ErrorBoundaryWrapper>
-            <LayoutAuth />
-          </ErrorBoundaryWrapper>
-        } errorElement={<RouteErrorBoundary />}>
-          <Route path="/login" element={<Login />} />
-          <Route path="/signup" element={<Signup />} />
-          <Route path="/forgetpassword" element={<ForgetPassword />} />
-          <Route path="/reset/emails" element={<NewPassword />} />
-          <Route path="/verifymail/:email" element={<VerifyMail />} />
-          <Route path="/emails/reset/" element={<NewPassword />} />
-          <Route path="/recoverysuccess" element={<RecoverySuccess />} />
-          <Route path="/emails/verify" element={<EmailVerification />} />
-        </Route>
-
-        {/* Landing Routes */}
-        <Route path="/" element={
-          <ErrorBoundaryWrapper>
-            <LayoutLanding />
-          </ErrorBoundaryWrapper>
-        } errorElement={<RouteErrorBoundary />}>
-          <Route index element={<Home />} />
-          <Route path="/home" element={<Home />} />
-          <Route path="/pricing" element={<Pricing />} />
-          <Route path="/about" element={<About />} />
-          <Route path="/SearchResult" element={<SearchResult />} />
-        </Route>
-
-        {/* Protected Routes */}
-        <Route element={<PrivateRoute />} errorElement={<RouteErrorBoundary />}>
+    <ErrorBoundary FallbackComponent={FallbackComponent} onError={(error) => console.error("App error:", error)}>
+      <Router>
+        <RouteChangeHandler />
+        <Routes>
+          {/* Auth Routes */}
           <Route path="/" element={
             <ErrorBoundaryWrapper>
-              <Layout />
+              <LayoutAuth />
             </ErrorBoundaryWrapper>
-          }>
-            <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="/knowledgebase" element={<KnowledgeBase />} />
-            <Route path="/myboard" element={<MyBoardPins />} />
-            <Route path="/services-provider" element={<Merchant />} />
-            <Route path="/services-provider-pinned" element={<MerchantPinned />} />
-
-            {/* Chat Nested Routes */}
-            <Route path="/" element={<Chat />}>
-              <Route path="chat" element={<ChatWelcome />} />
-              <Route path="chatmessages" element={<ChatMessages />} />
-            </Route>
-
-            {/* Project Management */}
-            <Route path="/projectmangement-SharedProjects" element={<SharedProjects />} />
-            <Route path="/projectmangement-tasks" element={<ProjectmangementTasks />} />
-
-            {/* Bidding Project */}
-            <Route path="/create-bidding-project" element={<CreateBiddingProject />} />
-            <Route path="/bidding-project" element={<BiddingProject />} />
-            <Route path="/mybids" element={<MyBids />} />
-            <Route path="/saved-BiddingProject" element={<SavedBiddingProject />} />
-            <Route path="/bidding-project/offer" element={<BiddingProjectDetails />} />
-
-            {/* Compare */}
-            <Route path="/compare" element={<CompareInProvider />} />
-            <Route path="/compare/saved" element={<CompareSaved />} />
-            <Route path="/compare/forms" element={<CompareForms />} />
-            <Route path="/compare-between" element={<CompareBetween />} />
-
-            {/* Production Group */}
-            <Route path="/production-group" element={<ProductionGroup />} />
-            <Route path="/production-group/myrequests" element={<MyRequestsProductionGroup />} />
-            <Route path="/production-group/saved" element={<SavedProductionGroup />} />
-            <Route path="/production-group/:id" element={<ProductionGroupDetails />} />
-
-            {/* Settings */}
-            <Route path="/upgrade" element={<Upgrade />} />
-            <Route path="/setting-profile" element={<SettingProfile />} />
-            <Route path="/Setting-billing" element={<SettingBilling />} />
+          } errorElement={<RouteErrorBoundary />}>
+            <Route path="/login" element={<Login />} />
+            <Route path="/signup" element={<Signup />} />
+            <Route path="/forgetpassword" element={<ForgetPassword />} />
+            <Route path="/reset/emails" element={<NewPassword />} />
+            <Route path="/verifymail/:email" element={<VerifyMail />} />
+            <Route path="/emails/reset/" element={<NewPassword />} />
+            <Route path="/recoverysuccess" element={<RecoverySuccess />} />
+            <Route path="/emails/verify" element={<EmailVerification />} />
           </Route>
-        </Route>
 
-        {/* Public Single Page */}
-        <Route path="/ordering-billing" element={<OrderBilling />} errorElement={<RouteErrorBoundary />} />
+          {/* Landing Routes */}
+          <Route path="/" element={
+            <ErrorBoundaryWrapper>
+              <LayoutLanding />
+            </ErrorBoundaryWrapper>
+          } errorElement={<RouteErrorBoundary />}>
+            <Route index element={<Home />} />
+            <Route path="/home" element={<Home />} />
+            <Route path="/pricing" element={<Pricing />} />
+            <Route path="/about" element={<About />} />
+            <Route path="/SearchResult" element={<SearchResult />} />
+          </Route>
 
-        {/* Google Callback Route */}
-        <Route path="/auth/callback" element={<GoogleCallback />} errorElement={<RouteErrorBoundary />} />
+          {/* Protected Routes */}
+          <Route element={<PrivateRoute />} errorElement={<RouteErrorBoundary />}>
+            <Route path="/" element={
+              <ErrorBoundaryWrapper>
+                <Layout />
+              </ErrorBoundaryWrapper>
+            }>
+              <Route path="/dashboard" element={<Dashboard />} />
+              <Route path="/knowledgebase" element={<KnowledgeBase />} />
+              <Route path="/myboard" element={<MyBoardPins />} />
+              <Route path="/services-provider" element={<Merchant />} />
+              <Route path="/services-provider-pinned" element={<MerchantPinned />} />
 
-        {/* 404 Route - Must be last */}
-        <Route path="*" element={<NotFoundScreen />} />
-      </Routes>
-    </Router>
+              {/* Chat Nested Routes */}
+              <Route path="/" element={<Chat />}>
+                <Route path="chat" element={<ChatWelcome />} />
+                <Route path="chatmessages" element={<ChatMessages />} />
+              </Route>
+
+              {/* Project Management */}
+              <Route path="/projectmangement-SharedProjects" element={<SharedProjects />} />
+              <Route path="/projectmangement-tasks" element={<ProjectmangementTasks />} />
+
+              {/* Bidding Project */}
+              <Route path="/create-bidding-project" element={<CreateBiddingProject />} />
+              <Route path="/bidding-project" element={<BiddingProject />} />
+              <Route path="/mybids" element={<MyBids />} />
+              <Route path="/saved-BiddingProject" element={<SavedBiddingProject />} />
+              <Route path="/bidding-project/offer" element={<BiddingProjectDetails />} />
+
+              {/* Compare */}
+              <Route path="/compare" element={<CompareInProvider />} />
+              <Route path="/compare/saved" element={<CompareSaved />} />
+              <Route path="/compare/forms" element={<CompareForms />} />
+              <Route path="/compare-between" element={<CompareBetween />} />
+
+              {/* Production Group */}
+              <Route path="/production-group" element={<ProductionGroup />} />
+              <Route path="/production-group/myrequests" element={<MyRequestsProductionGroup />} />
+              <Route path="/production-group/saved" element={<SavedProductionGroup />} />
+              <Route path="/production-group/:id" element={<ProductionGroupDetails />} />
+
+              {/* Settings */}
+              <Route path="/upgrade" element={<Upgrade />} />
+              <Route path="/setting-profile" element={<SettingProfile />} />
+              <Route path="/Setting-billing" element={<SettingBilling />} />
+            </Route>
+          </Route>
+
+          {/* Public Single Page */}
+          <Route path="/ordering-billing" element={<OrderBilling />} errorElement={<RouteErrorBoundary />} />
+
+          {/* Google Callback Route */}
+          <Route path="/auth/callback" element={<GoogleCallback />} errorElement={<RouteErrorBoundary />} />
+
+          {/* 404 Route - Must be last */}
+          <Route path="*" element={<NotFoundScreen />} />
+        </Routes>
+      </Router>
+    </ErrorBoundary>
   );
 };
 
 export default App;
+
 
 
 
