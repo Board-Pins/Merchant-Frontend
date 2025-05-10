@@ -27,9 +27,9 @@ export default function MyBoardPins() {
 
   // Add error handling
   useEffect(() => {
-    if (error ) {
+    if (error.status == 404 ) {
       console.error("Error fetching user profile:", error);
-      toast.error("Failed to load user profile. Please try again later.");
+  
     }
   }, [error]);
 
