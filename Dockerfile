@@ -12,6 +12,9 @@ COPY package*.json ./
 # Use npm ci for faster, more reliable builds
 RUN npm ci --no-audit --no-fund
 
+# Install rollup explicitly to avoid platform-specific issues
+RUN npm install --save-dev @rollup/rollup-linux-x64-musl
+
 # Copy the rest of the application
 COPY . .
 
