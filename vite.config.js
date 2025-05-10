@@ -39,8 +39,11 @@ export default defineConfig({
     rollupOptions: {
       output: {
         manualChunks: {
-          vendor: ['react', 'react-dom', 'react-router-dom'],
-          // Add other large dependencies as needed
+          // Remove React from manualChunks since it's external
+          vendor: ['react-router-dom'],
+          mui: ['@mui/material', '@mui/icons-material'],
+          emotion: ['@emotion/react', '@emotion/styled'],
+          charts: ['apexcharts', 'react-apexcharts', '@mui/x-charts'],
         },
         // Customize asset filenames for better caching
         assetFileNames: 'assets/[name].[hash].[ext]',
@@ -48,18 +51,14 @@ export default defineConfig({
       // Add external dependencies that shouldn't be bundled
       external: [
         'react',
-        'react-dom',
-        'react-router-dom',
-        '@emotion/react',
-        '@emotion/styled',
-        '@mui/material',
-        '@mui/icons-material'
+        'react-dom'
       ]
     },
     // Ensure assets are properly hashed for cache busting
     assetsInlineLimit: 4096, // 4kb - default value
   },
 })
+
 
 
 
