@@ -3,7 +3,7 @@ import correct from "../../assets/icons/co.png";
 export const PendingModal = () => {
   return (
     <>
-      <div className="flex justify-center   items-center h-full">
+      <div className="flex justify-center   bg-white w-1/2 items-center h-full">
         <div className=" text-center flex flex-col ">
           <div className="w-full flex items-center justify-center">
             <img src={correct} alt="pending" className=" w-[200px]" />
