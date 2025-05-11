@@ -1,62 +1,38 @@
-import React, { Suspense, useEffect } from 'react';
+import React, { Suspense } from 'react';
 import ReactDOM from 'react-dom/client';
 import { CacheProvider } from '@emotion/react';
 import createCache from '@emotion/cache';
+import { Provider } from 'react-redux';
+import { store } from './redux/store';
 import App from './App';
 import './index.css';
-import { store } from './redux/store';
-import { Provider } from 'react-redux';
 import { initI18n } from '../i18n';
 import { LoadingProvider } from './context/LoadingContext';
 import LoadingScreen from './components/common/LoadingScreen';
 
-// Add performance monitoring in development
-
-
-// Optimize emotion cache configuration
 const emotionCache = createCache({
   key: 'css',
-  prepend: true, // Ensure styles are prepended to the <head> for faster rendering
-  speedy: import.meta.env.PROD // Enable speedy mode in production for better performance
+  prepend: true,
+  speedy: import.meta.env.PROD,
 });
 
-const Root = () => {
-  // useEffect(() => {
-  //   // Initialize i18n with a small delay to prioritize UI rendering
-  //   const setupI18n = async () => {
-  //     // Small timeout to prioritize initial render
-  //     setTimeout(async () => {
-  //       await initI18n();
-  //     }, 100);
-  //   };
+// Initialize i18n before rendering the app
+const renderApp = async () => {
+  await initI18n(); // Await i18n setup to ensure language detection/load is complete
 
-  //   setupI18n();
-    
-  //   // Preload critical assets after initial render
-  //   if ('requestIdleCallback' in window) {
-  //     window.requestIdleCallback(() => {
-  //       // Preload important routes
-  //       import('./pages/Merchant/Dashboard');
-  //       import('./pages/Merchant/MyBoardPins');
-  //     });
-  //   }
-  // }, []);
-
-  return (
-    <CacheProvider value={emotionCache}>
-      <Provider store={store}>
-        <LoadingProvider>
-         
-            <App />
-     
-        </LoadingProvider>
-      </Provider>
-    </CacheProvider>
+  ReactDOM.createRoot(document.getElementById('root')).render(
+    <React.StrictMode>
+      <CacheProvider value={emotionCache}>
+        <Provider store={store}>
+          <LoadingProvider>
+            <Suspense fallback={<LoadingScreen />}>
+              <App />
+            </Suspense>
+          </LoadingProvider>
+        </Provider>
+      </CacheProvider>
+    </React.StrictMode>
   );
 };
 
-ReactDOM.createRoot(document.getElementById('root')).render(<Root />);
-
-
-
-
+renderApp();

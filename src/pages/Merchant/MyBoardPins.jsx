@@ -27,7 +27,8 @@ export default function MyBoardPins() {
 
   // Add error handling
   useEffect(() => {
-    if (error.status == 404 ) {
+    console.log()
+    if (error?.status == 404 ) {
       console.error("Error fetching user profile:", error);
   
     }
@@ -46,11 +47,11 @@ export default function MyBoardPins() {
   const userName = userProfile?.first_name || "User";
 
   return (
-    <div className="flex flex-col gap-6 mx-auto">
+    <div className="flex flex-col gap-6 bg-white mx-auto">
       <ToastContainer />
       {/* Add a console log to verify the component is rendering */}
  
-      <WelcomeModal />
+     
       <div className='py-3 lg:flex justify-center items-center gap-2'>
         <ManageCardSideBar isOpenMangeCard={isSidebarOpen} toggleSidebar={toggleSidebar} />
 

@@ -3,6 +3,7 @@ import { Outlet } from 'react-router-dom';
 import Navbar from '../components/merchant/NavbarProvider';
 import Sidebar from '../components/merchant/Sidebar/SidebarProvider';
 import Invite from '../components/merchant/Invite/Invite';
+import WelcomeModal from '../components/merchant/WelcomeModal';
 
 const LayoutDashboard = () => {
   const [IsOpen, setIsOpen] = useState()
@@ -15,7 +16,7 @@ const LayoutDashboard = () => {
   }
   return (
     <div className="flex h-screen  overflow-hidden bg-[#F5F6FA] relative">
-
+ <WelcomeModal/>
       <Sidebar className="z-10" handleIsopen={handleIsopen} />
       <div className="flex flex-col flex-1">
         <Invite isOpen={IsOpen} handleIsclose={handleIsclose} />

@@ -13,24 +13,28 @@ export default function WelcomeModal() {
   const [open, setOpen] = useState(true);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef(null);
-  const { data: userProfile, isLoading: profileLoading, error: profileError } = useGetUserProfileQuery();
+  const {
+    data: userProfile,
+    isLoading: profileLoading,
+    error: profileError,
+  } = useGetUserProfileQuery();
 
   // Add console logs to debug
-useEffect(() => {
-  if (!profileLoading) {
-    if (profileError && profileError.status === 404) {
-      console.log("No profile exists, showing welcome modal.");
-      setOpen(true);
-    } else if (userProfile) {
-      console.log("User profile found, hiding welcome modal.");
-      setOpen(false);
-    } else if (profileError) {
-      // Handle other errors
-      console.error("Unexpected profile error:", profileError);
-      setOpen(true);
+  useEffect(() => {
+    if (!profileLoading) {
+      if (profileError && profileError.status === 404) {
+        console.log("No profile exists, showing welcome modal.");
+        setOpen(true);
+      } else if (userProfile) {
+        console.log("User profile found, hiding welcome modal.");
+        setOpen(true);
+      } else if (profileError) {
+        // Handle other errors
+        console.error("Unexpected profile error:", profileError);
+        setOpen(true);
+      }
     }
-  }
-}, [userProfile, profileLoading, profileError]);
+  }, [userProfile, profileLoading, profileError]);
 
   // Handle errors gracefully
   if (profileError) {
@@ -41,14 +45,16 @@ useEffect(() => {
     useFetchCategoriesQuery();
   const [createProfile, { isLoading, isSuccess, isError, error }] =
     useCreateProfileMutation();
-console.log("categories====>",categories)
+  console.log("categories====>", categories);
   // Show modal only if user doesn't have a profile and we're not loading
   useEffect(() => {
     if (!profileLoading && !userProfile) {
       console.log("Setting modal open to TRUE");
       setOpen(true);
-    } else {
+    } else if (userProfile.data.current_status == "pending") {
       console.log("Setting modal open to FALSE");
+      setOpen(true);
+    } else if (userProfile.data.current_status == "completed") {
       setOpen(false);
     }
   }, [userProfile, profileLoading]);
@@ -91,11 +97,12 @@ console.log("categories====>",categories)
   if (!open) return null;
 
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-[999] p-4">
       {/* Welcome Modal - hidden when success */}
       <div
-        className={`bg-white  rounded-lg shadow-xl w-full max-w-4xl py-12 h-[90vh] overflow-scroll transition-all duration-300 ${isSuccess ? "opacity-0 pointer-events-none" : "opacity-100"
-          }`}
+        className={`bg-white overflow-y-auto  rounded-lg shadow-xl w-full max-w-4xl py-12 h-[90vh] overflow-scroll transition-all duration-300 ${
+          isSuccess ? "opacity-0 pointer-events-none" : "opacity-100"
+        }`}
       >
         <form
           onSubmit={formik.handleSubmit}
@@ -110,13 +117,13 @@ console.log("categories====>",categories)
                 </Link>
               </div>
             </div>
-            <div className="relative w-full h-[300px]">
+            <div className="relative w-full h-[] lg:h-[250px]">
               <img src={x} alt="Illustration" />
             </div>
           </div>
 
           {/* Right section */}
-          <div className="p-8 md:w-3/5 h-full overflow-y-auto">
+          <div className="p-8 md:w-3/5 h-full o">
             <div className="mb-8 text-center">
               <h2 className="text-3xl font-bold">Welcome to Board pins</h2>
               <p className="text-xl text-gray-600 mt-2">
@@ -185,8 +192,9 @@ console.log("categories====>",categories)
                     onClick={() => setDropdownOpen(!dropdownOpen)}
                   >
                     <span className="text-gray-700">
-                      {categories.data?.results?.find((c) => c.id === formik.values.category)
-                        ?.name || "Select Category"}
+                      {categories.data?.results?.find(
+                        (c) => c.id === formik.values.category
+                      )?.name || "Select Category"}
                     </span>
                     <svg
                       width="24"
@@ -194,8 +202,9 @@ console.log("categories====>",categories)
                       viewBox="0 0 24 24"
                       fill="none"
                       xmlns="http://www.w3.org/2000/svg"
-                      className={`transition-transform ${dropdownOpen ? "rotate-180" : ""
-                        }`}
+                      className={`transition-transform ${
+                        dropdownOpen ? "rotate-180" : ""
+                      }`}
                     >
                       <path
                         d="M6 9L12 15L18 9"
@@ -266,15 +275,13 @@ console.log("categories====>",categories)
       </div>
 
       {/* Pending Modal - shown when success */}
-      <div className={`fixed inset-0 flex items-center justify-center transition-all duration-300 ${isSuccess ? "opacity-100" : "opacity-0 pointer-events-none"
-        }`}>
+      <div
+        className={`fixed inset-0 flex items-center justify-center transition-all duration-300 ${
+          isSuccess ? "opacity-100" : "opacity-0 pointer-events-none"
+        }`}
+      >
         <PendingModal />
       </div>
     </div>
   );
 }
-
-
-
-
-
