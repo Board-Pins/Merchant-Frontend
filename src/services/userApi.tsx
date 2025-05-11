@@ -35,7 +35,7 @@ export const userApi = createApi({
       method: 'GET',
     }),
     getUserProfile: builder.query({
-      query: () => 'users-service/profiles',
+      query: () => '/users-service/profiles/',
       method: 'GET',
     }),
     
