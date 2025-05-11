@@ -113,6 +113,12 @@ const Navbar = () => {
           >
             Contact
           </NavLink>
+          <NavLink
+            to="/login"
+            className={({ isActive }) => isActive ? 'block px-2 py-1 text-[#6161FF]' : 'block px-2 py-1 text-gray-300 hover:text-[#6161FF]'}
+          >
+            Login
+          </NavLink>
         </div>
       )}
     </nav>
