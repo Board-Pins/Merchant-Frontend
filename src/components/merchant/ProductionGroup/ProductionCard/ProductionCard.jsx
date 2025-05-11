@@ -10,7 +10,7 @@ export const ProductionCard = ({ factoryName, requsetbutton,reviews, groupName, 
     const data = { groupName, target, merchantsApplied, createdAt, category };
   
     return (
-      <div className="rounded-xl bg-gray-100 p-4">
+      <div className="rounded-xl bg-white shadow-lg border  p-4">
         <div className="flex items-center bg-white rounded-lg px-5 py-3 gap-3 ">
          <div className=" flex flex-grow gap-x-20">
          <img src={image} className="w-12 h-12 rounded-full" alt="Factory" />
