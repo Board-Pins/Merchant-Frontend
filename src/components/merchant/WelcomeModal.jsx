@@ -28,7 +28,7 @@ export default function WelcomeModal() {
         if (profileError) {
           console.error("Error loading profile:", profileError);
           setOpen(false); // Don't show modal on error
-        } else if (!userProfile) {
+        } else if (!userProfile || !userProfile.data) {
           console.log("No user profile found, showing welcome modal");
           setOpen(true);
         } else {
