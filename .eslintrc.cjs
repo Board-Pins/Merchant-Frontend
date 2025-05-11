@@ -9,7 +9,17 @@ module.exports = {
   ],
   ignorePatterns: ['dist', '.eslintrc.cjs'],
   parserOptions: { ecmaVersion: 'latest', sourceType: 'module' },
-  settings: { react: { version: '18.2' } },
+  settings: { 
+    react: { version: '18.2' },
+    'import/parsers': {
+      '@typescript-eslint/parser': ['.ts', '.tsx']
+    },
+    'import/resolver': {
+      node: {
+        extensions: ['.js', '.jsx']
+      }
+    }
+  },
   plugins: ['react-refresh', 'import'],
   rules: {
     'react/jsx-no-target-blank': 'off',
@@ -22,6 +32,12 @@ module.exports = {
     'react-hooks/rules-of-hooks': 'error',
     'react-hooks/exhaustive-deps': 'warn',
     'no-unused-vars': 'warn',
+    
+    // Add performance improvements
+    'react/prop-types': 'off', // Disable prop-types checking if you're not using it
+    'import/namespace': 'off', // Can be slow
+    'import/no-named-as-default': 'off', // Can be slow
   },
 }
+
 

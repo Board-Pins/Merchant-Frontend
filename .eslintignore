@@ -1,0 +1,9 @@
+# Ignore build files
+dist/
+build/
+
+# Ignore node_modules
+node_modules/
+
+# Ignore large or complex files if needed
+# src/components/merchant/ProductionGroup/ProductionCard/ProductionCard.jsx
