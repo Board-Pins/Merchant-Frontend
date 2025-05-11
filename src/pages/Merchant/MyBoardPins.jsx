@@ -1,10 +1,9 @@
-import React, { useState, useEffect } from 'react';
-import { useGetUserProfileQuery } from '../../services/userApi';
-import { toast, ToastContainer } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import { useState, useEffect } from "react";
+import { useGetUserProfileQuery } from "../../services/userApi";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 // Import your components
-import MerchantsConnect from '../../components/merchant/myboard/MerchantsConnect';
 import ProductionGroups from '../../components/merchant/myboard/ProductionGroups';
 import ProjectTsks from '../../components/merchant/myboard/ProjectTsks';
 import Recents from '../../components/merchant/myboard/Recents';
@@ -12,7 +11,6 @@ import Reminder from '../../components/merchant/myboard/Reminder';
 import Table from '../../components/merchant/myboard/table';
 import TaskModal from '../../components/merchant/myboard/TaskModal';
 import ManageCardSideBar from '../../components/merchant/myboard/MangeCardSideBar';
-import WelcomeModal from '../../components/merchant/WelcomeModal';
 import InprogressProject from '../../components/merchant/myboard/InprogressProject';
 
 export default function MyBoardPins() {
@@ -27,10 +25,11 @@ export default function MyBoardPins() {
 
   // Add error handling
   useEffect(() => {
-    console.log()
-    if (error?.status == 404 ) {
+    if (error) {
       console.error("Error fetching user profile:", error);
-  
+      if (error.status === 404) {
+        console.log("User profile not found");
+      }
     }
   }, [error]);
 
@@ -50,8 +49,8 @@ export default function MyBoardPins() {
     <div className="flex flex-col gap-6 bg-white mx-auto">
       <ToastContainer />
       {/* Add a console log to verify the component is rendering */}
- 
-     
+
+
       <div className='py-3 lg:flex justify-center items-center gap-2'>
         <ManageCardSideBar isOpenMangeCard={isSidebarOpen} toggleSidebar={toggleSidebar} />
 
@@ -97,8 +96,6 @@ export default function MyBoardPins() {
     </div>
   );
 }
-
-
 
 
 
