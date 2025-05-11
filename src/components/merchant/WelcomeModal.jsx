@@ -100,30 +100,32 @@ export default function WelcomeModal() {
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-[999] p-4">
       {/* Welcome Modal - hidden when success */}
       <div
-        className={`bg-white overflow-y-auto  rounded-lg shadow-xl w-full max-w-4xl py-12 h-[90vh] overflow-scroll transition-all duration-300 ${
+        className={`bg-white overflow-y-auto  rounded-lg shadow-xl w-full max-w-4xl  py-6 px-5 h-[90vh] overflow-scroll transition-all duration-300 ${
           isSuccess ? "opacity-0 pointer-events-none" : "opacity-100"
         }`}
       >
-        <form
-          onSubmit={formik.handleSubmit}
-          className="flex items-center flex-col md:flex-row h-full"
-        >
-          {/* Left section */}
-          <div className="p-8 flex items-center justify-center md:w-2/5 relative h-full">
-            <div className="absolute top-[-00px] left-4">
-              <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2">
                 <Link to={"/"}>
-                  <img src={logo} className="w-[200px]" alt="Logo" />
+                  <img src={logo} className="w-[150px]" alt="Logo" />
                 </Link>
               </div>
+        <form
+          onSubmit={formik.handleSubmit}
+          className="   grid lg:grid-cols-8  h-full"
+        >
+          {/* Left section */}
+          <div className="p-8   col-span-4 flex items-center  w-full relative h-full">
+            <div className="">
+            
             </div>
-            <div className="relative w-full h-[] lg:h-[250px]">
+            <div className="relative flex-grow flex px-5  items-center justify-center ">
+          
               <img src={x} alt="Illustration" />
             </div>
           </div>
 
           {/* Right section */}
-          <div className="p-8 md:w-3/5 h-full o">
+          <div className="p-8  col-span-4    h-full o">
             <div className="mb-8 text-center">
               <h2 className="text-3xl font-bold">Welcome to Board pins</h2>
               <p className="text-xl text-gray-600 mt-2">
@@ -145,7 +147,7 @@ export default function WelcomeModal() {
                     name="firstName"
                     type="text"
                     placeholder="First Name"
-                    className="w-full h-14 px-4 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#7B7FF6]"
+                    className="w-full h-14 px-4 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#7B7FF6]"
                     onChange={formik.handleChange}
                     onBlur={formik.handleBlur}
                     value={formik.values.firstName}
@@ -168,7 +170,7 @@ export default function WelcomeModal() {
                     name="lastName"
                     type="text"
                     placeholder="Last Name"
-                    className="w-full h-14 px-4 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#7B7FF6]"
+                    className="w-full h-14 px-4 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#7B7FF6]"
                     onChange={formik.handleChange}
                     onBlur={formik.handleBlur}
                     value={formik.values.lastName}
@@ -188,7 +190,7 @@ export default function WelcomeModal() {
                 <div className="relative" ref={dropdownRef}>
                   <button
                     type="button"
-                    className="w-full h-14 px-4 text-left bg-slate-50 rounded-md flex items-center justify-between border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#7B7FF6]"
+                    className="w-full h-14 px-4 text-left bg-slate-50 rounded-xl flex items-center justify-between border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#7B7FF6]"
                     onClick={() => setDropdownOpen(!dropdownOpen)}
                   >
                     <span className="text-gray-700">
@@ -217,12 +219,12 @@ export default function WelcomeModal() {
                   </button>
 
                   {dropdownOpen && (
-                    <div className="absolute z-10 w-full mt-1 bg-white border border-gray-200 rounded-md shadow-lg">
+                    <div className="absolute z-10 w-full mt-1 bg-white border border-gray-200 rounded-xl shadow-lg">
                       <div className="p-2">
                         {categories.data.results.map((category) => (
                           <div
                             key={category.id}
-                            className="flex items-center p-2 hover:bg-slate-50 cursor-pointer rounded-md"
+                            className="flex items-center p-2 hover:bg-slate-50 cursor-pointer rounded-xl"
                             onClick={() => {
                               formik.setFieldValue("category", category.id);
                               setDropdownOpen(false);
@@ -264,7 +266,7 @@ export default function WelcomeModal() {
               </div>
               <button
                 type="submit"
-                className="w-full h-12 text-lg bg-[#7B7FF6] hover:bg-[#6366F1] text-white rounded-md mt-8 transition-colors focus:outline-none focus:ring-2 focus:ring-[#4F46E5] focus:ring-offset-2"
+                className="w-full h-12 text-lg bg-[#7B7FF6] hover:bg-[#6366F1] text-white rounded-xl mt-8 transition-colors focus:outline-none focus:ring-2 focus:ring-[#4F46E5] focus:ring-offset-2"
                 disabled={isLoading}
               >
                 {isLoading ? "Submitting..." : "Start Now"}
