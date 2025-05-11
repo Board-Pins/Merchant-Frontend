@@ -57,14 +57,24 @@ export default function WelcomeModal() {
   console.log("categories====>", categories);
   // Show modal only if user doesn't have a profile and we're not loading
   useEffect(() => {
-    if (!profileLoading && !userProfile) {
-      console.log("Setting modal open to TRUE");
+    // if (!profileLoading && !userProfile) {
+    //   console.log("Setting modal open to TRUE");
+    //   setOpen(true);
+    // } else if (userProfile.data.current_status == "pending") {
+    //   console.log("Setting modal open to FALSE");
+    //   setOpen(true);
+    // } else if (userProfile.data.current_status == "completed") {
+    //   setOpen(false);
+    // }
+    if (!profileLoading && userProfile && userProfile.data) {
+      if (userProfile.data.current_status === "pending") {
+        console.log("Setting modal open to FALSE");
+        setOpen(true);
+      } else if (userProfile.data.current_status === "completed") {
+        setOpen(false);
+      }
+    } else if (!profileLoading && (!userProfile || !userProfile.data)) {
       setOpen(true);
-    } else if (userProfile.data.current_status == "pending") {
-      console.log("Setting modal open to FALSE");
-      setOpen(true);
-    } else if (userProfile.data.current_status == "completed") {
-      setOpen(false);
     }
   }, [userProfile, profileLoading]);
 
