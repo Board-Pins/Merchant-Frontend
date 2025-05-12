@@ -91,7 +91,7 @@ const RouteChangeHandler = () => {
     }, 500);
     
     return () => clearTimeout(timer);
-  }, [location.pathname]);
+  }, [location.pathname, showLoading, hideLoading]);
   
   return null;
 };

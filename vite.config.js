@@ -17,7 +17,7 @@ export default defineConfig({
     include: ['@emotion/react', '@emotion/styled', '@emotion/cache']
   },
   build: {
-    sourcemap: true,
+    sourcemap: false,
     rollupOptions: {
       output: {
         manualChunks: {

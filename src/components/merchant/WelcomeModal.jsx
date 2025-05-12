@@ -4,10 +4,14 @@ import * as Yup from "yup";
 import { Link } from "react-router-dom";
 import logo from "../../assets/images/Logo.png";
 import x from "../../assets/images/x.png";
+
+// import Api services
 import { useFetchCategoriesQuery } from "../../services/userSingleServicesProviderApi";
-import { useCreateProfileMutation } from "../../services/userApi";
-import { PendingModal } from "./Pending";
 import { useGetUserProfileQuery } from "../../services/userApi";
+import { useCreateProfileMutation } from "../../services/userApi";
+
+// Import PendingModal
+import { PendingModal } from "./Pending";
 
 export default function WelcomeModal() {
   const [open, setOpen] = useState(true);
