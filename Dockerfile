@@ -30,7 +30,7 @@ RUN npm install -g serve
 COPY --from=build /boardpins/dist ./dist
 
 # Expose the port the app runs on
-EXPOSE 5000
+EXPOSE 5174
 
 # Command to run the app
-CMD ["serve", "-s", "dist", "-l", "5000"]
+CMD ["serve", "-s", "dist", "-l", "5174"]
