@@ -124,9 +124,19 @@ const App = () => {
     // Simulate initial loading
     const timer = setTimeout(() => {
       setIsLoading(false);
+      console.log("Forced loading completion after timeout");
     }, 1500);
+    
+    // Add a safety timeout to prevent infinite loading
+    const safetyTimer = setTimeout(() => {
+      setIsLoading(false);
+      console.error("Safety timeout triggered - forcing app to load");
+    }, 5000);
 
-    return () => clearTimeout(timer);
+    return () => {
+      clearTimeout(timer);
+      clearTimeout(safetyTimer);
+    };
   }, []);
 
   // Show loading screen while app is initializing
@@ -232,3 +242,4 @@ const App = () => {
 };
 
 export default App;
+
