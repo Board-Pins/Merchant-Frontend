@@ -18,21 +18,34 @@ const emotionCache = createCache({
 
 // Initialize i18n before rendering the app
 const renderApp = async () => {
-  await initI18n(); // Await i18n setup to ensure language detection/load is complete
+  try {
+    await initI18n(); // Await i18n setup to ensure language detection/load is complete
 
-  ReactDOM.createRoot(document.getElementById('root')).render(
-    <React.StrictMode>
-      <CacheProvider value={emotionCache}>
-        <Provider store={store}>
-          <LoadingProvider>
-            <Suspense fallback={<LoadingScreen />}>
-              <App />
-            </Suspense>
-          </LoadingProvider>
-        </Provider>
-      </CacheProvider>
-    </React.StrictMode>
-  );
+    ReactDOM.createRoot(document.getElementById('root')).render(
+      <React.StrictMode>
+        <CacheProvider value={emotionCache}>
+          <Provider store={store}>
+            <LoadingProvider>
+              <Suspense fallback={<LoadingScreen />}>
+                <App />
+              </Suspense>
+            </LoadingProvider>
+          </Provider>
+        </CacheProvider>
+      </React.StrictMode>
+    );
+  } catch (error) {
+    console.error("Fatal rendering error:", error);
+    // Render a minimal fallback UI
+    document.getElementById('root').innerHTML = `
+      <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100vh;font-family:sans-serif;">
+        <h1>Something went wrong</h1>
+        <p>We're having trouble loading the application. Please try refreshing the page.</p>
+        <button onclick="window.location.reload()">Refresh Page</button>
+      </div>
+    `;
+  }
 };
 
 renderApp();
+

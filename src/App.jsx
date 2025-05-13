@@ -94,7 +94,7 @@ const RouteChangeHandler = () => {
   return null;
 };
 
-const FallbackComponent = () => {
+const FallbackComponent = ({ error }) => {
   return (
     <div className="fixed inset-0 bg-white flex flex-col items-center justify-center z-50 p-4">
       <h1 className="text-2xl font-bold text-gray-800 mb-3">Something went wrong</h1>
@@ -113,35 +113,52 @@ const FallbackComponent = () => {
           Refresh Page
         </button>
       </div>
+      {error && (
+        <div className="mt-4 text-red-600">
+          <h2 className="text-xl font-bold">Error Details:</h2>
+          <pre className="bg-gray-100 p-4 rounded-lg overflow-x-auto whitespace-pre-wrap">{error.message}</pre>
+        </div>
+      )}
     </div>
   );
 };
 
 const App = () => {
   const [isLoading, setIsLoading] = useState(true);
+  const [renderError, setRenderError] = useState(null);
 
   useEffect(() => {
-    // Simulate initial loading
-    const timer = setTimeout(() => {
-      setIsLoading(false);
-      console.log("Forced loading completion after timeout");
-    }, 1500);
-    
-    // Add a safety timeout to prevent infinite loading
-    const safetyTimer = setTimeout(() => {
-      setIsLoading(false);
-      console.error("Safety timeout triggered - forcing app to load");
-    }, 5000);
+    try {
+      // Simulate initial loading
+      const timer = setTimeout(() => {
+        setIsLoading(false);
+        console.log("Forced loading completion after timeout");
+      }, 1500);
+      
+      // Add a safety timeout to prevent infinite loading
+      const safetyTimer = setTimeout(() => {
+        setIsLoading(false);
+        console.error("Safety timeout triggered - forcing app to load");
+      }, 5000);
 
-    return () => {
-      clearTimeout(timer);
-      clearTimeout(safetyTimer);
-    };
+      return () => {
+        clearTimeout(timer);
+        clearTimeout(safetyTimer);
+      };
+    } catch (error) {
+      console.error("Loading effect error:", error);
+      setIsLoading(false);
+      setRenderError(error);
+    }
   }, []);
 
   // Show loading screen while app is initializing
   if (isLoading) {
     return <LoadingScreen />;
+  }
+
+  if (renderError) {
+    return <FallbackComponent error={renderError} />;
   }
 
   return (
@@ -242,4 +259,5 @@ const App = () => {
 };
 
 export default App;
+
 

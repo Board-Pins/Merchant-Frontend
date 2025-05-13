@@ -1,5 +1,4 @@
-import { type HandleErrorFunction } from "react-router-dom";
-
+// Removed 'type' as it is specific to TypeScript
 export const handleError = (error, { request }) => {
   // Don't log aborted requests
   if (!request.signal.aborted) {
