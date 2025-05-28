@@ -24,21 +24,18 @@ const Navbar = () => {
             <NavLink
               to="/"
               className={({ isActive }) => isActive ? 'text-[#6161FF]' : 'text-[#8E8E8E]'}
-              activeClassName="text-[#6161FF]"
             >
               Home
             </NavLink>
             <NavLink
               to="/about"
               className={({ isActive }) => isActive ? 'text-[#6161FF]' : 'text-[#8E8E8E]'}
-              activeClassName="text-[#6161FF]"
             >
               About
             </NavLink>
             <NavLink
               to=""
-              className={'hover:text-[#6161FF] text-[#8E8E8E]'}
-              activeClassName="text-[#6161FF]"
+              className={({ isActive }) => isActive ? 'text-[#6161FF]' : 'hover:text-[#6161FF] text-[#8E8E8E]'}
             >
               How it works
             </NavLink>
@@ -48,14 +45,12 @@ const Navbar = () => {
           <NavLink
             to="/pricing"
             className={({ isActive }) => isActive ? 'text-[#6161FF]' : 'text-[#8E8E8E]'}
-            activeClassName="text-[#6161FF]"
           >
             Pricing
           </NavLink>
           <NavLink
             to="/login"
             className={({ isActive }) => isActive ? 'text-[#6161FF]' : 'text-[#8E8E8E]'}
-            activeClassName="text-[#6161FF]"
           >
             Login
           </NavLink >
