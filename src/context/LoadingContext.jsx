@@ -1,4 +1,3 @@
-
 import React, { createContext, useState, useContext, useEffect, useRef } from 'react';
 import LoadingScreen from '../components/common/LoadingScreen';
 
@@ -26,15 +25,16 @@ export const LoadingProvider = ({ children }) => {
     // Set a timeout to ensure initial loading doesn't get stuck
     initialLoadingTimeoutRef.current = setTimeout(() => {
       setIsInitialLoading(false);
-    }, 2500);
+      console.log("Initial loading complete");
+    }, 1000);
 
-    // Safety timeout - force hide loading after 10 seconds no matter what
+    // Safety timeout - force hide loading after 5 seconds no matter what
     const safetyTimeout = setTimeout(() => {
       if (isInitialLoading) {
         console.warn("Force hiding initial loading after safety timeout");
         setIsInitialLoading(false);
       }
-    }, 10000);
+    }, 5000);
 
     return () => {
       clearTimeout(initialLoadingTimeoutRef.current);
@@ -51,11 +51,11 @@ export const LoadingProvider = ({ children }) => {
       clearTimeout(loadingTimeoutRef.current);
     }
 
-    // Set safety timeout - force hide after 15 seconds
+    // Set safety timeout - force hide after 5 seconds
     loadingTimeoutRef.current = setTimeout(() => {
       console.warn("Force hiding loading after safety timeout");
       setIsLoading(false);
-    }, 15000);
+    }, 5000);
   };
 
   const hideLoading = () => {
@@ -103,7 +103,13 @@ export const LoadingProvider = ({ children }) => {
   );
 };
 
-export const useLoading = () => useContext(LoadingContext);
+export const useLoading = () => {
+  const context = useContext(LoadingContext);
+  if (!context) {
+    console.error('useLoading must be used within LoadingProvider');
+  }
+  return context;
+};
 
 // Use this hook in API call functions
 export const useLoadingWithData = () => {
