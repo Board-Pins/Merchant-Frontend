@@ -42,10 +42,11 @@ export default defineConfig({
     }
   },
   esbuild: {
-    drop: ['console', 'debugger'],
+    // Keep console logs during development to help debug loading issues
+    drop: process.env.NODE_ENV === 'production' ? ['console', 'debugger'] : [],
   },
   server: {
-    port: 5173,
+    port: 5174,
     cors: {
       origin: '*',
       methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
