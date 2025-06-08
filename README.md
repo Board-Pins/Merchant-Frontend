@@ -88,7 +88,7 @@ or
 ```bash
 yarn dev
 ```
-Open [http://localhost:5173](http://localhost:5173) (or your configured port) to view it in the browser.
+Open [localhost](http://localhost:5173) (or your configured port) to view it in the browser.
 
 
 <!-- Explain how to run the development server. -->
@@ -98,7 +98,7 @@ Open [http://localhost:5173](http://localhost:5173) (or your configured port) to
 In the project directory, you can run:
 
 ### `npm start` or `yarn start`
-Runs the app in development mode. Open http://localhost:3000 (or your app's default port) to view it in the browser.
+Runs the app in development mode. Open http://localhost:5174 (or your app's default port) to view it in the browser.
 
 ### `npm test` or `yarn test`
 Launches the test runner in interactive watch mode.
