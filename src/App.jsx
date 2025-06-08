@@ -70,25 +70,16 @@ const ErrorBoundaryWrapper = ({ children }) => {
 const RouteChangeHandler = () => {
   const { showLoading, hideLoading } = useLoading();
   const location = useLocation();
-  const navigate = useNavigate();
 
   useEffect(() => {
-    const handleStart = () => {
-      showLoading();
+    showLoading();
+    
+    // Immediately hide loading after route change
+    hideLoading();
+    
+    return () => {
+      hideLoading(); // Ensure loading is hidden on unmount
     };
-
-    const handleComplete = () => {
-      hideLoading();
-    };
-
-    handleStart();
-
-    // Simulate navigation delay
-    const timer = setTimeout(() => {
-      handleComplete();
-    }, 500);
-
-    return () => clearTimeout(timer);
   }, [location.pathname, showLoading, hideLoading]);
 
   return null;
@@ -128,35 +119,18 @@ const App = () => {
   const [renderError, setRenderError] = useState(null);
 
   useEffect(() => {
-    try {
-      // Simulate initial loading
-      const timer = setTimeout(() => {
-        setIsLoading(false);
-        console.log("Forced loading completion after timeout");
-      }, 1500);
-      
-      // Add a safety timeout to prevent infinite loading
-      const safetyTimer = setTimeout(() => {
-        setIsLoading(false);
-        console.error("Safety timeout triggered - forcing app to load");
-      }, 5000);
-
-      return () => {
-        clearTimeout(timer);
-        clearTimeout(safetyTimer);
-      };
-    } catch (error) {
-      console.error("Loading effect error:", error);
+    // Immediately set loading to false
+    setIsLoading(false);
+    
+    return () => {
       setIsLoading(false);
-      setRenderError(error);
-    }
+    };
   }, []);
 
-  // Show loading screen while app is initializing
   if (isLoading) {
     return <LoadingScreen />;
   }
-
+  
   if (renderError) {
     return <FallbackComponent error={renderError} />;
   }
