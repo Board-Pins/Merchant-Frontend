@@ -4,7 +4,9 @@ import { useTranslation } from 'react-i18next';
 import { HashLink } from 'react-router-hash-link';
 import { useLanguageUpdate } from '../../utils/useLanguageUpdate';
 import logo from '../../assets/images/Logo.png';
+import TagManager from "../../utils/mockGtm"; // Adjust the import path as necessary
 import { TfiWorld } from "react-icons/tfi";
+import { RiArrowRightLine } from "react-icons/ri";
 
 const Navbar = () => {
   const { t, i18n } = useTranslation();
@@ -26,13 +28,26 @@ const Navbar = () => {
     el.scrollIntoView({ behavior: "smooth", block: "start" });
   };
 
+  const tagManagerArgs = {
+    gtmId: 'G-47G2XH7T8L'
+  };
+  TagManager.initialize(tagManagerArgs);
+
+  const handleLoginClick = () => {
+    TagManager.dataLayer({
+      dataLayer: {
+        event: 'login_click',
+      },
+    });
+  };
+
   useEffect(() => {
     document.body.dir = currentLanguage === 'ar' ? 'rtl' : 'ltr';
     document.body.style.fontFamily = currentLanguage === 'ar' ? 'Cairo, sans-serif' : 'Poppins, sans-serif';
   }, [currentLanguage]);
 
   return (
-    <nav className={`bg-[#F5F6FA] lg:mx-24 p-4 ${currentLanguage === 'ar' ? 'font-cairo' : 'font-poppins'}`}
+    <nav className={`bg-[#F5F6FA] lg:mx-24 p-4 font-light ${currentLanguage === 'ar' ? 'font-cairo' : 'font-poppins'}`}
       dir={currentLanguage === 'ar' ? 'rtl' : 'ltr'}>
       <div className="mx-auto flex items-center">
         <div className="flex flex-grow gap-12 items-center">
@@ -49,22 +64,25 @@ const Navbar = () => {
             <HashLink to="/home#howUsage" className="text-[#8E8E8E] hover:text-[#6161FF]" scroll={smoothScroll}>
               {t('howItWorks')}
             </HashLink>
-            <NavLink to="/pricing" className="text-[#8E8E8E] hover:text-[#6161FF]">
-              {t('pricing')}
-            </NavLink>
+
           </div>
         </div>
         <div className="hidden md:flex gap-4 items-center">
+          <NavLink to="/pricing" className="text-[#8E8E8E] hover:text-[#6161FF]">
+            {t('pricing')}
+          </NavLink>
           <NavLink to="/login" className="text-[#8E8E8E] hover:text-[#6161FF]">
-            <button >
+            <button onClick={handleLoginClick}>
               {t('login.title')}
             </button>
           </NavLink>
           <NavLink to="/signup">
-            <button className="text-white hover:text-[#ffffff] hover:bg-[#5555e0] bg-[#6161FF] rounded-3xl py-3 px-5">
+            <button className="text-white hover:text-[#ffffff] hover:bg-[#5555e0] bg-[#6161FF] rounded-3xl py-3 px-5 gap-2 flex items-center">
               {t('getStarted')}
+              <RiArrowRightLine />
             </button>
           </NavLink>
+
           <button onClick={toggleLanguage} className="text-[#6161FF] flex items-center gap-1">
             <TfiWorld />
             {currentLanguage === 'ar' ? 'en' : 'ar'}
@@ -79,17 +97,17 @@ const Navbar = () => {
         </div>
       </div>
       {isOpen && (
-        <div className="md:hidden py-6">
-          <NavLink to="/" className={({ isActive }) => isActive ? 'block px-2 py-1 text-[#6161FF]' : 'block px-2 py-1 text-gray-900 hover:text-[#6161FF]'} onClick={() => setIsOpen(false)}>
+        <div className="md:hidden py-6 ">
+          <NavLink to="/" className={({ isActive }) => isActive ? 'block px-2 py-1 text-[#6161FF]' : 'block px-2 py-1 text-gray-900 hover:text-[#8E8E8E]'} onClick={() => setIsOpen(false)}>
             {t('home')}
           </NavLink>
-          <NavLink to="/about" className={({ isActive }) => isActive ? 'block px-2 py-1 text-[#6161FF]' : 'block px-2 py-1 text-gray-900 hover:text-[#6161FF]'} onClick={() => setIsOpen(false)}>
+          <NavLink to="/about" className={({ isActive }) => isActive ? 'block px-2 py-1 text-[#6161FF]' : 'block px-2 py-1 text-gray-900 hover:text-[#8E8E8E]'} onClick={() => setIsOpen(false)}>
             {t('about')}
           </NavLink>
-          <NavLink to="/pricing" className={({ isActive }) => isActive ? 'block px-2 py-1 text-[#6161FF]' : 'block px-2 py-1 text-gray-900 hover:text-[#6161FF]'} onClick={() => setIsOpen(false)}>
+          <NavLink to="/pricing" className={({ isActive }) => isActive ? 'block px-2 py-1 text-[#6161FF]' : 'block px-2 py-1 text-gray-900 hover:text-[#8E8E8E]'} onClick={() => setIsOpen(false)}>
             {t('pricing')}
           </NavLink>
-          <HashLink to="/home#howUsage" className="text-gray-900 hover:text-[#6161FF] px-2 py-1" scroll={smoothScroll} onClick={() => setIsOpen(false)}>
+          <HashLink to="/home#howUsage" className={({ isActive }) => isActive ? 'block px-2 py-1 text-[#6161FF]' : 'block px-2 py-1 text-gray-900 hover:text-[#8E8E8E]'} onClick={() => setIsOpen(false)}>
             {t('howItWorks')}
           </HashLink>
           <NavLink to="/login" className={({ isActive }) => isActive ? 'block px-2 py-1 text-[#6161FF]' : 'block px-2 py-1 text-gray-900 hover:text-[#6161FF]'} onClick={() => setIsOpen(false)}>
