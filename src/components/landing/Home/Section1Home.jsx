@@ -1,197 +1,107 @@
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import illustration from '../../../assets/images/Landing/Group 26874.png';
 import search from '../../../assets/images/Landing/Icon  Bank.svg';
-import right from '../../../assets/images/Landing/div.CuHomeTabs_svgContainer__TQmy5.svg';
+import right from '../../../assets/images/Landing/cardicon1.svg';
+import dial from '../../../assets/images/Landing/cardicon2.svg';
+import coupon from '../../../assets/images/Landing/cardicon3.svg';
+import collaboration from '../../../assets/images/Landing/cardicon4.svg';
+
 import { RiArrowRightLine } from "react-icons/ri";
-import { FaChevronDown } from "react-icons/fa6";
+import { FaChevronDown, FaChevronUp } from "react-icons/fa6";
+import { Link } from 'react-router-dom';
 
 function Section1Home() {
+  const { i18n } = useTranslation();
   const [showCardsCount, setShowCardsCount] = useState(4);
-  const [totalCardsCount] = useState(4); // Number of cards to show each time
 
-  // Data for the service features
-  const serviceFeatures = [
-    {
-      title: 'Access to Verified Service Providers',
-      description: 'Find a comprehensive list of verified service providers in one centralized platform, saving you time and effort in searching for reliable partners.',
-      src: right
-    },
-    {
-      title: 'Streamlined vendor selection process',
-      description: 'Easily compare different service providers and their offerings, allowing you to make informed decisions for your e-commerce business.',
-      src: right
-    },
-    {
-      title: 'Exclusive discounts and offer',
-      description: 'Take advantage of special discounts and offers available only through our platform, helping you save costs on essential services.',
-      src: right
-    },
-    {
-      title: 'Quality assurance',
-      description: 'Our verification process ensures that all service providers listed meet specific quality standards, providing you with peace of mind.',
-      src: right
-    },
-    {
-      title: 'Access to Verified Service Providers',
-      description: 'Find a comprehensive list of verified service providers in one centralized platform, saving you time and effort in searching for reliable partners.',
-      src: right
-    },
-    {
-      title: 'Streamlined vendor selection process',
-      description: 'Easily compare different service providers and their offerings, allowing you to make informed decisions for your e-commerce business.',
-      src: right
-    },
-    {
-      title: 'Exclusive discounts and offer',
-      description: 'Take advantage of special discounts and offers available only through our platform, helping you save costs on essential services.',
-      src: right
-    },
-    {
-      title: 'Quality assurance',
-      description: 'Our verification process ensures that all service providers listed meet specific quality standards, providing you with peace of mind.',
-      src: right
-    },
-    {
-      title: 'Quality assurance',
-      description: 'Our verification process ensures that all service providers listed meet specific quality standards, providing you with peace of mind.',
-      src: right
-    },
-    {
-      title: 'Access to Verified Service Providers',
-      description: 'Find a comprehensive list of verified service providers in one centralized platform, saving you time and effort in searching for reliable partners.',
-      src: right
-    },
-    {
-      title: 'Streamlined vendor selection process',
-      description: 'Easily compare different service providers and their offerings, allowing you to make informed decisions for your e-commerce business.',
-      src: right
-    },
-    {
-      title: 'Exclusive discounts and offer',
-      description: 'Take advantage of special discounts and offers available only through our platform, helping you save costs on essential services.',
-      src: right
-    },
-    {
-      title: 'Quality assurance',
-      description: 'Our verification process ensures that all service providers listed meet specific quality standards, providing you with peace of mind.',
-      src: right
-    },
-    {
-      title: 'Quality assurance',
-      description: 'Our verification process ensures that all service providers listed meet specific quality standards, providing you with peace of mind.',
-      src: right
-    },
-    {
-      title: 'Access to Verified Service Providers',
-      description: 'Find a comprehensive list of verified service providers in one centralized platform, saving you time and effort in searching for reliable partners.',
-      src: right
-    },
-    {
-      title: 'Streamlined vendor selection process',
-      description: 'Easily compare different service providers and their offerings, allowing you to make informed decisions for your e-commerce business.',
-      src: right
-    },
-    {
-      title: 'Exclusive discounts and offer',
-      description: 'Take advantage of special discounts and offers available only through our platform, helping you save costs on essential services.',
-      src: right
-    },
-    {
-      title: 'Quality assurance',
-      description: 'Our verification process ensures that all service providers listed meet specific quality standards, providing you with peace of mind.',
-      src: right
-    },
-    {
-      title: 'Quality assurance',
-      description: 'Our verification process ensures that all service providers listed meet specific quality standards, providing you with peace of mind.',
-      src: right
-    },
-    {
-      title: 'Access to Verified Service Providers',
-      description: 'Find a comprehensive list of verified service providers in one centralized platform, saving you time and effort in searching for reliable partners.',
-      src: right
-    },
-    {
-      title: 'Streamlined vendor selection process',
-      description: 'Easily compare different service providers and their offerings, allowing you to make informed decisions for your e-commerce business.',
-      src: right
-    },
-    {
-      title: 'Exclusive discounts and offer',
-      description: 'Take advantage of special discounts and offers available only through our platform, helping you save costs on essential services.',
-      src: right
-    },
-    {
-      title: 'Quality assurance',
-      description: 'Our verification process ensures that all service providers listed meet specific quality standards, providing you with peace of mind.',
-      src: right
-    },
-  ];
-
-  // Function to show more cards
-  const showMoreCards = () => {
-    setShowCardsCount(prevCount => prevCount + totalCardsCount);
+  const serviceFeatures = {
+    en: [
+      { title: 'Access to Verified Service Providers', description: 'Find a comprehensive list of verified service providers in one centralized platform, saving you time and effort in searching for reliable partners.', src: right },
+      { title: 'Streamlined vendor selection process', description: 'Easily compare different service providers and their offerings, allowing you to make informed decisions for your e-commerce business. ', src: dial },
+      { title: 'Exclusive discounts and offer', description: 'Take advantage of special discounts and offers available only through our platform.', src: coupon },
+      { title: 'Quality assurance', description: ' Our verification process ensures that all service providers listed meet specific quality standards, providing you with peace of mind. ', src: collaboration },
+      { title: 'Empower Your Service Business', description: 'Board Pins connects you with a network of established and growing e-commerce SMEs seeking your expertise.', src: right },
+      { title: 'Showcase Your Skills', description: 'List your services, highlight your experience, and showcase your portfolio to attract the right clients.', src: right },
+      { title: "Real-Time Communication", description: "Built-in chat functionality allows you to have clear and instant communication with your clients.", src: right },
+      { title: "Grow with Confidence", description: "Find recurring projects, build strong client relationships, and scale your service business to new heights with Board Pins.", src: right }
+    ],
+    ar: [
+      { title: 'الوصول إلى مقدمي الخدمات المعتمدين', description: 'احصل على وصول إلى شبكة من مقدمي الخدمات المعتمدين الذين يحتاجون إلى خدماتك.', src: right },
+      { title: 'عملية اختيار الموردين المبسطة', description: 'قم بمقارنة مقدمي الخدمات المختلفين وعروضهم بسهولة، مما يتيح لك اتخاذ قرارات مستنيرة لعملك في التجارة الإلكترونية.', src: right },
+      { title: 'خصومات وعروض حصرية', description: 'استفد من الخصومات والعروض الخاصة المتاحة فقط من خلال منصتنا.', src: right },
+      { title: 'ضمان الجودة', description: 'تضمن عملية التحقق لدينا أن جميع مقدمي الخدمات المدرجين يستوفون معايير الجودة المحددة، مما يوفر لك راحة البال.', src: right },
+      { title: 'تمكين عملك في مجال الخدمات', description: 'توصلك "Board Pins" بشبكة من الشركات الصغيرة والمتوسطة التي تتطلب خبرتك.', src: right },
+      { title: 'عرض مهاراتك', description: 'اعرض خدماتك، أبرز خبراتك، وعرض محفظة أعمالك لجذب العملاء المناسبين.', src: right },
+      { title: "الاتصال في الوقت الحقيقي", description: "تتيح لك وظيفة الدردشة المدمجة الاتصال الفوري والواضح مع عملائك.", src: right },
+      { title: "تنمية عملك بثقة", description: "اعثر على مشاريع متكررة، وابن علاقات قوية مع العملاء، وقم بتوسيع عملك إلى مستويات جديدة مع 'Board Pins'.", src: right }
+    ]
   };
 
-  // Function to toggle showing all cards
+  const currentLanguage = i18n.language || 'en';
+  const featuresToShow = serviceFeatures[currentLanguage] || serviceFeatures.en;
+
+  // Function to toggle between showing 4 and 8 cards
   const toggleShowAllCards = () => {
-    setShowCardsCount(showCardsCount === 4 ? 8 : 4); // Toggle between showing 4 and 8 cards
+    setShowCardsCount(showCardsCount === 4 ? 8 : 4);
   };
 
   return (
-    <div className="mx-6 lg:mx-24">
+    <div className={`mx-6 lg:mx-24 ${currentLanguage === "ar" ? 'font-cairo' : 'font-poppins'}`} dir={currentLanguage === "ar" ? "rtl" : "ltr"}>
       {/* Section 1 */}
-      <div className="grid lg:grid-cols-4 grid-cols-1 py-12 gap-2">
-        <div className="col-span-1 md:order-1 order-3"></div>
-        <div className="mx-5 lg:mx-0 lg:col-span-2 col-span-4 py-5 md:order-2  order-2">
-          <h1 className="font-[700] text-center leading-[4rem] text-[48px] text-[#333333] ">
-
-            Grow Your Service Business with Our All-in-One Platform
+      <div className={`flex lg:flex-row flex-col bg w-full py-12 gap-2`}>
+        <div className={` ${currentLanguage === "ar" ? "lg:me-56" : "lg:ms-56"} flex-grow bg py-5 md:order-2 order-2`}>
+          <h1 className="lg:font-semibold font-[500] text-center lg:leading-[3.25rem] md:leading-[3.25rem] md:text-[48px] text-[32px] text-[#333333]">
+            {currentLanguage === "ar" ? "اكتشف وتواصل وأدر في منصة واحدة" : "Discover, Connect, and Manage in One Platform"}
           </h1>
-          <p className="text-md text-center py-3 mt-5">
-          Connect with E-Commerce Merchants and Collaborate Effortlessly on Exciting Projects
+          <p className="text-md text-center font-light md:text-[14px] text-[12px] py-4 mt-6">
+            {currentLanguage === "ar" ? "ابحث عن مقدمي الخدمات المثاليين، إدارة المهام، والحصول على مساعدة فورية من مساعدنا الذكي في منصة واحدة" : "Find the perfect service providers, manage tasks, get instant help with our friendly AI assistant in one platform"}
           </p>
-
-          <div className="bg-white rounded py-3 px-5 m-5 flex">
-            <input placeholder="What are you looking for?" className="w-full h-100 outline-0" />
-            <img src={search} alt="Search Icon" />
+          {/* Search Bar */}
+          <div className="bg-white rounded-xl py-4 flex justify-center gap-2 items-center px-5 m-5">
+            <input placeholder={currentLanguage === "ar" ? "ماذا تبحث عنه؟" : "What are you looking for?"} className="w-full h-100 focus:outline-none" />
+            <img src={search} alt="Search Icon" className='w-7 h-7' />
           </div>
         </div>
-        <div className="flex justify-center items-center w-full md:order-3 order-1">
-          <img src={illustration} alt="Illustration" className="md:w-auto w-[200px]" />
+
+        <div className={`lg:flex hidden justify-center lg:max-w-[300px] items-center w-full order-1 ${currentLanguage === "ar" ? "md:order-1" : "md:order-3"}`}>
+          <img src={illustration} alt="Illustration" className={currentLanguage === "ar" ? `md:w-auto w-[200px]` : `md:w-auto w-[200px]`} />
         </div>
       </div>
 
       {/* Section 2 - Service Features */}
-      <div className="grid lg:grid-cols-4 grid-cols-1 py-4 gap-6 justify-center">
-        {serviceFeatures.slice(0, showCardsCount).map((feature, index) => (
-          <div key={index} className="flex rounded-3xl bg-white p-3 gap-3">
-            <div className=' flex items-start gap-3'>
-              <img src={feature.src} alt="Right Icon" className=' w-[200px]' />
-            </div>
+      <div className={`grid lg:grid-cols-4 grid-cols-1  py-4 gap-6  justify-center transition-max-height duration-500 ease-in-out`} style={{ maxHeight: showCardsCount === 4 ? '500px' : '1000px', overflow: 'hidden' }}>
+        {featuresToShow.slice(0, showCardsCount).map((feature, index) => (
+          <div key={index} className="flex rounded-xl bg-white p-6 gap-2 shadow-md hover:shadow-lg transition-all duration-300 border border-gray-100 hover:border-[#6161FF]/20 group">
+            <img src={feature.src} alt="Feature Icon" className='w-12 h-12 rounded-2xl' />
             <div>
-              <h3 className="font-bold">{feature.title}</h3>
-              <p>{feature.description}</p>
+              <h3 className="font-[700] mb-1 text-[14px] text-[#333333]">{feature.title}</h3>
+              <p className="text-gray-800 text-[9px] font-light mb-2">{feature.description}</p>
             </div>
           </div>
         ))}
       </div>
 
-      {/* Show more button */}
+      {/* Toggle Show more/Show less button */}
       <div className='text-center flex justify-center w-full'>
         <div className='w-full'>
           <div className='flex justify-center'>
-            <button onClick={showMoreCards} className='text-[#6161FF] block px-7 my-6 text-lg flex gap-2 items-center'>
-              Show more
-              <FaChevronDown/>
-            
+            <button onClick={toggleShowAllCards} className='text-[#6161FF] px-7 my-6 text-lg flex gap-2 items-center'>
+              {showCardsCount === 4 ? (currentLanguage === "ar" ? "عرض المزيد" : "SHOW MORE") : (currentLanguage === "ar" ? "عرض أقل" : "SHOW LESS")}
+              {showCardsCount === 4 ? <FaChevronDown /> : <FaChevronUp />}
             </button>
           </div>
           <div className='flex justify-center mb-12'>
-            <button className="rounded-3xl bg-[#6161FF] text-[#FFFFFF] py-2 px-7 text-md block flex items-center gap-2">Get Started   <RiArrowRightLine/></button>
+            <Link
+              to="/signup"
+              className="rounded-3xl bg-[#6161FF] text-[#FFFFFF] py-2 px-7 text-md  flex items-center gap-2"
+              onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+            >
+              {currentLanguage === "ar" ? "ابدأ الآن" : "Get Started"} <RiArrowRightLine />
+            </Link>
           </div>
           <h2 className='text-center text-[#676879] mb-12'>
-            No credit card needed   ✦   Unlimited time on Free plan
+            {currentLanguage === "ar" ? "لا تحتاج إلى بطاقة ائتمان ✦ وقت غير محدود في الخطة المجانية" : "No credit card needed ✦ Unlimited time on Free plan"}
           </h2>
         </div>
       </div>

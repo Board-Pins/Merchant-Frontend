@@ -1,7 +1,7 @@
 services:
   app:
     container_name: Merchant-frontend
-    build: 
+    build:
       context: .
       dockerfile: Dockerfile
     ports:
@@ -16,6 +16,8 @@ services:
           cpus: '0.5'
           memory: 512M
     environment:
-      - CHOKIDAR_USEPOLLING=true
-      - COMPOSE_BAKE=true
+      - VITE_MODE=production
+      - NODE_ENV=production
       - NODE_OPTIONS=--max-old-space-size=4096
+      - COMPOSE_BAKE=true
+      - CHOKIDAR_USEPOLLING=true

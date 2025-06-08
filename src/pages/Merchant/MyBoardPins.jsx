@@ -33,17 +33,17 @@ export default function MyBoardPins() {
     }
   }, [error]);
 
-  // Show loading state
-  if (isLoading) {
-    return (
-      <div className="flex justify-center items-center h-screen">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
-      </div>
-    );
-  }
+  // Skip loading state to prevent getting stuck
+  // if (isLoading) {
+  //   return (
+  //     <div className="flex justify-center items-center h-screen">
+  //       <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+  //     </div>
+  //   );
+  // }
 
-  // Get user name from profile or use default
-  const userName = userProfile?.first_name || "User";
+  // Get user name from profile or use default, with fallback for null userProfile
+  const userName = userProfile?.first_name || userProfile?.data?.first_name || "User";
 
   return (
     <div className="flex flex-col gap-6 bg-white mx-auto">

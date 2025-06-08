@@ -121,6 +121,12 @@ export const userApi = createApi({
         body: credentials,
       }),
     }),
+    logout: builder.mutation({
+      query: () => ({
+        url: '/users-service/auth/logout/',
+        method: 'POST',
+      }),
+    }),
     forgotPassword: builder.mutation({
       query: (email) => ({
         url: '/users-service/auth/password/reset/',
@@ -155,6 +161,7 @@ export const {
   useLoginMutation,
   useForgotPasswordMutation,
   useCreateProfileMutation,
+  useLogoutMutation,
   useRefreshTokenMutation
 } = userApi;
 

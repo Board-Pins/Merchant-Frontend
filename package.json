@@ -1,5 +1,5 @@
 {
-  "name": "boardpins",
+  "name": "merchants-boardpins",
   "private": true,
   "version": "0.0.0",
   "type": "module",
@@ -56,6 +56,7 @@
     "react-modal": "^3.16.1",
     "react-phone-input-2": "^2.15.1",
     "react-router-dom": "^6.23.1",
+    "react-router-hash-link": "^2.4.3",
     "react-select": "^5.8.0",
     "react-toastify": "^11.0.5",
     "styled-components": "^6.1.12",
