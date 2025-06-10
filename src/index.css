@@ -1,8 +1,19 @@
 @import '@fontsource/poppins';
+@import '@fontsource/poppins/400.css';
+@import '@fontsource/poppins/500.css';
+@import '@fontsource/poppins/600.css';
+@import '@fontsource/poppins/700.css';
+@import '@fontsource/poppins/800.css';
+@import '@fontsource/poppins/900.css';
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+body {
+  /* background-color: #b7b7b8 !important; */
+  font-family: "Poppins", sans-serif !important;
+}
 
 .gradient-bg {
   background: linear-gradient(0deg, #6161FF -0.23%, rgba(255, 255, 255, 0) 187.21%);
