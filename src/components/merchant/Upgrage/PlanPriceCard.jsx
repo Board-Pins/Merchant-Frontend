@@ -28,7 +28,7 @@ const PlanCard = ({ title, price, buttonText, currentLanguage, listItems, border
         </header>
         <ul>
           {listItems?.map((item, index) => (
-            <li key={index} className='text-[14px] font-thin flex items-start gap-3 my-4'>
+            <li key={index} className='text-[12px] font-light flex items-start gap-3 my-4'>
               <img src={star} className='w-[24px] h-[24px]' alt="star icon" />
               <span className='font-[200]'>{item}</span>
             </li>
