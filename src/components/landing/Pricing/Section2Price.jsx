@@ -15,9 +15,12 @@ function Section2Price() {
         annualPrice: 'EGP 0',
         buttonText: 'Start Now',
         listItems: [
-          'Get a basic listing in the directory to showcase your skills and experience to potential clients.',
-          'Receive a limited number of connection requests: Get discovered by high-growth e-commerce businesses. 5 connections only (To be editable)',
-          'Freemium Project Management: Collaborate with connected merchants on basic project tasks ( Limited to one project)',
+          'Limited access to service provider directory',
+          'Search on the service providers is limited to 3 timers only per day',
+          'One Category in Board',
+          '3 pins only',
+          'Manage basic projects with to-do lists and task assignments',
+          'web app',
         ],
         borderColor: '#C1C1C1',
         buttonBgColor: 'transparent',
@@ -26,18 +29,18 @@ function Section2Price() {
     ],
     Standard: [
       {
-        title: 'Pro Plan',
+        title: 'Standard',
         monthlyPrice: 'EGP 299',
         annualPrice: 'EGP 2999',
         buttonText: 'Subscribe Now',
         listItems: [
-          'Everything in the Free Plan',
-          'Stand Out from the Crowd',
+          'Unlimited search per day (Editable)',
+          'Unlimited connection requests Find the PERFECT service provider for every need.',
           'Unlimited Connection Requests',
           'Create Pins Collection',
-          'Lead Generation Machine',
+          'Project Management Powerhouse Collaborate seamlessly with advanced tools like shared boards, file sharing, and in-app messaging.',
           'Basic reporting and analytics',
-          'Get featured in our weekly client spotlight newsletter (limited slots available!).',
+          'Exclusive Discounts: Get special offers from select service providers on the platform (limited time only!).',
         ],
         borderColor: '#6161FF',
         buttonBgColor: '#6161FF',
@@ -47,14 +50,17 @@ function Section2Price() {
     ],
     Premium: [
       {
-        title: 'Enterprise Plan',
+        title: 'Premium',
         monthlyPrice: 'EGP 399',
         annualPrice: 'EGP 3999',
         buttonText: 'Start Now',
         listItems: [
-          'Everything in the Pro Plan',
-          'Dominate Directory Searches',
-          'Your Personal Growth Partner',
+          'All features of Standard Plan',
+          'Unlimited search per day',
+          'Unlimited Categories in Board',
+          'Create Pins Collection Dedicated account manager for support and onboarding Pre-negotiated discounted rates with some service providers',
+          'Invite your service provider',
+          'Collaborate with your service provider through shared projects and tasks',
         ],
         borderColor: '#C1C1C1',
         buttonBgColor: 'transparent',
@@ -70,13 +76,17 @@ function Section2Price() {
   };
 
   return (
-    <div className='mt-12 lg:mx-24 mx-6 '>
-      <header className="flex flex-row align-self: center justify-content: space-between items-center w-full gap-3">
-        <div className="flex-end w-full gap-3">
+    <div
+      className={`mt-12 lg:mx-24 mx-6 ${currentLanguage === "ar" ? "font-cairo" : "font-poppins"
+        }`}
+      dir={currentLanguage === "ar" ? "rtl" : "ltr"}
+    >
+      <header className="flex lg:flex-row flex-wrap w-full gap-3">
+        <div className="flex-grow flex gap-3">
 
         </div>
         <button
-          className={`px-5 py-2 font-[500] rounded-3xl ${selectedPlan === "Monthly"
+          className={`px-5 py-2.5 font-[500] rounded-3xl ${selectedPlan === "Monthly"
             ? "bg-[#6161FF] text-[#FDFDFD]"
             : "bg-[#E8E8E8] text-[#C1C1C1]"
             }`}
@@ -86,7 +96,7 @@ function Section2Price() {
         </button>
 
         <button
-          className={`px-5 py-2 font-[500] rounded-3xl ${selectedPlan === "Annual"
+          className={`px-5 py-2.5 font-[500] rounded-3xl ${selectedPlan === "Annual"
             ? "bg-[#6161FF] text-[#FDFDFD]"
             : "bg-[#E8E8E8] text-[#C1C1C1]"
             }`}

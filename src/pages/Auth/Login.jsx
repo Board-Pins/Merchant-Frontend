@@ -4,7 +4,6 @@ import { Formik, Form } from 'formik';
 import * as Yup from "yup";
 
 import { useTranslation } from 'react-i18next';
-import HeaderAuth from '../../components/auth/HeaderAuth';
 import CustomInput from '../../components/auth/Atoms/CusomInput';
 import CustomTitle from '../../components/auth/Atoms/CustomTitle';
 import CustomSubmitBtn from '../../components/auth/Atoms/CustomSubmitBtn';
@@ -13,9 +12,12 @@ import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { toast, ToastContainer } from 'react-toastify';
 import { useLoginMutation, useResendOtpMutation } from '../../services/userApi';
 import CustomTextNav from '../../components/auth/Atoms/CustomTextNav';
+import { useLanguageUpdate } from '../../utils/useLanguageUpdate';
 
 const Login = () => {
   const { t, i18n } = useTranslation();
+  // This will force the component to re-render when language changes
+  const currentLanguage = useLanguageUpdate();
 
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
@@ -23,7 +25,7 @@ const Login = () => {
   useEffect(() => {
     const accessToken = searchParams.get('access_token');
     console.log("acesss====>", accessToken)
-   if (accessToken !== null)  {
+    if (accessToken !== null) {
 
       localStorage.setItem('accessToken', accessToken);
     }
@@ -89,7 +91,7 @@ const Login = () => {
   };
 
   return (
-    <div className='mt-12'>
+    <div className={`mt-12 ${currentLanguage === 'ar' ? 'font-cairo' : 'font-poppins'}`} dir={currentLanguage === 'ar' ? 'rtl' : 'ltr'}>
       <ToastContainer />
       <header>
         <CustomTitle title={t('login.title')} />

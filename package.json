@@ -9,6 +9,9 @@
     "lint": "eslint . --ext js,jsx --report-unused-disable-directives --max-warnings 0",
     "lint:fix": "eslint . --ext js,jsx --fix",
     "preview": "vite preview",
+    "clean": "rimraf node_modules/.cache",
+    "check-deps": "vite optimize --force",
+    "dev:clean": "npm run clean && vite --force",
     "format": "prettier --write 'src/**/*.{js,jsx,ts,tsx,css,md,json}'"
   },
   "dependencies": {
