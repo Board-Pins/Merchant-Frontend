@@ -8,7 +8,7 @@ import coupon from '../../../assets/images/Landing/cardicon3.svg';
 import collaboration from '../../../assets/images/Landing/cardicon4.svg';
 
 import { RiArrowRightLine } from "react-icons/ri";
-import { FaChevronDown, FaChevronUp } from "react-icons/fa6";
+// import { FaChevronDown, FaChevronUp } from "react-icons/fa6";
 import { Link } from 'react-router-dom';
 
 function Section1Home() {
@@ -42,9 +42,9 @@ function Section1Home() {
   const featuresToShow = serviceFeatures[currentLanguage] || serviceFeatures.en;
 
   // Function to toggle between showing 4 and 8 cards
-  const toggleShowAllCards = () => {
-    setShowCardsCount(showCardsCount === 4 ? 8 : 4);
-  };
+  // const toggleShowAllCards = () => {
+  //   setShowCardsCount(showCardsCount === 4 ? 8 : 4);
+  // };
 
   return (
     <div className={`mx-6 lg:mx-24 ${currentLanguage === "ar" ? 'font-cairo' : 'font-poppins'}`} dir={currentLanguage === "ar" ? "rtl" : "ltr"}>
