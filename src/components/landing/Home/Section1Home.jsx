@@ -70,7 +70,7 @@ function Section1Home() {
       </div>
 
       {/* Section 2 - Service Features */}
-      <div className={`grid lg:grid-cols-4 grid-cols-1  py-4 gap-6  justify-center transition-max-height duration-500 ease-in-out`} style={{ maxHeight: showCardsCount === 4 ? '500px' : '1000px', overflow: 'hidden' }}>
+      <div className={`grid lg:grid-cols-4 grid-cols-1  py-12 gap-6  justify-center transition-max-height duration-500 ease-in-out`} style={{ maxHeight: showCardsCount === 4 ? '500px' : '1300px', overflow: 'hidden' }}>
         {featuresToShow.slice(0, showCardsCount).map((feature, index) => (
           <div key={index} className="flex rounded-xl bg-white p-6 gap-2 shadow-md hover:shadow-lg transition-all duration-300 border border-gray-100 hover:border-[#6161FF]/20 group">
             <img src={feature.src} alt="Feature Icon" className='w-12 h-12 rounded-2xl' />
@@ -85,12 +85,12 @@ function Section1Home() {
       {/* Toggle Show more/Show less button */}
       <div className='text-center flex justify-center w-full'>
         <div className='w-full'>
-          <div className='flex justify-center'>
+          {/* <div className='flex justify-center'>
             <button onClick={toggleShowAllCards} className='text-[#6161FF] px-7 my-6 text-lg flex gap-2 items-center'>
               {showCardsCount === 4 ? (currentLanguage === "ar" ? "عرض المزيد" : "SHOW MORE") : (currentLanguage === "ar" ? "عرض أقل" : "SHOW LESS")}
               {showCardsCount === 4 ? <FaChevronDown /> : <FaChevronUp />}
             </button>
-          </div>
+          </div> */}
           <div className='flex justify-center mb-12'>
             <Link
               to="/signup"
