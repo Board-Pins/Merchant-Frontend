@@ -1,12 +1,12 @@
-import { useState, useEffect, useRef } from "react";
-import { useFormik } from "formik";
+import { useState, useEffect } from "react";
+import { Formik, Form } from "formik";
 import * as Yup from "yup";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import logo from "../../assets/images/Logo.png";
 import x from "../../assets/images/x.png";
+import CategorySelector from "./FormComponents/CategorySelector";
 
 // import Api services
-import { useFetchCategoriesQuery } from "../../services/userSingleServicesProviderApi";
 import { useGetUserProfileQuery } from "../../services/userApi";
 import { useCreateProfileMutation } from "../../services/userApi";
 
@@ -15,13 +15,16 @@ import { PendingModal } from "./Pending";
 import Modal from "./atoms/commonatoms/Modal";
 
 const WelcomeModal = ({ isOpen, handleIsClose }) => {
-  const [open, setOpen] = useState(true);
-  const [dropdownOpen, setDropdownOpen] = useState(false);
-  const dropdownRef = useRef(null);
   const navigate = useNavigate();
-
-  // Add state to control showing pending modal after submission
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
   const [showPendingAfterSubmit, setShowPendingAfterSubmit] = useState(false);
+
+  // Handle window resize
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth < 768);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   // Fetch user profile
   const {
@@ -30,257 +33,143 @@ const WelcomeModal = ({ isOpen, handleIsClose }) => {
   } = useGetUserProfileQuery();
 
   // Fetch categories and create profile mutation
-  const { data: categories = [] } = useFetchCategoriesQuery();
-  const [createProfile, { isLoading, isSuccess }] = useCreateProfileMutation();
+  const [createProfile, { isLoading }] = useCreateProfileMutation();
 
-  // Store profile in localStorage and handle navigation
+  // Handle profile navigation
   useEffect(() => {
-    if (profileLoading || !userProfile) return;
+    if (profileLoading || !userProfile?.data) return;
 
-    // Store profile data in localStorage for later use
     localStorage.setItem('userProfile', JSON.stringify(userProfile.data));
 
-    if (userProfile.data) {
-      // User has a profile
-      if (userProfile.data.current_status === "completed") {
-        // Profile is approved, redirect to dashboard
-        setOpen(false);
-        navigate('/dashboard');
-      }
+    if (userProfile.data?.current_status === "completed") {
+      handleIsClose();
+      navigate('/dashboard');
     }
-  }, [userProfile, profileLoading, navigate]);
+  }, [userProfile, profileLoading, navigate, handleIsClose]);
 
-  // Close dropdown when clicking outside
-  useEffect(() => {
-    function handleClickOutside(event) {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-        setDropdownOpen(false);
-      }
-    }
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, []);
-
-  const formik = useFormik({
-    initialValues: {
-      firstName: "",
-      lastName: "",
-      category: "factory",
-      role: "merchant",
-    },
-    validationSchema: Yup.object({
-      firstName: Yup.string().required("First name is required"),
-      lastName: Yup.string().required("Last name is required"),
-      category: Yup.string().required("Category is required"),
-    }),
-    onSubmit: async (values) => {
-      try {
-        const result = await createProfile(values).unwrap();
-        // Store the newly created profile
-        if (result && result.data) {
-          localStorage.setItem('userProfile', JSON.stringify(result.data));
-          setShowPendingAfterSubmit(true);
-        }
-      } catch (err) {
-        console.error("Profile creation failed:", err);
-      }
-    },
+  const validationSchema = Yup.object({
+    firstName: Yup.string().required("First name is required"),
+    lastName: Yup.string().required("Last name is required"),
+    category: Yup.string().required("Category is required"),
   });
 
-  if (!open) return null;
+  const handleSubmit = async (values, { setSubmitting }) => {
+    try {
+      const result = await createProfile(values).unwrap();
+      if (result?.data) {
+        localStorage.setItem('userProfile', JSON.stringify(result.data));
+        setShowPendingAfterSubmit(true);
+      }
+    } catch (err) {
+      console.error("Profile creation failed:", err);
+    } finally {
+      setSubmitting(false);
+    }
+  };
 
   const current_status = userProfile?.data?.current_status;
 
+  if (current_status === "pending" || showPendingAfterSubmit) {
+    return <PendingModal isOpen={isOpen} handleIsClose={handleIsClose} />;
+  }
+
+  if (current_status === "rejected") {
+    return null;
+  }
+
   return (
-    <>
-      {current_status === "pending" || showPendingAfterSubmit ? (
-        <PendingModal isOpen={isOpen} handleIsClose={handleIsClose} />
-      ) : current_status === "rejected" ? (
-        // If rejected, this component shouldn't render anything as RejectionModal will handle it
-        null
-      ) : (
-        <>
-          {!isSuccess ? (
-            <Modal
-              isOpen={isOpen}
-              onClose={handleIsClose}
-              className="lg:w-[1000px] w-[95%] mx-auto overflow-hidden max-h-[90vh] bg-white rounded-3xl"
-            >
-              <div className="flex items-center gap-2">
-                <Link to={"/"}>
-                  <img src={logo} className="w-[150px]" alt="Logo" />
-                </Link>
-              </div>
-              <form
-                onSubmit={formik.handleSubmit}
-                className="grid lg:grid-cols-8 h-full"
-              >
-                {/* Left section */}
-                <div className="p-8 col-span-4 flex items-center w-full relative h-full">
-                  <div className="relative flex-grow flex px-5 items-center justify-center">
-                    <img src={x} alt="Illustration" />
-                  </div>
+    <Modal
+      isOpen={open}
+      onClose={handleIsClose}
+      className="lg:w-[980px] w-[85%] lg:h-[500px] min-h-[70%] h-[85%] overflow-hidden bg-white rounded-3xl"
+    >
+      <div className="h-full text-[#333333] font-poppins">
+        <div className="p-2 md:p-4">
+          <img src={logo} alt="Board pins" className="w-[130px]" />
+        </div>
+
+        <Formik
+          initialValues={{
+            firstName: "",
+            lastName: "",
+            category: "factory",
+            role: "merchant",
+          }}
+          validationSchema={validationSchema}
+          onSubmit={handleSubmit}
+        >
+          {({ values, errors, touched, handleChange, handleBlur, setFieldValue }) => (
+            <Form className="flex-grow flex flex-col p-6">
+              <div className={`${isMobile ? 'flex flex-col' : 'grid grid-cols-2'} gap-8`}>
+                <div className="flex justify-center items-center p-4">
+                  <img
+                    src={x}
+                    alt="welcome"
+                    className="w-[80%] max-w-[400px] object-contain logo-animation"
+                  />
                 </div>
 
-                {/* Right section */}
-                <div className="p-8 col-span-4 h-full">
-                  <div className="mb-8 text-center">
-                    <h2 className="text-3xl font-bold">Welcome to Board pins</h2>
-                    <p className="text-xl text-gray-600 mt-2">
+                <div className="flex flex-col items-center space-y-6">
+                  <div>
+                    <h2 className="text-3xl font-bold mb-2">Welcome to Board pins</h2>
+                    <p className="text-xl text-gray-600 text-center">
                       Please choose Your category
                     </p>
                   </div>
 
                   <div className="space-y-6">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div className="space-y-2">
-                        <label
-                          htmlFor="firstName"
-                          className="text-lg font-medium block"
-                        >
-                          First Name
-                        </label>
-                        <input
-                          id="firstName"
-                          name="firstName"
-                          type="text"
-                          placeholder="First Name"
-                          className="w-full h-14 px-4 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#7B7FF6]"
-                          onChange={formik.handleChange}
-                          onBlur={formik.handleBlur}
-                          value={formik.values.firstName}
-                        />
-                        {formik.touched.firstName && formik.errors.firstName && (
-                          <div className="text-sm text-red-500">
-                            {formik.errors.firstName}
-                          </div>
-                        )}
-                      </div>
-                      <div className="space-y-2">
-                        <label
-                          htmlFor="lastName"
-                          className="text-lg font-medium block"
-                        >
-                          Last Name
-                        </label>
-                        <input
-                          id="lastName"
-                          name="lastName"
-                          type="text"
-                          placeholder="Last Name"
-                          className="w-full h-14 px-4 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#7B7FF6]"
-                          onChange={formik.handleChange}
-                          onBlur={formik.handleBlur}
-                          value={formik.values.lastName}
-                        />
-                        {formik.touched.lastName && formik.errors.lastName && (
-                          <div className="text-sm text-red-500">
-                            {formik.errors.lastName}
-                          </div>
-                        )}
-                      </div>
+                      {['firstName', 'lastName'].map((field) => (
+                        <div key={field} className="space-y-2">
+                          <label htmlFor={field} className="text-lg font-medium">
+                            {field === 'firstName' ? 'First Name' : 'Last Name'}
+                          </label>
+                          <input
+                            id={field}
+                            name={field}
+                            type="text"
+                            placeholder={field === 'firstName' ? 'First Name' : 'Last Name'}
+                            className="w-full h-12 px-4 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#7B7FF6] focus:border-transparent"
+                            onChange={handleChange}
+                            onBlur={handleBlur}
+                            value={values[field]}
+                          />
+                          {touched[field] && errors[field] && (
+                            <div className="text-sm text-red-500">{errors[field]}</div>
+                          )}
+                        </div>
+                      ))}
                     </div>
 
                     <div className="space-y-2">
-                      <label className="text-lg font-medium block">
-                        Merchant category <span className="text-[#7B7FF6]">*</span>
+                      <label className="text-lg font-medium">
+                        Merchant category <span className="text-red-500">*</span>
                       </label>
-                      <div className="relative" ref={dropdownRef}>
-                        <button
-                          type="button"
-                          className="w-full h-14 px-4 text-left bg-slate-50 rounded-xl flex items-center justify-between border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#7B7FF6]"
-                          onClick={() => setDropdownOpen(!dropdownOpen)}
-                        >
-                          <span className="text-gray-700">
-                            {categories?.data?.results?.find(
-                              (c) => c.id === formik.values.category
-                            )?.name || "Select Category"}
-                          </span>
-                          <svg
-                            width="24"
-                            height="24"
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            xmlns="http://www.w3.org/2000/svg"
-                            className={`transition-transform ${dropdownOpen ? "rotate-180" : ""}`}
-                          >
-                            <path
-                              d="M6 9L12 15L18 9"
-                              stroke="currentColor"
-                              strokeWidth="2"
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                            />
-                          </svg>
-                        </button>
-
-                        {dropdownOpen && (
-                          <div className="absolute z-10 w-full mt-1 bg-white border border-gray-200 rounded-xl shadow-lg">
-                            <div className="p-2">
-                              {categories?.data?.results?.map((category) => (
-                                <div
-                                  key={category.id}
-                                  className="flex items-center p-2 hover:bg-slate-50 cursor-pointer rounded-xl"
-                                  onClick={() => {
-                                    formik.setFieldValue("category", category.id);
-                                    setDropdownOpen(false);
-                                  }}
-                                >
-                                  <div className="w-6 h-6 border border-[#7B7FF6] rounded flex items-center justify-center mr-2">
-                                    {formik.values.category === category.id && (
-                                      <div className="w-4 h-4 bg-[#7B7FF6] rounded-sm flex items-center justify-center">
-                                        <svg
-                                          width="12"
-                                          height="12"
-                                          viewBox="0 0 24 24"
-                                          fill="none"
-                                          className="text-white"
-                                        >
-                                          <path
-                                            d="M5 12L10 17L19 8"
-                                            stroke="currentColor"
-                                            strokeWidth="3"
-                                            strokeLinecap="round"
-                                            strokeLinejoin="round"
-                                          />
-                                        </svg>
-                                      </div>
-                                    )}
-                                  </div>
-                                  <span>{category.name}</span>
-                                </div>
-                              ))}
-                            </div>
-                          </div>
-                        )}
-                      </div>
-                      {formik.touched.category && formik.errors.category && (
-                        <div className="text-sm text-red-500">
-                          {formik.errors.category}
-                        </div>
-                      )}
+                      <CategorySelector
+                        setFieldValue={setFieldValue}
+                        name="categories"
+                        title={""}
+                        placeholder="Like graphic designer"
+                        error={errors.categories && touched.categories}
+                        errorMessage={errors.categories}
+                      />
                     </div>
+
                     <button
                       type="submit"
-                      className="w-full h-12 text-lg bg-[#7B7FF6] hover:bg-[#6366F1] text-white rounded-xl mt-8 transition-colors focus:outline-none focus:ring-2 focus:ring-[#4F46E5] focus:ring-offset-2"
+                      className="w-full h-12 text-lg bg-[#7B7FF6] hover:bg-[#6366F1] text-white rounded-lg transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-[#4F46E5] focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
                       disabled={isLoading}
                     >
                       {isLoading ? "Submitting..." : "Start Now"}
                     </button>
                   </div>
                 </div>
-              </form>
-              {/* </div>
-              </div> */}
-            </Modal>
-          ) : (
-            <PendingModal isOpen={isOpen} handleIsclose={handleIsClose} />
+              </div>
+            </Form>
           )}
-        </>
-      )}
-    </>
+        </Formik>
+      </div>
+    </Modal>
   );
 };
 
