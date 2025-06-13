@@ -15,14 +15,6 @@ const PrivateRoute = ({ redirectTo = '/login', requireApproval = true, path }) =
   const [userRole, setUserRole] = useState(null);
   const [showWelcomeModal, setShowWelcomeModal] = useState(false);
 
-  // Show welcome modal when profile doesn't exist
-  useEffect(() => {
-    if (profileError?.status === 404 || !profileData?.data) {
-      setShowWelcomeModal(true);
-    } else {
-      setShowWelcomeModal(false);
-    }
-  }, [profileError, profileData]);
   // Get user info to check role and profile data
   const {
     data: profileData,
@@ -35,6 +27,15 @@ const PrivateRoute = ({ redirectTo = '/login', requireApproval = true, path }) =
   const { data: userInfo } = useGetUserInfoQuery(undefined, {
     skip: !isAuthenticated
   });
+
+  // Show welcome modal when profile doesn't exist
+  useEffect(() => {
+    if (profileError?.status === 404 || !profileData?.data) {
+      setShowWelcomeModal(true);
+    } else {
+      setShowWelcomeModal(false);
+    }
+  }, [profileError, profileData]);
   useEffect(() => {
     if (profileData?.data?.role) {
       setUserRole(profileData.data.role);
