@@ -18,6 +18,7 @@ import VerifyMail from "./pages/Auth/VerfiyMail";
 import RecoverySuccess from "./pages/Auth/RecoverySuccess";
 import EmailVerification from "./pages/Auth/EmailVerification";
 import GoogleCallback from "./pages/Auth/GoogleCallback";
+import AuthCallback from "./pages/Auth/AuthCallback";
 
 import Dashboard from "./pages/Merchant/Dashboard";
 import MyBoardPins from "./pages/Merchant/MyBoardPins";
@@ -222,7 +223,8 @@ const App = () => {
           <Route path="/ordering-billing" element={<OrderBilling />} errorElement={<RouteErrorBoundary />} />
 
           {/* Google Callback Route */}
-          <Route path="/auth/callback" element={<GoogleCallback />} errorElement={<RouteErrorBoundary />} />
+          <Route path="/auth/google/callback" element={<GoogleCallback />} errorElement={<RouteErrorBoundary />} />
+          <Route path="/auth/callback" element={<AuthCallback />} errorElement={<RouteErrorBoundary />} />
 
           {/* 404 Route - Must be last */}
           <Route path="*" element={<NotFoundScreen />} />

@@ -3,16 +3,19 @@ import { Navigate, Outlet } from 'react-router-dom';
 import { useLoading } from '../../context/LoadingContext';
 import NotFoundScreen from '../../components/common/NotFoundScreen';
 import RouteErrorBoundary from '../../components/common/RouteErrorBoundary';
-import { useGetUserProfileQuery } from '../../services/userApi';
+import { useGetUserProfileQuery, useGetUserInfoQuery } from '../../services/userApi';
 import LoadingScreen from '../../components/common/LoadingScreen';
+import WelcomeModal from '../../components/merchant/WelcomeModal'
 
-const PrivateRoute = ({ redirectTo = '/login', requireApproval = true }) => {
+const PrivateRoute = ({ redirectTo = '/login', requireApproval = true, path }) => {
   const { showLoading, hideLoading } = useLoading();
   const accessToken = localStorage.getItem('accessToken');
   const isAuthenticated = !!accessToken;
   const [error, setError] = useState(null);
+  const [userRole, setUserRole] = useState(null);
+  const [showWelcomeModal, setShowWelcomeModal] = useState(false);
 
-  // Get profile data to check approval status
+  // Get user info to check role and profile data
   const {
     data: profileData,
     error: profileError,
@@ -20,6 +23,26 @@ const PrivateRoute = ({ redirectTo = '/login', requireApproval = true }) => {
   } = useGetUserProfileQuery(undefined, {
     skip: !isAuthenticated
   });
+  // Get user info to check role
+  const { data: userInfo } = useGetUserInfoQuery(undefined, {
+    skip: !isAuthenticated
+  });
+
+  // Show welcome modal when profile doesn't exist
+  useEffect(() => {
+    if (profileError?.status === 404 || !profileData?.data) {
+      setShowWelcomeModal(true);
+    } else {
+      setShowWelcomeModal(false);
+    }
+  }, [profileError, profileData]);
+  useEffect(() => {
+    if (profileData?.data?.role) {
+      setUserRole(profileData.data.role);
+      // Store profile data in localStorage
+      localStorage.setItem('userProfile', JSON.stringify(profileData.data));
+    }
+  }, [profileData]);
 
   // Show loading screen when checking authentication
   useEffect(() => {
@@ -85,9 +108,39 @@ const PrivateRoute = ({ redirectTo = '/login', requireApproval = true }) => {
     return <RouteErrorBoundary error={error} />;
   }
 
-  // Check if user is authenticated
-  if (!isAuthenticated) {
+  // Check if user is authenticated and has merchant role
+  if (!isAuthenticated || (userRole && userRole !== 'merchant')) {
     return <Navigate to={redirectTo} replace />;
+  }
+
+  // If profile is loading, show loading screen
+  if (loadingProfile) {
+    return <LoadingScreen />;
+  }
+
+  if (error) {
+    // If it's a 404 error, render the NotFoundScreen
+    if (error.status === 404) {
+      return <NotFoundScreen />;
+    }
+    return <RouteErrorBoundary error={error} />;
+  }
+
+  // Check if user is authenticated and has valid role for /myboard
+  if (!isAuthenticated || (path === '/myboard' && userInfo?.data?.role && !['merchant'].includes(userInfo.data.role))) {
+    return <Navigate to={redirectTo} replace />;
+  }
+
+  // For /myboard path, check if profile exists
+  if (path === '/myboard') {
+    if (profileError?.status === 404 || !profileData?.data) {
+      return (
+        <>
+          <WelcomeModal isOpen={showWelcomeModal} onClose={() => setShowWelcomeModal(false)} />
+          <Outlet />
+        </>
+      );
+    }
   }
 
   // If approval is required, check profile status
@@ -107,6 +160,7 @@ const PrivateRoute = ({ redirectTo = '/login', requireApproval = true }) => {
 };
 
 export default PrivateRoute;
+
 
 
 

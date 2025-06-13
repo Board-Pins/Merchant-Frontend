@@ -14,22 +14,20 @@ import ManageCardSideBar from '../../components/merchant/myboard/MangeCardSideBa
 import InprogressProject from '../../components/merchant/myboard/InprogressProject';
 
 export default function MyBoardPins() {
+  // Define all state and variables first
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const { data: userProfile, isLoading, error } = useGetUserProfileQuery();
 
-  // Toggle sidebar function
+  // Then define functions
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
   };
 
-  // Add error handling
+  // Then effects
   useEffect(() => {
     if (error) {
       console.error("Error fetching user profile:", error);
-      if (error.status === 404) {
-        console.log("User profile not found");
-      }
     }
   }, [error]);
 

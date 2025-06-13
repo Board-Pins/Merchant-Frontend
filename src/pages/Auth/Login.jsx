@@ -24,17 +24,14 @@ const Login = () => {
 
   useEffect(() => {
     const accessToken = searchParams.get('access_token');
-    console.log("acesss====>", accessToken)
-    if (accessToken !== null) {
+    const refreshToken = searchParams.get('refresh_token');
 
+    if (accessToken && refreshToken) {
       localStorage.setItem('accessToken', accessToken);
+      localStorage.setItem('refreshToken', refreshToken);
+      navigate('/myboard', { replace: true });
     }
-
-    if (accessToken) {
-      localStorage.setItem('accessToken', accessToken);
-      navigate('/auth/callback', { replace: true });
-    }
-  }, [searchParams]);
+  }, [searchParams, /*hideLoading,*/ navigate]);
 
   const validationSchema = Yup.object({
     email: Yup.string().email(t('login.invalidEmail')).required(t('login.emailRequired')),

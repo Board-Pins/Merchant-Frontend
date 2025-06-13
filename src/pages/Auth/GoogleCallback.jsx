@@ -14,7 +14,7 @@ const GoogleCallback = () => {
     if (accessToken) {
       // Store the token
       localStorage.setItem('accessToken', accessToken);
-      
+
       // If we're not loading and there's no error, proceed with navigation
       if (!isLoading && !error) {
         // Always navigate to myboard - the WelcomeModal will handle profile check
