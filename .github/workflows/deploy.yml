@@ -22,18 +22,18 @@ jobs:
           ssh -o StrictHostKeyChecking=no ${{ secrets.EC2_USER }}@${{ secrets.EC2_IP }} << EOF   
             echo "Connection successful"
             REPO_DIR=/home/${{ vars.SERVICE_NAME }}
-            CURRENT_BRANCH=$(git branch --show-current)
+            CURRENT_BRANCH="${{ github.ref }}"
 
             if [ -d "$REPO_DIR" ]; then
               cd "$REPO_DIR"
               sudo git config --global --add safe.directory "$REPO_DIR"
-              sudo git fetch origin CURRENT_BRANCH
-              sudo git reset --hard origin/CURRENT_BRANCH  # Force reset to match remote
+              sudo git fetch origin "$CURRENT_BRANCH"
+              sudo git reset --hard origin/"$CURRENT_BRANCH"  # Force reset to match remote
               sudo git clean -fd  # Remove untracked files
             else
               echo "start cloning repo"
               sudo git clone https://${{ secrets.TOKEN_GIT }}@github.com/${{ github.repository }} "$REPO_DIR"
-              sudo git switch $CURRENT_BRANCH
+              sudo git switch "$CURRENT_BRANCH"
             fi
 
             
