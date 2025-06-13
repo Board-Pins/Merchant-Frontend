@@ -74,10 +74,10 @@ const RouteChangeHandler = () => {
 
   useEffect(() => {
     showLoading();
-    
+
     // Immediately hide loading after route change
     hideLoading();
-    
+
     return () => {
       hideLoading(); // Ensure loading is hidden on unmount
     };
@@ -123,12 +123,12 @@ const FallbackComponent = ({ error }) => {
 
 const App = () => {
   const [isLoading, setIsLoading] = useState(true);
-  const [renderError, setRenderError] = useState(null);
+  const [renderError] = useState(null);
 
   useEffect(() => {
     // Immediately set loading to false
     setIsLoading(false);
-    
+
     return () => {
       setIsLoading(false);
     };
@@ -137,7 +137,7 @@ const App = () => {
   if (isLoading) {
     return <LoadingScreen />;
   }
-  
+
   if (renderError) {
     return <FallbackComponent error={renderError} />;
   }
