@@ -13,7 +13,16 @@ const PrivateRoute = ({ redirectTo = '/login', requireApproval = true, path }) =
   const isAuthenticated = !!accessToken;
   const [error, setError] = useState(null);
   const [userRole, setUserRole] = useState(null);
+  const [showWelcomeModal, setShowWelcomeModal] = useState(false);
 
+  // Show welcome modal when profile doesn't exist
+  useEffect(() => {
+    if (profileError?.status === 404 || !profileData?.data) {
+      setShowWelcomeModal(true);
+    } else {
+      setShowWelcomeModal(false);
+    }
+  }, [profileError, profileData]);
   // Get user info to check role and profile data
   const {
     data: profileData,
@@ -120,19 +129,13 @@ const PrivateRoute = ({ redirectTo = '/login', requireApproval = true, path }) =
   if (!isAuthenticated || (path === '/myboard' && userInfo?.data?.role && !['merchant'].includes(userInfo.data.role))) {
     return <Navigate to={redirectTo} replace />;
   }
-  else {
-    // User is not authenticated, redirect to login
-    if (!isAuthenticated) {
-      return <Navigate to={redirectTo} replace />;
-    }
-  }
 
   // For /myboard path, check if profile exists
   if (path === '/myboard') {
     if (profileError?.status === 404 || !profileData?.data) {
       return (
         <>
-          <WelcomeModal isOpen={true} onClose={() => { }} />
+          <WelcomeModal isOpen={showWelcomeModal} onClose={() => setShowWelcomeModal(false)} />
           <Outlet />
         </>
       );
