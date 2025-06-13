@@ -22,7 +22,7 @@ jobs:
           ssh -o StrictHostKeyChecking=no ${{ secrets.EC2_USER }}@${{ secrets.EC2_IP }} << EOF   
             echo "Connection successful"
             REPO_DIR=/home/${{ vars.SERVICE_NAME }}
-            CURRENT_BRANCH="${{ github.ref }}"
+            CURRENT_BRANCH="${GITHUB_REF##*/}"
 
             if [ -d "$REPO_DIR" ]; then
               cd "$REPO_DIR"
@@ -33,7 +33,8 @@ jobs:
             else
               echo "start cloning repo"
               sudo git clone https://${{ secrets.TOKEN_GIT }}@github.com/${{ github.repository }} "$REPO_DIR"
-              sudo git switch "$CURRENT_BRANCH"
+              sudo git fetch origin "$CURRENT_BRANCH"
+              sudo git checkout "$CURRENT_BRANCH"
             fi
 
             

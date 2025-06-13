@@ -87,6 +87,12 @@ const RouteChangeHandler = () => {
 };
 
 const FallbackComponent = ({ error }) => {
+  const { isInitialLoading } = useLoading();
+
+  if (isInitialLoading) {
+    return null;
+  }
+
   return (
     <div className="fixed inset-0 bg-white flex flex-col items-center justify-center z-50 p-4">
       <h1 className="text-2xl font-bold text-gray-800 mb-3">Something went wrong</h1>
