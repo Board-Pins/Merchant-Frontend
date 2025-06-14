@@ -4,6 +4,7 @@ import MenuIcon from "@mui/icons-material/Menu";
 import { IoMdExit } from "react-icons/io";
 import { Icon } from "@iconify/react";
 import Logo from "../../../assets/images/Logo.png";
+import { FiSearch } from "react-icons/fi";
 
 const SidebarProvider = ({ handleIsopen }) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -146,10 +147,9 @@ const SidebarProvider = ({ handleIsopen }) => {
           } transition-transform duration-300 ease-in-out z-40 md:static md:translate-x-0 py-4 top-0 md:py-0 md:h-full md:w-[19%]`}
       >
         <div className="flex justify-between items-center w-full">
-          <Link to={"/"}>
+          <Link to={"/myboard"}>
             <img src={Logo} className="w-[200px] pt-4" alt="Logo" />
           </Link>
-
         </div>
 
         <ul
@@ -159,12 +159,12 @@ const SidebarProvider = ({ handleIsopen }) => {
             scrollbarColor: "#4B5563 ##1E1E1EBF",
           }}
         >
-          <li className="bg-[#F2F2F2] rounded-lg flex items-center text-[#666666] p-3">
-            <Icon icon="ri:search-line" width={25} height={25} />
+          <li className="bg-[#F2F2F2] rounded-lg  flex items-center text-[#666666] p-4 ">
+            <FiSearch />
             <input
               type="text"
-              placeholder="Search..."
-              className="bg-transparent outline-0"
+              placeholder="Search"
+              className="bg-transparent px-2 outline-0 flex-grow"
             />
           </li>
 
