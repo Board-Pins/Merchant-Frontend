@@ -4,6 +4,7 @@ import { IoMdArrowDropdown } from "react-icons/io";
 import { useFetchCategoriesQuery } from "../../../services/userSingleServicesProviderApi";
 import { Skeleton } from "@mui/material";
 
+
 const CategorySelector = ({ setFieldValue, name, title, placeholder, categories: propCategories }) => {
   const [selectedCategories, setSelectedCategories] = useState([]);
   const [showCategories, setShowCategories] = useState(false);

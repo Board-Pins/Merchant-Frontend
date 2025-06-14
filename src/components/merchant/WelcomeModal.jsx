@@ -7,7 +7,6 @@ import x from "../../assets/images/x.png";
 import CategorySelector from "./FormComponents/CategorySelector";
 
 // import Api services
-import { useFetchCategoriesQuery } from "../../services/userSingleServicesProviderApi";
 import { useGetUserProfileQuery } from "../../services/userApi";
 import { useCreateProfileMutation } from "../../services/userApi";
 
