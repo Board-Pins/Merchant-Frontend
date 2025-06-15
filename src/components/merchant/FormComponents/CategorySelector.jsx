@@ -4,7 +4,6 @@ import { IoMdArrowDropdown } from "react-icons/io";
 import { useFetchCategoriesQuery } from "../../../services/userSingleServicesProviderApi";
 import { Skeleton } from "@mui/material";
 
-
 const CategorySelector = ({ setFieldValue, name, title, placeholder, categories: propCategories }) => {
   const [selectedCategories, setSelectedCategories] = useState([]);
   const [showCategories, setShowCategories] = useState(false);
@@ -153,7 +152,7 @@ const CategorySelector = ({ setFieldValue, name, title, placeholder, categories:
       </div>
 
       {showCategories && (
-        <div className="absolute z-10 mt-1 w-full bg-[#F9F9F9] border border-gray-200 rounded-lg shadow-lg max-h-[120px] overflow-y-auto">
+        <div className="absolute z-10 mt-1 w-full bg-[#F9F9F9] border border-gray-200 rounded-lg shadow-lg max-h-[100px] overflow-y-auto">
           <div className="py-2 px-2">
             {categoriesToRender.length > 0 ? (
               categoriesToRender.map((category) => (
