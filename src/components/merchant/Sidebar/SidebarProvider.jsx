@@ -186,9 +186,7 @@ const SidebarProvider = ({ handleIsopen }) => {
                 onClick={() => item.dropdown && toggleDropdown(item.dropdown)}
               >
                 <div className="flex-grow flex items-center w-full gap-3">
-                  {item.icon && (
-                    <Icon icon={item.icon} width="25px" height="25px" />
-                  )}
+                      {item.icon && <Icon icon={item.icon} width="25px" height="25px" />}
                   {item.text}
                 </div>
                 {item.dropdown && (
