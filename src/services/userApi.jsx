@@ -148,6 +148,20 @@ export const userApi = createApi({
         body: profileData,
       }),
     }),
+    updateProfile: builder.mutation({
+      query: (profileData) => ({
+        url: '/users-service/profiles/update/',
+        method: 'PUT',
+        body: profileData,
+      }),
+    }),
+    partialUpdateProfile: builder.mutation({
+      query: (profileData) => ({
+        url: '/users-service/profiles/update/',
+        method: 'PATCH',
+        body: profileData,
+      }),
+    }),
   }),
 });
 
@@ -162,9 +176,7 @@ export const {
   useForgotPasswordMutation,
   useCreateProfileMutation,
   useLogoutMutation,
-  useRefreshTokenMutation
+  useRefreshTokenMutation,
+  useUpdateProfileMutation,
+  usePartialUpdateProfileMutation
 } = userApi;
-
-
-
-
