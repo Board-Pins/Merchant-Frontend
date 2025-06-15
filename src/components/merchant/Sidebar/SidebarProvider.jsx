@@ -5,10 +5,14 @@ import { IoMdExit } from "react-icons/io";
 import { Icon } from "@iconify/react";
 import Logo from "../../../assets/images/Logo.png";
 import { FiSearch } from "react-icons/fi";
+import { useTranslation } from "react-i18next";
 
 const SidebarProvider = ({ handleIsopen }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [selectedItem, setSelectedItem] = useState(null);
+  const [selectedSubItem, setSelectedSubItem] = useState(null);
+  const [workspaces, setWorkspaces] = useState([]);
+  const { t, i18n } = useTranslation();
   const [dropdowns, setDropdowns] = useState({
     chat: false,
     projectManagement: false,
@@ -19,28 +23,23 @@ const SidebarProvider = ({ handleIsopen }) => {
     Setting: false,
   });
 
+  const toggleLanguage = () => {
+    i18n.changeLanguage(i18n.language === 'en' ? 'ar' : 'en');
+  };
+
   const location = useLocation();
 
   useEffect(() => {
-    // Scroll to top on route change
+    document.body.dir = i18n.language === 'ar' ? 'rtl' : 'ltr';
+    document.body.style.fontFamily = i18n.language === 'ar' ? 'Cairo, sans-serif' : 'Poppins, sans-serif';
+  }, [i18n.language]);
+
+  useEffect(() => {
     window.scrollTo({
       top: 0,
       behavior: "smooth",
     });
   }, [location.pathname]);
-
-  const toggleSidebar = () => setIsOpen(!isOpen);
-  const handleItemClick = (id) => setSelectedItem(id);
-
-  const toggleDropdown = (dropdown) => {
-    setDropdowns((prev) => {
-      const updatedDropdowns = Object.keys(prev).reduce((acc, key) => {
-        acc[key] = key === dropdown ? !prev[key] : false;
-        return acc;
-      }, {});
-      return updatedDropdowns;
-    });
-  };
 
   const menuItems = [
     { id: 1, icon: "octicon:apps-24", text: "My Board Pins", path: "myboard" },
@@ -132,6 +131,67 @@ const SidebarProvider = ({ handleIsopen }) => {
     { id: 11, icon: "mdi:invite", text: "Invite", onClick: handleIsopen },
   ];
 
+
+  useEffect(() => {
+    const currentPath = location.pathname;
+
+    // Find the exact or partial match for main items
+    const currentItem = menuItems.find((item) =>
+      currentPath.includes(item.path)
+    );
+    if (currentItem) {
+      setSelectedItem(currentItem.id);
+    }
+
+
+    // Handle sub-items
+    menuItems.forEach((item) => {
+      if (item.subItems) {
+        const currentSubItem = item.subItems.find((subItem) =>
+          currentPath.includes(subItem.path)
+        );
+        if (currentSubItem) {
+          setSelectedItem(item.id);
+          setSelectedSubItem(currentSubItem.id);
+        }
+      }
+    });
+  }, [location.pathname, menuItems]); // Ensure menuItems is included in the dependency array
+
+  const toggleSidebar = () => setIsOpen(!isOpen);
+
+  const handleItemClick = (id) => {
+    const clickedItem = menuItems.find(item => item.id === id);
+    setSelectedItem(id);
+
+    // Close the sidebar if the clicked item has subitems
+    if (clickedItem && !clickedItem.subItems) {
+      setIsOpen(false);
+
+    }
+
+
+  };
+
+  const handleSubItemClick = (itemId, subItemId) => {
+    setSelectedItem(itemId);
+    setSelectedSubItem(subItemId);
+
+    setIsOpen(false)
+
+  };
+
+  const toggleDropdown = (dropdown) => {
+    setDropdowns((prev) => {
+      const updatedDropdowns = Object.keys(prev).reduce((acc, key) => {
+        acc[key] = key === dropdown ? !prev[key] : false;
+        return acc;
+      }, {});
+      return updatedDropdowns;
+    });
+  };
+
+
   return (
     <>
       <button
@@ -156,7 +216,7 @@ const SidebarProvider = ({ handleIsopen }) => {
           className="font-popines flex flex-col text-xs gap-4 font-[500] max-h-[90vh] overflow-y-auto py-4 px-1 mt-2"
           style={{
             scrollbarWidth: "thin",
-            scrollbarColor: "#4B5563 ##1E1E1EBF",
+            scrollbarColor: "#4B5563 #1E1E1EBF",
           }}
         >
           <li className="bg-[#F2F2F2] rounded-lg  flex items-center text-[#666666] p-4 ">
@@ -186,7 +246,7 @@ const SidebarProvider = ({ handleIsopen }) => {
                 onClick={() => item.dropdown && toggleDropdown(item.dropdown)}
               >
                 <div className="flex-grow flex items-center w-full gap-3">
-                      {item.icon && <Icon icon={item.icon} width="25px" height="25px" />}
+                  {item.icon && <Icon icon={item.icon} width="25px" height="25px" />}
                   {item.text}
                 </div>
                 {item.dropdown && (
