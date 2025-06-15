@@ -63,7 +63,7 @@
     "react-select": "^5.8.0",
     "react-toastify": "^11.0.5",
     "styled-components": "^6.1.12",
-    "sweetalert2": "^11.12.2",
+    "sweetalert2": "^11.6.13",
     "tailwindcss-filters": "^3.0.0",
     "web-vitals": "^5.0.0",
     "yup": "^1.4.0"
@@ -81,7 +81,7 @@
     "postcss": "^8.4.38",
     "prettier": "^3.1.0",
     "tailwindcss": "^3.4.4",
-    "vite": "^5.2.0",
+    "vite": "^6.3.5",
     "web-vitals": "^5.0.0"
   }
 }
