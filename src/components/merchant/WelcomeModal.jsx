@@ -185,7 +185,7 @@ const WelcomeModal = ({ isOpen, handleIsClose }) => {
 
                   <div className="flex flex-col items-center space-y-6 w-full">
                     <div className="text-center mb-5">
-                      <h2 className="text-2xl md:text-3xl font-bold">{t("profile.form.title", "Welcome to Board Pins")}</h2>
+                      <h2 className="text-3xl md:text-4xl font-bold">{t("profile.form.title", "Welcome to Board Pins")}</h2>
                       <p className="text-md md:text-lg text-gray-700">
                         {t("profile.form.subtitle", "Tell us a bit about yourself to get started.")}
                       </p>
