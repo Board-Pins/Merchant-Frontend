@@ -67,7 +67,7 @@ const Navbar = () => {
 
           </div>
         </div>
-        <div className="hidden md:flex gap-4 items-center">
+        <div className="hidden md:flex gap-2 items-center">
           <NavLink to="/pricing" className="text-[#8E8E8E] hover:text-[#6161FF]">
             {t('pricing')}
           </NavLink>
