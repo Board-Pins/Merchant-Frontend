@@ -4,6 +4,10 @@ import { ErrorBoundary } from 'react-error-boundary';
 import Layout from "./utils/LayoutDashboard";
 import LayoutLanding from "./utils/LayoutLanding";
 import LayoutAuth from "./utils/LayoutAuth";
+import configureIconify from './config/iconify';
+
+// Configure Iconify
+configureIconify();
 
 import Home from "./pages/Landing/Home";
 import Pricing from "./pages/Landing/Pricing";
