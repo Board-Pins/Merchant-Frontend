@@ -37,7 +37,7 @@ jobs:
             
       - name: Trigger user repo pipeline
         env:
-          PAT_TOKEN: ${{ secrets.GIT_TOKEN}}
+          PAT_TOKEN: ${{secrets.GIT_TOKEN}}
         run: |
           response=$(curl -s -w "%{http_code}" \
             -X POST \
