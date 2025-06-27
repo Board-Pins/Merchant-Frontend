@@ -1,4 +1,4 @@
-name: marchent pipeline
+name: merchant pipeline
 on:
   push:
     branches: [ test ]
