@@ -6,11 +6,11 @@ function ApiErrorScreen({ error, onRetry, backLink = "/" }) {
   let title = "Something went wrong";
   let message = "We're having trouble processing your request. Please try again later.";
   let errorCode = null;
-  
+
   // Handle different error types
   if (error) {
     errorCode = error.status || error.statusCode;
-    
+
     // Handle specific error codes
     switch (errorCode) {
       case 400:
@@ -40,18 +40,19 @@ function ApiErrorScreen({ error, onRetry, backLink = "/" }) {
         } else if (error.message) {
           message = error.message;
         }
-        
+
         // For i18n support
         if (error.data?.data?.errors?.en) {
           message = error.data.data.errors.en;
         }
     }
   }
-  
+
   return (
     <ErrorScreen
       title={title}
       message={message}
+      details={error.data?.details}
       errorCode={errorCode}
       buttonText="Go Back"
       buttonLink={backLink}

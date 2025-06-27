@@ -5,7 +5,7 @@ import NotFoundScreen from '../../components/common/NotFoundScreen';
 import RouteErrorBoundary from '../../components/common/RouteErrorBoundary';
 import { useGetUserProfileQuery, useGetUserInfoQuery } from '../../services/userApi';
 import LoadingScreen from '../../components/common/LoadingScreen';
-import WelcomeModal from '../../components/merchant/WelcomeModal'
+import WelcomeModal from '../../components/merchant/WelcomeModal';
 
 const PrivateRoute = ({ redirectTo = '/login', requireApproval = true, path }) => {
   const { showLoading, hideLoading } = useLoading();
@@ -36,6 +36,7 @@ const PrivateRoute = ({ redirectTo = '/login', requireApproval = true, path }) =
       setShowWelcomeModal(false);
     }
   }, [profileError, profileData]);
+
   useEffect(() => {
     if (profileData?.data?.role) {
       setUserRole(profileData.data.role);
@@ -44,96 +45,83 @@ const PrivateRoute = ({ redirectTo = '/login', requireApproval = true, path }) =
     }
   }, [profileData]);
 
-  // Show loading screen when checking authentication
-  useEffect(() => {
-    showLoading();
-
-    // Hide loading when profile data is loaded or on error
-    if (profileData || profileError || !isAuthenticated) {
-      hideLoading();
-    }
-
-    // Safety timeout to prevent infinite loading - use a shorter timeout
-    const safetyTimer = setTimeout(() => {
-      hideLoading();
-      console.log("PrivateRoute safety timeout triggered");
-    }, 1000);
-
-    return () => {
-      clearTimeout(safetyTimer);
-      hideLoading();
-    };
-  }, [profileData, profileError, isAuthenticated, hideLoading, showLoading]);
-
   // Handle errors
   useEffect(() => {
     if (profileError) {
       // Don't set error for "No profile exists" errors - these should trigger profile creation
       if (profileError.status === 404 || profileError.originalStatus === 404) {
-        // Check if this is a "No profile exists" error
         if (profileError?.data?.message === "No profile exists for this user") {
-          return; // Skip error handling for this case
+          return;
         }
       }
-
-      // Handle PARSING_ERROR with string data
       if (profileError.status === 'PARSING_ERROR' && typeof profileError.data === 'string') {
         try {
           const parsedData = JSON.parse(profileError.data);
           if (parsedData?.message === "No profile exists for this user" ||
             parsedData?.data?.errors?.en === "No profile exists for this user") {
-            // This is expected for new users, don't treat as an error
             return;
           }
         } catch (e) {
-          // If parsing fails, treat as a regular error
+          // Ignore parsing failure, treat as a regular error
         }
       }
-
-      // For all other errors, set the error state
       setError(profileError);
     }
   }, [profileError]);
 
-  // Skip the loading screen to prevent getting stuck
-  // if (loadingProfile) {
-  //   return <LoadingScreen />;
-  // }
-
-  if (error) {
-    // If it's a 404 error, render the NotFoundScreen
-    if (error.status === 404) {
-      return <NotFoundScreen />;
+  // Show loading screen when checking authentication
+  useEffect(() => {
+    if (loadingProfile) {
+      showLoading();
+    } else {
+      hideLoading();
     }
-    return <RouteErrorBoundary error={error} />;
-  }
+    // Safety timeout
+    const safetyTimer = setTimeout(() => {
+      hideLoading();
+      console.log("PrivateRoute safety timeout triggered");
+    }, 1000);
+    return () => {
+      clearTimeout(safetyTimer);
+      hideLoading();
+    };
+  }, [loadingProfile, hideLoading, showLoading]);
 
-  // Check if user is authenticated and has merchant role
-  if (!isAuthenticated || (userRole && userRole !== 'merchant')) {
+  console.log('Profile Data:', profileData);
+  console.log('Profile Error:', profileError);
+  console.log('Profile Status:', profileData?.data?.current_status);
+
+  // 1. If not authenticated, redirect
+  if (!isAuthenticated) {
     return <Navigate to={redirectTo} replace />;
   }
 
-  // If profile is loading, show loading screen
+  // 2. If loading, show loading screen
   if (loadingProfile) {
     return <LoadingScreen />;
   }
 
+  // 3. If error (other than no profile), show error
   if (error) {
-    // If it's a 404 error, render the NotFoundScreen
     if (error.status === 404) {
       return <NotFoundScreen />;
     }
     return <RouteErrorBoundary error={error} />;
   }
 
-  // Check if user is authenticated and has valid role for /myboard
-  if (!isAuthenticated || (path === '/myboard' && userInfo?.data?.role && !['merchant'].includes(userInfo.data.role))) {
+  // 4. If user role is loaded and not merchant, redirect
+  if (userRole && userRole !== 'merchant') {
     return <Navigate to={redirectTo} replace />;
   }
 
-  // For /myboard path, check if profile exists
+  // 5. Special case for /myboard: show WelcomeModal if no profile or not approved, and allow Outlet
   if (path === '/myboard') {
-    if (profileError?.status === 404 || !profileData?.data) {
+    const profileStatus = profileData?.data?.current_status;
+    const shouldShowWelcome =
+      profileError?.status === 404 ||
+      !profileData?.data ||
+      ['pending', 'rejected'].includes(profileStatus);
+    if (shouldShowWelcome) {
       return (
         <>
           <WelcomeModal isOpen={showWelcomeModal} onClose={() => setShowWelcomeModal(false)} />
@@ -141,26 +129,23 @@ const PrivateRoute = ({ redirectTo = '/login', requireApproval = true, path }) =
         </>
       );
     }
+    // If userInfo role is not merchant, redirect
+    if (userInfo?.data?.role && !['merchant'].includes(userInfo.data.role)) {
+      return <Navigate to={redirectTo} replace />;
+    }
   }
 
-  // If approval is required, check profile status
+  // 6. If approval is required, check profile status
   if (requireApproval && profileData) {
     const profileStatus = profileData?.data?.current_status;
-
-    // If profile is not approved, redirect to a waiting page
     if (profileStatus !== "approved") {
-      // We'll let the LayoutDashboard handle showing the appropriate modal
-      // but we could redirect to a specific waiting page if needed
+      // Let LayoutDashboard handle the modal, but allow Outlet
       return <Outlet />;
     }
   }
 
-  // User is authenticated and (if required) approved
+  // 7. Default: user is authenticated, role is valid, and profile is approved (if required)
   return <Outlet />;
 };
 
 export default PrivateRoute;
-
-
-
-

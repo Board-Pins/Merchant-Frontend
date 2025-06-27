@@ -69,18 +69,23 @@ const WelcomeModal = ({ isOpen, handleIsClose }) => {
     categories: Yup.array().min(1, t("validation.categoryRequired", "Category is required")).required(t("validation.categoryRequired", "Category is required")),
   });
 
+  const isFormValid = (values) => {
+    return !validationSchema.isValidSync(values);
+  }
+
+
   const handleSubmit = async (values, { setSubmitting }) => {
     try {
       const profileData = { ...values, role: "merchant" };
       const result = await createProfile(profileData).unwrap();
       if (result?.data) {
         localStorage.setItem('userProfile', JSON.stringify(result.data));
-        toast.success(t("profile.creationSuccess", "Profile created successfully!"));
+        toast.success(result?.data?.en || t("profile.creationSuccess", "Profile created successfully!"));
         setModalStep('success');
       }
     } catch (err) {
       console.error("Profile creation failed:", err);
-      toast.error(err?.data?.message || t("profile.creationError", "Profile creation failed. Please try again."));
+      toast.error(err?.data?.data.errors?.en || t("profile.creationError", "Profile creation failed. Please try again."));
     } finally {
       setSubmitting(false);
     }
@@ -180,7 +185,7 @@ const WelcomeModal = ({ isOpen, handleIsClose }) => {
 
                   <div className="flex flex-col items-center space-y-6 w-full">
                     <div className="text-center mb-5">
-                      <h2 className="text-2xl md:text-3xl font-bold">{t("profile.form.title", "Welcome to Board Pins")}</h2>
+                      <h2 className="text-3xl md:text-4xl font-bold">{t("profile.form.title", "Welcome to Board Pins")}</h2>
                       <p className="text-md md:text-lg text-gray-700">
                         {t("profile.form.subtitle", "Tell us a bit about yourself to get started.")}
                       </p>
@@ -226,7 +231,7 @@ const WelcomeModal = ({ isOpen, handleIsClose }) => {
                       <button
                         type="submit"
                         className="w-full h-10 md:h-12 text-base md:text-lg bg-[#7B7FF6] hover:bg-[#6366F1] text-white font-semibold rounded-lg transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-[#4F46E5] focus:ring-offset-2 disabled:opacity-60 disabled:cursor-not-allowed"
-                        disabled={isCreatingProfile || isSubmitting}
+                        disabled={isFormValid(values)}
                       >
                         {isCreatingProfile || isSubmitting ? t("profile.form.submitting", "Creating Profile...") : t("profile.form.submitButton", "Create Profile & Continue")}
                       </button>
@@ -250,7 +255,7 @@ const WelcomeModal = ({ isOpen, handleIsClose }) => {
 
   return (
     <Modal
-      isOpen={true}
+      isOpen={isOpen}
       onClose={handleIsClose}
       className="lg:w-[1080px] w-[90%] lg:h-[720px] min-h-[70%] h-[85%] overflow-hidden bg-white rounded-3xl flex flex-col"
     >

@@ -1,7 +1,7 @@
-name: marchent pipeline
+name: merchant pipeline
 on:
   push:
-    branches: [ test ] # add test branch for testing pipeline 
+    branches: [ test ]
 env:
   AWS_REGION: ${{ secrets.AWS_REGION }}
   SERVICE_NAME: ${{ vars.SERVICE_NAME }}
@@ -22,19 +22,16 @@ jobs:
           ssh -o StrictHostKeyChecking=no ${{ secrets.EC2_USER }}@${{ secrets.EC2_IP }} << EOF   
             echo "Connection successful"
             REPO_DIR=/home/${{ vars.SERVICE_NAME }}
-            CURRENT_BRANCH="${GITHUB_REF##*/}"
 
             if [ -d "$REPO_DIR" ]; then
               cd "$REPO_DIR"
               sudo git config --global --add safe.directory "$REPO_DIR"
-              sudo git fetch origin "$CURRENT_BRANCH"
-              sudo git reset --hard origin/"$CURRENT_BRANCH"  # Force reset to match remote
+              sudo git fetch origin main
+              sudo git reset --hard origin/main  # Force reset to match remote
               sudo git clean -fd  # Remove untracked files
             else
               echo "start cloning repo"
               sudo git clone https://${{ secrets.TOKEN_GIT }}@github.com/${{ github.repository }} "$REPO_DIR"
-              sudo git fetch origin "$CURRENT_BRANCH"
-              sudo git checkout "$CURRENT_BRANCH"
             fi
 
             
