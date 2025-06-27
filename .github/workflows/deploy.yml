@@ -19,30 +19,30 @@ jobs:
       - name: Connect and deploy to EC2
         run: |
           REPO_DIR=/home/${{ vars.SERVICE_NAME }}
-          ssh -o StrictHostKeyChecking=no ${{ secrets.EC2_USER }}@${{ secrets.EC2_IP }} << EOF   
+          BRANCH="${GITHUB_REF##*/}"
+          ssh -o StrictHostKeyChecking=no ${{ secrets.EC2_USER }}@${{ secrets.EC2_IP }} "export BRANCH='$BRANCH'; export REPO_DIR='$REPO_DIR'; bash -s" << EOF
             echo "Connection successful"
-            REPO_DIR=/home/${{ vars.SERVICE_NAME }}
-            CURRENT_BRANCH=test
-
             if [ -d "$REPO_DIR" ]; then
               cd "$REPO_DIR"
               sudo git config --global --add safe.directory "$REPO_DIR"
-              sudo git fetch origin "$CURRENT_BRANCH"
-              sudo git reset --hard origin/"$CURRENT_BRANCH"  # Force reset to match remote
-              sudo git clean -fd  # Remove untracked files
+              sudo git fetch origin "$BRANCH"
+              sudo git reset --hard origin/"$BRANCH"
+              sudo git clean -fd
             else
               echo "start cloning repo"
               sudo git clone https://${{ secrets.TOKEN_GIT }}@github.com/${{ github.repository }} "$REPO_DIR"
-              sudo git fetch origin "$CURRENT_BRANCH"
-              sudo git checkout "$CURRENT_BRANCH"
+              cd "$REPO_DIR"
+              sudo git fetch origin "$BRANCH"
+              sudo git checkout "$BRANCH"
             fi
+          EOF
 
-            
       - name: Trigger user repo pipeline
         env:
           PAT_TOKEN: ${{ secrets.GIT_TOKEN }}
         run: |
-          response=$(curl -s -w "%{http_code}" \
+          # Ensure PAT_TOKEN is a valid GitHub PAT with repo:workflow and repo permissions
+          response=$(curl -s -o /dev/null -w "%{http_code}" \
             -X POST \
             -H "Accept: application/vnd.github.v3+json" \
             -H "Authorization: Bearer $PAT_TOKEN" \
