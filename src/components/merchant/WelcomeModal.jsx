@@ -255,7 +255,7 @@ const WelcomeModal = ({ isOpen, handleIsClose }) => {
 
   return (
     <Modal
-      isOpen={true}
+      isOpen={isOpen}
       onClose={handleIsClose}
       className="lg:w-[1080px] w-[90%] lg:h-[720px] min-h-[70%] h-[85%] overflow-hidden bg-white rounded-3xl flex flex-col"
     >
