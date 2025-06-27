@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import { IoSearchOutline } from "react-icons/io5";
 import { MdAddCircleOutline } from "react-icons/md";
+import config from '../../../../config';
 
 function SearchInput() {
   const [inputs, setInputs] = useState([{ id: 1, value: "" }]);
@@ -44,10 +45,21 @@ function SearchInput() {
     }
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async (e) => {
+    if (e) e.preventDefault();
     const searchValues = inputs.map((input) => input.value).filter((value) => value !== "");
-    console.log("Search values:", searchValues);
-    // Perform search with searchValues
+    const ApiURL = config.apiBaseUrl;
+    try {
+      const response = await fetch(`${ApiURL}/profiles/search/?q=${encodeURIComponent(searchValues.join(' '))}`);
+      if (!response.ok) {
+        // For compare, just return empty if not ok
+        return;
+      }
+      const data = await response.json();
+      console.log('Compare Search Results:', data);
+    } catch (error) {
+      console.error('Compare search error:', error);
+    }
   };
 
   const handleRemoveInput = (id) => {
@@ -91,26 +103,26 @@ function SearchInput() {
         )
       ))}
       <div className="flex lg:flex-row flex-col  items-center w-full py-2">
-  <div className=" flex items-center gap-2 w-full px-4">
+        <div className=" flex items-center gap-2 w-full px-4">
 
 
-  <div className="flex items-center justify-center h-full">
-          <div className="vs-line px-2 text-xs font-bold text-gray-600 flex flex-col items-center">
-            <span className="vs-text">VS</span>
+          <div className="flex items-center justify-center h-full">
+            <div className="vs-line px-2 text-xs font-bold text-gray-600 flex flex-col items-center">
+              <span className="vs-text">VS</span>
+            </div>
+          </div>
+
+          <div className="flex flex-grow px-5 bg-white items-center rounded-lg">
+            <input
+              type="text"
+              className="lg:w-full flex-grow h-full outline-0 py-3"
+              placeholder="Type here to compare"
+              onChange={(event) => handleInputChange(inputs[inputs.length - 1].id, event)}
+            />
+            <IoSearchOutline size={20} className="search-icon" />
           </div>
         </div>
 
-        <div className="flex flex-grow px-5 bg-white items-center rounded-lg">
-          <input
-            type="text"
-            className="lg:w-full flex-grow h-full outline-0 py-3"
-            placeholder="Type here to compare"
-            onChange={(event) => handleInputChange(inputs[inputs.length - 1].id, event)}
-          />
-          <IoSearchOutline size={20} className="search-icon" />
-        </div>
-  </div>
-      
         <button
           className="flex lg:mt-1 mt-6  min-w-[140px] justify-center text-center gap-1 items-center px-2 bg-[#6161FF] text-white font-medium text-sm py-3 rounded-lg ml-2"
           onClick={handleSubmit}

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import illustration from '../../../assets/images/Landing/Group 26874.png';
 import search from '../../../assets/images/Landing/Icon  Bank.svg';
@@ -10,10 +10,16 @@ import collaboration from '../../../assets/images/Landing/cardicon4.svg';
 import { RiArrowRightLine } from "react-icons/ri";
 // import { FaChevronDown, FaChevronUp } from "react-icons/fa6";
 import { Link } from 'react-router-dom';
+import config from '../../../config';
 
 function Section1Home() {
   const { i18n } = useTranslation();
   const [showCardsCount, setShowCardsCount] = useState(4);
+  const [searchValue, setSearchValue] = useState("");
+  const [suggestions, setSuggestions] = useState([]);
+  const [showDropdown, setShowDropdown] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const debounceTimeout = useRef(null);
 
   const serviceFeatures = {
     en: [
@@ -41,6 +47,65 @@ function Section1Home() {
   const currentLanguage = i18n.language || 'en';
   const featuresToShow = serviceFeatures[currentLanguage] || serviceFeatures.en;
 
+  const fetchSuggestions = async (value) => {
+    if (!value) {
+      setSuggestions([]);
+      setShowDropdown(false);
+      return;
+    }
+    setLoading(true);
+    const ApiURL = config.apiBaseUrl;
+    try {
+      const response = await fetch(`${ApiURL}/profiles/search/?q=${encodeURIComponent(value)}`);
+      const data = await response.json();
+      // Try to find a string field to show as label
+      const results = Array.isArray(data?.results) ? data.results : (Array.isArray(data) ? data : []);
+      const getLabel = (item) => {
+        if (!item) return '';
+        for (const key in item) {
+          if (typeof item[key] === 'string' && item[key].length > 0) return item[key];
+        }
+        return '';
+      };
+      setSuggestions(results.slice(0, 5).map(item => ({ ...item, label: getLabel(item) })));
+      setShowDropdown(true);
+    } catch (error) {
+      setSuggestions([]);
+      setShowDropdown(false);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleInputChange = (e) => {
+    const value = e.target.value;
+    setSearchValue(value);
+    setShowDropdown(false);
+    if (debounceTimeout.current) clearTimeout(debounceTimeout.current);
+    debounceTimeout.current = setTimeout(() => {
+      fetchSuggestions(value);
+    }, 300);
+  };
+
+  const handleSuggestionClick = (label) => {
+    setSearchValue(label);
+    setShowDropdown(false);
+  };
+
+  const handleSearch = async (e) => {
+    e.preventDefault();
+    setShowDropdown(false);
+    // You can keep or remove the fetch here depending on if you want to do a full search on submit
+    const ApiURL = config.apiBaseUrl;
+    try {
+      const response = await fetch(`${ApiURL}/profiles/search/?q=${encodeURIComponent(searchValue)}`);
+      const data = await response.json();
+      console.log('Search Results:', data);
+    } catch (error) {
+      console.error('Search error:', error);
+    }
+  };
+
   // Function to toggle between showing 4 and 8 cards
   // const toggleShowAllCards = () => {
   //   setShowCardsCount(showCardsCount === 4 ? 8 : 4);
@@ -52,15 +117,43 @@ function Section1Home() {
       <div className={`flex lg:flex-row flex-col bg w-full py-12 gap-2`}>
         <div className={` ${currentLanguage === "ar" ? "lg:me-56" : "lg:ms-56"} flex-grow bg py-5 md:order-2 order-2`}>
           <h1 className="lg:font-semibold font-[500] text-center lg:leading-[3.25rem] md:leading-[3.25rem] md:text-[48px] text-[32px] text-[#333333]">
-            {currentLanguage === "ar" ? "اكتشف وتواصل وأدر في منصة واحدة" : "Discover, Connect, and Manage in One Platform"}
+            {currentLanguage === "ar" ? "اكتشف وتواصل وأدر في منصة واحدة" : "Discover, Connect, and Manage in One Platform"}
           </h1>
           <p className="text-md text-center font-light md:text-[14px] text-[12px] py-4 mt-6">
-            {currentLanguage === "ar" ? "ابحث عن مقدمي الخدمات المثاليين، إدارة المهام، والحصول على مساعدة فورية من مساعدنا الذكي في منصة واحدة" : "Find the perfect service providers, manage tasks, get instant help with our friendly AI assistant in one platform"}
+            {currentLanguage === "ar" ? "ابحث عن مقدمي الخدمات المثاليين، إدارة المهام، والحصول على مساعدة فورية من مساعدنا الذكي في منصة واحدة" : "Find the perfect service providers, manage tasks, get instant help with our friendly AI assistant in one platform"}
           </p>
           {/* Search Bar */}
-          <div className="bg-white rounded-xl py-4 flex justify-center gap-2 items-center px-5 m-5">
-            <input placeholder={currentLanguage === "ar" ? "ماذا تبحث عنه؟" : "What are you looking for?"} className="w-full h-100 focus:outline-none" />
-            <img src={search} alt="Search Icon" className='w-7 h-7' />
+          <div className="bg-white rounded-xl py-4 flex justify-center gap-2 items-center px-5 m-5" style={{ position: 'relative' }}>
+            <form onSubmit={handleSearch} className="flex w-full gap-2 items-center" autoComplete="off">
+              <input
+                value={searchValue}
+                onChange={handleInputChange}
+                onFocus={() => suggestions.length > 0 && setShowDropdown(true)}
+                placeholder={currentLanguage === "ar" ? "ماذا تبحث عنه؟" : "What are you looking for?"}
+                className="w-full h-100 focus:outline-none"
+                style={{ position: 'relative', zIndex: 2 }}
+              />
+              <button type="submit">
+                <img src={search} alt="Search Icon" className='w-7 h-7' />
+              </button>
+            </form>
+            {showDropdown && (
+              <div className="absolute left-0 right-0 top-full bg-white border border-gray-200 rounded-b-xl shadow-lg z-10" style={{ maxHeight: '200px', overflowY: 'auto' }}>
+                {loading ? (
+                  <div className="p-2 text-gray-500 text-sm">Loading...</div>
+                ) : suggestions.length === 0 ? (
+                  <div className="p-2 text-gray-500 text-sm">No results</div>
+                ) : suggestions.map((s, idx) => (
+                  <div
+                    key={idx}
+                    className="p-2 cursor-pointer hover:bg-gray-100 text-sm"
+                    onMouseDown={() => handleSuggestionClick(s.label)}
+                  >
+                    {s.label}
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         </div>
 

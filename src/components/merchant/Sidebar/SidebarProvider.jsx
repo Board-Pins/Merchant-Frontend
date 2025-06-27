@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Link, useLocation } from "react-router-dom";
 import MenuIcon from "@mui/icons-material/Menu";
 import { IoMdExit } from "react-icons/io";
@@ -6,6 +6,7 @@ import { Icon } from "@iconify/react";
 import Logo from "../../../assets/images/Logo.png";
 import { FiSearch } from "react-icons/fi";
 import { useTranslation } from "react-i18next";
+import config from '../../../config';
 
 const SidebarProvider = ({ handleIsopen }) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -22,6 +23,11 @@ const SidebarProvider = ({ handleIsopen }) => {
     productionGroup: false,
     Setting: false,
   });
+  const [sidebarSearch, setSidebarSearch] = useState("");
+  const [suggestions, setSuggestions] = useState([]);
+  const [showDropdown, setShowDropdown] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const debounceTimeout = useRef(null);
 
   const toggleLanguage = () => {
     i18n.changeLanguage(i18n.language === 'en' ? 'ar' : 'en');
@@ -191,6 +197,74 @@ const SidebarProvider = ({ handleIsopen }) => {
     });
   };
 
+  const fetchSuggestions = async (value) => {
+    if (!value) {
+      setSuggestions([]);
+      setShowDropdown(false);
+      return;
+    }
+    setLoading(true);
+    const ApiURL = config.apiBaseUrl;
+    try {
+      const response = await fetch(`${ApiURL}/profiles/search/?q=${encodeURIComponent(value)}`);
+      if (!response.ok) {
+        setSuggestions([]);
+        setShowDropdown(true);
+        setLoading(false);
+        return;
+      }
+      const data = await response.json();
+      const results = Array.isArray(data?.results) ? data.results : (Array.isArray(data) ? data : []);
+      const getLabel = (item) => {
+        if (!item) return '';
+        for (const key in item) {
+          if (typeof item[key] === 'string' && item[key].length > 0) return item[key];
+        }
+        return '';
+      };
+      setSuggestions(results.slice(0, 5).map(item => ({ ...item, label: getLabel(item) })));
+      setShowDropdown(true);
+    } catch (error) {
+      setSuggestions([]);
+      setShowDropdown(false);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleInputChange = (e) => {
+    const value = e.target.value;
+    setSidebarSearch(value);
+    setShowDropdown(false);
+    if (debounceTimeout.current) clearTimeout(debounceTimeout.current);
+    debounceTimeout.current = setTimeout(() => {
+      fetchSuggestions(value);
+    }, 300);
+  };
+
+  const handleSuggestionClick = (label) => {
+    setSidebarSearch(label);
+    setShowDropdown(false);
+  };
+
+  const handleSidebarSearch = async (e) => {
+    e.preventDefault();
+    setShowDropdown(false);
+    const ApiURL = config.apiBaseUrl;
+    try {
+      const response = await fetch(`${ApiURL}/profiles/search/?q=${encodeURIComponent(sidebarSearch)}`);
+      if (!response.ok) {
+        setSuggestions([]);
+        setShowDropdown(true);
+        setLoading(false);
+        return;
+      }
+      const data = await response.json();
+      console.log('Sidebar Search Results:', data);
+    } catch (error) {
+      console.error('Sidebar search error:', error);
+    }
+  };
 
   return (
     <>
@@ -219,13 +293,35 @@ const SidebarProvider = ({ handleIsopen }) => {
             scrollbarColor: "#4B5563 #1E1E1EBF",
           }}
         >
-          <li className="bg-[#F2F2F2] rounded-lg  flex items-center text-[#666666] p-4 ">
+          <li className="bg-[#F2F2F2] rounded-lg flex items-center text-[#666666] p-4 relative">
             <FiSearch />
-            <input
-              type="text"
-              placeholder="Search"
-              className="bg-transparent px-2 outline-0 flex-grow"
-            />
+            <form onSubmit={handleSidebarSearch} className="flex-grow flex" autoComplete="off">
+              <input
+                type="text"
+                value={sidebarSearch}
+                onChange={handleInputChange}
+                onFocus={() => suggestions.length > 0 && setShowDropdown(true)}
+                placeholder="Search"
+                className="bg-transparent px-2 outline-0 flex-grow"
+              />
+            </form>
+            {showDropdown && (
+              <div className="absolute left-0 right-0 top-full mt-1 bg-white border border-gray-200 rounded-b-xl shadow-lg z-10" style={{ maxHeight: '200px', overflowY: 'auto' }}>
+                {loading ? (
+                  <div className="p-2 text-gray-500 text-sm">Loading...</div>
+                ) : suggestions.length === 0 ? (
+                  <div className="p-2 text-gray-500 text-sm">No results</div>
+                ) : suggestions.map((s, idx) => (
+                  <div
+                    key={idx}
+                    className="p-2 cursor-pointer hover:bg-gray-100 text-sm text-black"
+                    onMouseDown={() => handleSuggestionClick(s.label)}
+                  >
+                    {s.label}
+                  </div>
+                ))}
+              </div>
+            )}
           </li>
 
           {menuItems.map((item) => (
