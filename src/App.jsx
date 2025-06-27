@@ -1,5 +1,5 @@
-import { BrowserRouter as Router, Routes, Route, useLocation, useNavigate } from "react-router-dom";
-import { useState, useEffect, Suspense, lazy } from 'react';
+import { BrowserRouter as Router, Routes, Route, useLocation } from "react-router-dom";
+import { useState, useEffect, Suspense } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
 import Layout from "./utils/LayoutDashboard";
 import LayoutLanding from "./utils/LayoutLanding";
@@ -52,9 +52,10 @@ import ChatWelcome from "./components/merchant/Chat/ChatWelcome";
 import ChatMessages from "./components/merchant/Chat/ChatMessages";
 import PrivateRoute from "./pages/Auth/PrivateRoute";
 import { useLoading } from './context/LoadingContext';
+import logo from './assets/images/Logo.png'; // Import logo for RootFallbackComponent
 
 // Import error and loading components
-import RouteErrorBoundary from './components/common/RouteErrorBoundary';
+// RouteErrorBoundary is designed for data routers, remove its usage with BrowserRouter's errorElement
 import LoadingScreen from './components/common/LoadingScreen';
 import NotFoundScreen from './components/common/NotFoundScreen';
 
@@ -86,44 +87,81 @@ const RouteChangeHandler = () => {
   return null;
 };
 
-const FallbackComponent = ({ error }) => {
-  const { isInitialLoading } = useLoading();
+const RootFallbackComponent = ({ error }) => {
+  // Default values
+  let displayTitle = "Something went wrong";
+  let displayMessage = "An unexpected error occurred while loading this page.";
+  let displayErrorCode = null;
+  let displayDetails = null;
+  const buttonText = "Go to Home"; // Constant for this component
+  const showRefreshButton = true; // Constant for this component
+  const buttonLink = "/"; // Constant for this component
 
-  if (isInitialLoading) {
-    return null;
+  if (error) {
+    displayErrorCode = error.status || error.statusCode;
+    displayTitle = error.statusText || displayTitle; // Use default if error.statusText is not available
+
+    // Determine message and details
+    if (error.data?.data?.errors?.en) {
+      displayMessage = error.data.data.errors.en;
+      displayDetails = error.data.data.errors.en; // Use the same for details if it's the most specific
+    } else if (import.meta.env.MODE === 'development' && error.stack) {
+      displayMessage = error.message || displayMessage;
+      displayDetails = error.stack; // Show stack trace in development
+    } else {
+      displayMessage = error.data?.message || error.message || displayMessage;
+      displayDetails = error.data?.details || null; // Prefer specific details if available
+    }
   }
 
   return (
     <div className="fixed inset-0 bg-white flex flex-col items-center justify-center z-50 p-4">
-      <h1 className="text-2xl font-bold text-gray-800 mb-3">Something went wrong</h1>
-      <p className="text-gray-600 mb-8">We&apos;re having trouble loading the application.</p>
-      <div className="flex flex-col sm:flex-row gap-3 justify-center">
-        <button
-          onClick={() => window.location.href = '/'}
-          className="px-6 py-2 bg-primary text-white rounded-lg font-medium hover:bg-primary/90 transition-colors"
-        >
-          Go to Home
-        </button>
-        <button
-          onClick={() => window.location.reload()}
-          className="px-6 py-2 border border-gray-300 text-gray-700 rounded-lg font-medium hover:bg-gray-50 transition-colors"
-        >
-          Refresh Page
-        </button>
-      </div>
-      {error && (
-        <div className="mt-4 text-red-600">
-          <h2 className="text-xl font-bold">Error Details:</h2>
-          <pre className="bg-gray-100 p-4 rounded-lg overflow-x-auto whitespace-pre-wrap">{error.message}</pre>
+      <img src={logo} alt="BoardPins" className="w-[150px] mb-8" />
+
+      <div className="text-center max-w-lg"> {/* Increased max-width for better details display */}
+        {displayErrorCode && (
+          <span className="inline-block px-4 py-1 rounded-full bg-red-50 text-red-500 font-medium text-sm mb-4">
+            Error {displayErrorCode}
+          </span>
+        )}
+
+        <h1 className="text-2xl font-bold text-gray-800 mb-3">{displayTitle}</h1>
+        <p className="text-gray-600 mb-6">{displayMessage}</p> {/* Adjusted margin */}
+
+
+        {/* error details */}
+        {displayDetails && (
+          <div className="mt-4 mb-8 text-left bg-gray-100 p-4 rounded-lg max-h-60 overflow-y-auto"> {/* Added max-h and overflow */}
+            <h2 className="text-lg font-semibold text-gray-700 mb-2">Error Details:</h2>
+            <pre className="text-sm text-red-700 whitespace-pre-wrap break-all">{displayDetails}</pre> {/* break-all for long strings */}
+          </div>
+        )}
+
+        <div className="flex flex-col sm:flex-row gap-3 justify-center">
+          {/* Changed Link to a button with window.location.href for robustness */}
+          <button
+            onClick={() => window.location.href = buttonLink}
+            className="px-6 py-2 bg-primary text-white rounded-lg font-medium hover:bg-primary/90 transition-colors"
+          >
+            {buttonText}
+          </button>
+
+          {showRefreshButton && (
+            <button
+              onClick={() => window.location.reload()}
+              className="px-6 py-2 border border-gray-300 text-gray-700 rounded-lg font-medium hover:bg-gray-50 transition-colors"
+            >
+              Refresh Page
+            </button>
+          )}
         </div>
-      )}
+      </div>
     </div>
   );
 };
 
 const App = () => {
   const [isLoading, setIsLoading] = useState(true);
-  const [renderError] = useState(null);
 
   useEffect(() => {
     // Immediately set loading to false
@@ -138,21 +176,17 @@ const App = () => {
     return <LoadingScreen />;
   }
 
-  if (renderError) {
-    return <FallbackComponent error={renderError} />;
-  }
-
   return (
-    <ErrorBoundary FallbackComponent={FallbackComponent} onError={(error) => console.error("App error:", error)}>
+    <ErrorBoundary FallbackComponent={RootFallbackComponent} onError={(error, errorInfo) => {
+      console.error("App level error caught:", error, errorInfo);
+    }}>
       <Router>
         <RouteChangeHandler />
         <Routes>
           {/* Auth Routes */}
           <Route path="/" element={
-            <ErrorBoundaryWrapper>
-              <LayoutAuth />
-            </ErrorBoundaryWrapper>
-          } errorElement={<RouteErrorBoundary />}>
+            <ErrorBoundaryWrapper><LayoutAuth /></ErrorBoundaryWrapper>
+          }>
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<Signup />} />
             <Route path="/forgetpassword" element={<ForgetPassword />} />
@@ -165,10 +199,8 @@ const App = () => {
 
           {/* Landing Routes */}
           <Route path="/" element={
-            <ErrorBoundaryWrapper>
-              <LayoutLanding />
-            </ErrorBoundaryWrapper>
-          } errorElement={<RouteErrorBoundary />}>
+            <ErrorBoundaryWrapper><LayoutLanding /></ErrorBoundaryWrapper>
+          }>
             <Route index element={<Home />} />
             <Route path="/home" element={<Home />} />
             <Route path="/pricing" element={<Pricing />} />
@@ -177,12 +209,10 @@ const App = () => {
           </Route>
 
           {/* Protected Routes */}
-          <Route element={<PrivateRoute />} errorElement={<RouteErrorBoundary />}>
+          <Route element={<PrivateRoute />}>
             <Route path="/" element={
-              <ErrorBoundaryWrapper>
-                <Layout />
-              </ErrorBoundaryWrapper>
-            }>
+              <ErrorBoundaryWrapper><Layout /></ErrorBoundaryWrapper>
+            }> {/* Note: No errorElement here */}
               <Route path="/dashboard" element={<Dashboard />} />
               <Route path="/knowledgebase" element={<KnowledgeBase />} />
               <Route path="/myboard" element={<MyBoardPins />} />
@@ -226,11 +256,11 @@ const App = () => {
           </Route>
 
           {/* Public Single Page */}
-          <Route path="/ordering-billing" element={<OrderBilling />} errorElement={<RouteErrorBoundary />} />
+          <Route path="/ordering-billing" element={<OrderBilling />} />
 
           {/* Google Callback Route */}
-          <Route path="/auth/google/callback" element={<GoogleCallback />} errorElement={<RouteErrorBoundary />} />
-          <Route path="/auth/callback" element={<AuthCallback />} errorElement={<RouteErrorBoundary />} />
+          <Route path="/auth/google/callback" element={<GoogleCallback />} />
+          <Route path="/auth/callback" element={<AuthCallback />} />
 
           {/* 404 Route - Must be last */}
           <Route path="*" element={<NotFoundScreen />} />
@@ -241,5 +271,3 @@ const App = () => {
 };
 
 export default App;
-
-
