@@ -18,7 +18,7 @@ function InputSearch() {
     setLoading(true);
     const ApiURL = config.apiBaseUrl;
     try {
-      const response = await fetch(`${ApiURL}/profiles/search/?q=${encodeURIComponent(value)}`);
+      const response = await fetch(`${ApiURL}/users-service/profiles/search/?q=${encodeURIComponent(value)}`);
       if (!response.ok) {
         setSuggestions([]);
         setShowDropdown(true);
@@ -26,12 +26,13 @@ function InputSearch() {
         return;
       }
       const data = await response.json();
-      const results = Array.isArray(data?.results) ? data.results : (Array.isArray(data) ? data : []);
+      const results = Array.isArray(data?.data?.results) ? data.data.results : [];
       const getLabel = (item) => {
         if (!item) return '';
         for (const key in item) {
           if (typeof item[key] === 'string' && item[key].length > 0) return item[key];
         }
+        if (item.user && item.user.email) return item.user.email;
         return '';
       };
       setSuggestions(results.slice(0, 5).map(item => ({ ...item, label: getLabel(item) })));
@@ -64,7 +65,7 @@ function InputSearch() {
     setShowDropdown(false);
     const ApiURL = config.apiBaseUrl;
     try {
-      const response = await fetch(`${ApiURL}/profiles/search/?q=${encodeURIComponent(searchValue)}`);
+      const response = await fetch(`${ApiURL}/users-service/profiles/search/?q=${encodeURIComponent(searchValue)}`);
       if (!response.ok) {
         setSuggestions([]);
         setShowDropdown(true);

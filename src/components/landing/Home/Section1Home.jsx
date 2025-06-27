@@ -56,7 +56,7 @@ function Section1Home() {
     setLoading(true);
     const ApiURL = config.apiBaseUrl;
     try {
-      const response = await fetch(`${ApiURL}/profiles/search/?q=${encodeURIComponent(value)}`);
+      const response = await fetch(`${ApiURL}/users-service/profiles/search/?q=${encodeURIComponent(value)}`);
       const data = await response.json();
       // Try to find a string field to show as label
       const results = Array.isArray(data?.results) ? data.results : (Array.isArray(data) ? data : []);
@@ -98,7 +98,7 @@ function Section1Home() {
     // You can keep or remove the fetch here depending on if you want to do a full search on submit
     const ApiURL = config.apiBaseUrl;
     try {
-      const response = await fetch(`${ApiURL}/profiles/search/?q=${encodeURIComponent(searchValue)}`);
+      const response = await fetch(`${ApiURL}/users-service/profiles/search/?q=${encodeURIComponent(searchValue)}`);
       const data = await response.json();
       console.log('Search Results:', data);
     } catch (error) {

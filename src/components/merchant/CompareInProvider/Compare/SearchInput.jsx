@@ -50,12 +50,13 @@ function SearchInput() {
     const searchValues = inputs.map((input) => input.value).filter((value) => value !== "");
     const ApiURL = config.apiBaseUrl;
     try {
-      const response = await fetch(`${ApiURL}/profiles/search/?q=${encodeURIComponent(searchValues.join(' '))}`);
+      const response = await fetch(`${ApiURL}/users-service/profiles/search/?q=${encodeURIComponent(searchValues.join(' '))}`);
       if (!response.ok) {
         // For compare, just return empty if not ok
         return;
       }
       const data = await response.json();
+      const results = Array.isArray(data?.data?.results) ? data.data.results : [];
       console.log('Compare Search Results:', data);
     } catch (error) {
       console.error('Compare search error:', error);
