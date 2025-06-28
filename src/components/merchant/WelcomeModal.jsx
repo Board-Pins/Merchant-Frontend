@@ -31,10 +31,17 @@ const WelcomeModal = ({ isOpen, handleIsClose }) => {
 
 
   useEffect(() => {
+    // If no profile exists (userProfile is undefined), default to form step
+    if (!userProfile?.data) {
+      console.log('No profile data, setting modal step to form');
+      setModalStep('form');
+      return;
+    }
 
     const status = userProfile?.data?.current_status;
 
-    console.log(status);
+    console.log('Profile status:', status);
+    console.log('Setting modal step based on status:', status);
     switch (status) {
       case "pending":
         setModalStep('success');
