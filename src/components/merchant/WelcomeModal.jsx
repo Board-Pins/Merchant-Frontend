@@ -25,10 +25,12 @@ const WelcomeModal = ({ isOpen, handleIsClose }) => {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  const { data: userProfile, isLoading: profileLoading } = useGetUserProfileQuery();
+  const { data: userProfile, isLoading: profileLoading, refetch } = useGetUserProfileQuery();
   const [createProfile, { isLoading: isCreatingProfile }] = useCreateProfileMutation();
   const [updateProfile, { isLoading: isUpdatingProfile }] = useUpdateProfileMutation();
 
+  const status = userProfile?.data?.current_status;
+  const isIncomplete = status === "incomplete";
 
   useEffect(() => {
     // If no profile exists (userProfile is undefined), default to form step
@@ -37,8 +39,6 @@ const WelcomeModal = ({ isOpen, handleIsClose }) => {
       setModalStep('form');
       return;
     }
-
-    const status = userProfile?.data?.current_status;
 
     console.log('Profile status:', status);
     console.log('Setting modal step based on status:', status);
@@ -80,19 +80,31 @@ const WelcomeModal = ({ isOpen, handleIsClose }) => {
     return !validationSchema.isValidSync(values);
   }
 
-
   const handleSubmit = async (values, { setSubmitting }) => {
     try {
       const profileData = { ...values, role: "merchant" };
-      const result = await createProfile(profileData).unwrap();
+      let result;
+      if (isIncomplete) {
+        // Update the existing profile
+        result = await updateProfile(profileData).unwrap();
+      } else {
+        // Create a new profile
+        result = await createProfile(profileData).unwrap();
+      }
       if (result?.data) {
         localStorage.setItem('userProfile', JSON.stringify(result.data));
-        toast.success(result?.data?.en || t("profile.creationSuccess", "Profile created successfully!"));
+        toast.success(
+          result?.data?.en || t("profile.creationSuccess", "Profile saved successfully!")
+        );
         setModalStep('success');
+        await refetch();
       }
     } catch (err) {
-      console.error("Profile creation failed:", err);
-      toast.error(err?.data?.data.errors?.en || t("profile.creationError", "Profile creation failed. Please try again."));
+      console.error("Profile save failed:", err);
+      toast.error(
+        err?.data?.data.errors?.en ||
+        t("profile.creationError", "Profile save failed. Please try again.")
+      );
     } finally {
       setSubmitting(false);
     }
@@ -128,9 +140,8 @@ const WelcomeModal = ({ isOpen, handleIsClose }) => {
         if (result?.data) {
           toast(t('welcome.boardAccess', 'Welcome! Accessing your board.'));
           setNavigatingToBoard(true);
-          // hide the modal
+          await refetch();
           handleIsClose();
-          // navigate to my board
           navigate('/myboard', { replace: true });
         }
       } catch (err) {
