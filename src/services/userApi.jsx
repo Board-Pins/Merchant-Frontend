@@ -39,10 +39,14 @@ export const userApi = createApi({
       return headers;
     },
     responseHandler: async (response) => {
+      console.log('API Response status:', response.status, 'for URL:', response.url);
+
       // Handle token expiration
       if (response.status === 401) {
+        console.log('401 error detected, attempting token refresh');
         const refreshed = await refreshToken();
         if (refreshed) {
+          console.log('Token refreshed successfully, retrying request');
           // Retry the original request with new token
           const retryResponse = await fetch(response.url, {
             method: response.request.method,
@@ -53,6 +57,11 @@ export const userApi = createApi({
             body: response.request.body,
           });
           return retryResponse.json();
+        } else {
+          console.log('Token refresh failed, redirecting to login');
+          localStorage.removeItem('accessToken');
+          localStorage.removeItem('refreshToken');
+          window.location.href = '/login';
         }
       }
       return response.json();
@@ -103,7 +112,7 @@ export const userApi = createApi({
       method: 'GET',
     }),
     getUserProfile: builder.query({
-      query: () => 'users-service/profiles',
+      query: () => '/users-service/profiles',
       method: 'GET',
     }),
 
@@ -162,7 +171,7 @@ export const userApi = createApi({
         body: profileData,
       }),
     }),
-    
+
   }),
 });
 
