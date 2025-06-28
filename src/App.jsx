@@ -36,6 +36,7 @@ import MyBids from "./pages/Merchant/MyBids";
 import SavedBiddingProject from "./pages/Merchant/SavedBiddingProject";
 import BiddingProjectDetails from "./pages/Merchant/BiddingProjectDetails";
 import CreateBiddingProject from "./pages/Merchant/CreateBiddingProject";
+import ApiTest from "./components/common/ApiTest";
 
 import CompareInProvider from "./pages/Merchant/CompareInProvider";
 import CompareBetween from "./pages/Merchant/CompareBetween";
@@ -252,6 +253,9 @@ const App = () => {
               <Route path="/upgrade" element={<Upgrade />} />
               <Route path="/setting-profile" element={<SettingProfile />} />
               <Route path="/Setting-billing" element={<SettingBilling />} />
+
+              {/* ApiTest */}
+              <Route path="/api-test" element={<ApiTest />} />
             </Route>
           </Route>
 
