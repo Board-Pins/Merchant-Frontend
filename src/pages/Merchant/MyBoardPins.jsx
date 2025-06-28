@@ -26,8 +26,10 @@ export default function MyBoardPins() {
 
   // Then effects
   useEffect(() => {
-    if (error) {
+    if (error && error.status !== 404) {
       console.error("Error fetching user profile:", error);
+    } else if (error && error.status === 404) {
+      console.log("Profile not found (404) - this is expected for new users");
     }
   }, [error]);
 

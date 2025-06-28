@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Navigate, Outlet } from 'react-router-dom';
+import { Navigate, Outlet, useLocation } from 'react-router-dom';
 import { useLoading } from '../../context/LoadingContext';
 import NotFoundScreen from '../../components/common/NotFoundScreen';
 import RouteErrorBoundary from '../../components/common/RouteErrorBoundary';
@@ -7,8 +7,10 @@ import { useGetUserProfileQuery, useGetUserInfoQuery } from '../../services/user
 import LoadingScreen from '../../components/common/LoadingScreen';
 import WelcomeModal from '../../components/merchant/WelcomeModal';
 
-const PrivateRoute = ({ redirectTo = '/login', requireApproval = true, path }) => {
+const PrivateRoute = ({ redirectTo = '/login', requireApproval = true }) => {
   const { showLoading, hideLoading } = useLoading();
+  const location = useLocation();
+  const path = location.pathname;
   const accessToken = localStorage.getItem('accessToken');
   const isAuthenticated = !!accessToken;
   const [error, setError] = useState(null);
@@ -39,33 +41,26 @@ const PrivateRoute = ({ redirectTo = '/login', requireApproval = true, path }) =
 
   useEffect(() => {
     if (profileData?.data?.role) {
+      console.log('Setting user role from profile data:', profileData.data.role);
       setUserRole(profileData.data.role);
       // Store profile data in localStorage
       localStorage.setItem('userProfile', JSON.stringify(profileData.data));
+    } else if (userInfo?.data?.role) {
+      console.log('Setting user role from user info:', userInfo.data.role);
+      setUserRole(userInfo.data.role);
+      // Store user info in localStorage as fallback
+      localStorage.setItem('userProfile', JSON.stringify(userInfo.data));
     }
-  }, [profileData]);
+  }, [profileData, userInfo]);
 
-  // Handle errors
+  // Handle errors - only treat non-404 errors as actual errors
   useEffect(() => {
-    if (profileError) {
-      // Don't set error for "No profile exists" errors - these should trigger profile creation
-      if (profileError.status === 404 || profileError.originalStatus === 404) {
-        if (profileError?.data?.message === "No profile exists for this user") {
-          return;
-        }
-      }
-      if (profileError.status === 'PARSING_ERROR' && typeof profileError.data === 'string') {
-        try {
-          const parsedData = JSON.parse(profileError.data);
-          if (parsedData?.message === "No profile exists for this user" ||
-            parsedData?.data?.errors?.en === "No profile exists for this user") {
-            return;
-          }
-        } catch (e) {
-          // Ignore parsing failure, treat as a regular error
-        }
-      }
+    if (profileError && profileError.status !== 404) {
+      console.log('Profile error (non-404):', profileError);
       setError(profileError);
+    } else if (profileError && profileError.status === 404) {
+      console.log('Profile not found (404) - this is expected for new users');
+      // Don't set error for 404 - this is expected when user doesn't have a profile yet
     }
   }, [profileError]);
 
@@ -90,9 +85,14 @@ const PrivateRoute = ({ redirectTo = '/login', requireApproval = true, path }) =
   console.log('Profile Data:', profileData);
   console.log('Profile Error:', profileError);
   console.log('Profile Status:', profileData?.data?.current_status);
+  console.log('Access Token:', !!accessToken);
+  console.log('Is Authenticated:', isAuthenticated);
+  console.log('User Role:', userRole);
+  console.log('User Info:', userInfo);
 
   // 1. If not authenticated, redirect
   if (!isAuthenticated) {
+    console.log('Not authenticated, redirecting to login');
     return <Navigate to={redirectTo} replace />;
   }
 
@@ -101,7 +101,7 @@ const PrivateRoute = ({ redirectTo = '/login', requireApproval = true, path }) =
     return <LoadingScreen />;
   }
 
-  // 3. If error (other than no profile), show error
+  // 3. If error (other than 404), show error
   if (error) {
     if (error.status === 404) {
       return <NotFoundScreen />;
@@ -109,22 +109,32 @@ const PrivateRoute = ({ redirectTo = '/login', requireApproval = true, path }) =
     return <RouteErrorBoundary error={error} />;
   }
 
-  // 4. If user role is loaded and not merchant, redirect
+  // 4. Show WelcomeModal if no profile exists (for any protected route)
+  if (profileError?.status === 404 || !profileData?.data) {
+    console.log('No profile exists, showing WelcomeModal');
+    console.log('showWelcomeModal state:', showWelcomeModal);
+    return (
+      <>
+        <WelcomeModal isOpen={true} onClose={() => setShowWelcomeModal(false)} />
+        <Outlet />
+      </>
+    );
+  }
+
+  // 5. If user role is loaded and not merchant, redirect
   if (userRole && userRole !== 'merchant') {
+    console.log('User role is not merchant, redirecting to login. Role:', userRole);
     return <Navigate to={redirectTo} replace />;
   }
 
-  // 5. Special case for /myboard: show WelcomeModal if no profile or not approved, and allow Outlet
+  // 6. Special case for /myboard: show WelcomeModal if profile is not approved
   if (path === '/myboard') {
     const profileStatus = profileData?.data?.current_status;
-    const shouldShowWelcome =
-      profileError?.status === 404 ||
-      !profileData?.data ||
-      ['pending', 'rejected'].includes(profileStatus);
+    const shouldShowWelcome = ['pending', 'rejected'].includes(profileStatus);
     if (shouldShowWelcome) {
       return (
         <>
-          <WelcomeModal isOpen={showWelcomeModal} onClose={() => setShowWelcomeModal(false)} />
+          <WelcomeModal isOpen={true} onClose={() => setShowWelcomeModal(false)} />
           <Outlet />
         </>
       );
@@ -135,7 +145,7 @@ const PrivateRoute = ({ redirectTo = '/login', requireApproval = true, path }) =
     }
   }
 
-  // 6. If approval is required, check profile status
+  // 7. If approval is required, check profile status
   if (requireApproval && profileData) {
     const profileStatus = profileData?.data?.current_status;
     if (profileStatus !== "approved") {
@@ -144,7 +154,7 @@ const PrivateRoute = ({ redirectTo = '/login', requireApproval = true, path }) =
     }
   }
 
-  // 7. Default: user is authenticated, role is valid, and profile is approved (if required)
+  // 8. Default: user is authenticated, role is valid, and profile is approved (if required)
   return <Outlet />;
 };
 
