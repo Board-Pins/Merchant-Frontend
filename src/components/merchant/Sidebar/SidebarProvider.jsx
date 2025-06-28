@@ -291,7 +291,7 @@ const SidebarProvider = ({ handleIsopen }) => {
           className="font-popines flex flex-col text-xs gap-4 font-[500] max-h-[90vh] overflow-y-auto py-4 px-1 mt-2"
           style={{
             scrollbarWidth: "thin",
-            scrollbarColor: "#4B5563 #1E1E1EBF",
+            // scrollbarColor: "#4B5563 #1E1E1EBF",
           }}
         >
           <li className="bg-[#F2F2F2] rounded-lg flex items-center text-[#666666] p-4 relative">
