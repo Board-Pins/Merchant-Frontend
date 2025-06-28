@@ -127,6 +127,7 @@ const WelcomeModal = ({ isOpen, handleIsClose }) => {
       try {
         if (result?.data) {
           toast(t('welcome.boardAccess', 'Welcome! Accessing your board.'));
+          setNavigatingToBoard(true);
           // hide the modal
           handleIsClose();
           // navigate to my board
