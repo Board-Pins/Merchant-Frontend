@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Routes, Route, useLocation } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, useLocation, Link } from "react-router-dom";
 import { useState, useEffect, Suspense } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
 import Layout from "./utils/LayoutDashboard";
@@ -139,13 +139,12 @@ const RootFallbackComponent = ({ error }) => {
         )}
 
         <div className="flex flex-col sm:flex-row gap-3 justify-center">
-          {/* Changed Link to a button with window.location.href for robustness */}
-          <button
-            onClick={() => window.location.href = buttonLink}
-            className="px-6 py-2 bg-primary text-white rounded-lg font-medium hover:bg-primary/90 transition-colors"
+          <Link
+            to={buttonLink}
+            className="px-6 py-2 bg-primary text-white rounded-lg font-medium hover:bg-primary/90 transition-colors inline-block text-center"
           >
             {buttonText}
-          </button>
+          </Link>
 
           {showRefreshButton && (
             <button
