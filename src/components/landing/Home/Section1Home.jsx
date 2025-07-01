@@ -95,15 +95,13 @@ function Section1Home() {
   const handleSearch = async (e) => {
     e.preventDefault();
     setShowDropdown(false);
-    // You can keep or remove the fetch here depending on if you want to do a full search on submit
-    const ApiURL = config.apiBaseUrl;
-    try {
-      const response = await fetch(`${ApiURL}/users-service/profiles/search/?q=${encodeURIComponent(searchValue)}`);
-      const data = await response.json();
-      console.log('Search Results:', data);
-    } catch (error) {
-      console.error('Search error:', error);
+
+    if (!searchValue.trim()) {
+      return;
     }
+
+    // Navigate to search results page with query parameter
+    window.location.href = `/search?q=${encodeURIComponent(searchValue.trim())}`;
   };
 
   // Function to toggle between showing 4 and 8 cards
