@@ -9,17 +9,25 @@ import collaboration from '../../../assets/images/Landing/cardicon4.svg';
 
 import { RiArrowRightLine } from "react-icons/ri";
 // import { FaChevronDown, FaChevronUp } from "react-icons/fa6";
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import config from '../../../config';
+import { useSearch } from '../../../hooks/useSearch';
 
 function Section1Home() {
   const { i18n } = useTranslation();
   const [showCardsCount, setShowCardsCount] = useState(4);
-  const [searchValue, setSearchValue] = useState("");
-  const [suggestions, setSuggestions] = useState([]);
-  const [showDropdown, setShowDropdown] = useState(false);
-  const [loading, setLoading] = useState(false);
   const debounceTimeout = useRef(null);
+  const navigate = useNavigate();
+
+  const {
+    searchValue,
+    setSearchValue,
+    suggestions,
+    showDropdown,
+    loading,
+    handleInputChange,
+    setShowDropdown,
+  } = useSearch({ maxResults: 5 });
 
   const serviceFeatures = {
     en: [
@@ -47,61 +55,17 @@ function Section1Home() {
   const currentLanguage = i18n.language || 'en';
   const featuresToShow = serviceFeatures[currentLanguage] || serviceFeatures.en;
 
-  const fetchSuggestions = async (value) => {
-    if (!value) {
-      setSuggestions([]);
-      setShowDropdown(false);
-      return;
-    }
-    setLoading(true);
-    const ApiURL = config.apiBaseUrl;
-    try {
-      const response = await fetch(`${ApiURL}/users-service/profiles/search/?q=${encodeURIComponent(value)}`);
-      const data = await response.json();
-      // Try to find a string field to show as label
-      const results = Array.isArray(data?.results) ? data.results : (Array.isArray(data) ? data : []);
-      const getLabel = (item) => {
-        if (!item) return '';
-        for (const key in item) {
-          if (typeof item[key] === 'string' && item[key].length > 0) return item[key];
-        }
-        return '';
-      };
-      setSuggestions(results.slice(0, 5).map(item => ({ ...item, label: getLabel(item) })));
-      setShowDropdown(true);
-    } catch (error) {
-      setSuggestions([]);
-      setShowDropdown(false);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleInputChange = (e) => {
-    const value = e.target.value;
-    setSearchValue(value);
-    setShowDropdown(false);
-    if (debounceTimeout.current) clearTimeout(debounceTimeout.current);
-    debounceTimeout.current = setTimeout(() => {
-      fetchSuggestions(value);
-    }, 300);
-  };
-
   const handleSuggestionClick = (label) => {
     setSearchValue(label);
     setShowDropdown(false);
+    navigate(`/search?q=${encodeURIComponent(label)}`);
   };
 
-  const handleSearch = async (e) => {
+  const handleSearch = (e) => {
     e.preventDefault();
     setShowDropdown(false);
-
-    if (!searchValue.trim()) {
-      return;
-    }
-
-    // Navigate to search results page with query parameter
-    window.location.href = `/search?q=${encodeURIComponent(searchValue.trim())}`;
+    if (!searchValue.trim()) return;
+    navigate(`/search?q=${encodeURIComponent(searchValue.trim())}`);
   };
 
   // Function to toggle between showing 4 and 8 cards
