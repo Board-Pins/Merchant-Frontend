@@ -14,6 +14,9 @@ import { GoPin } from "react-icons/go";
 function SearchResult() {
   const [iconColor, setIconColor] = useState("inherit");
   const [clickedCards, setClickedCards] = useState([]);
+  const [searchQuery, setSearchQuery] = useState("Board Pins"); // Default search query
+  const [searchResults, setSearchResults] = useState([]); // Initialize with an empty array
+  const [loading, setLoading] = useState(false);
 
   const handleClick = (id) => {
     if (clickedCards.includes(id)) {
@@ -111,11 +114,15 @@ function SearchResult() {
 
   return (
     <div className=" font-poppins">
-  
       <header>
         <h3 className=" text-center  text-[1.6rem] py-4">
-          Result for <strong>“Board Pins”</strong>
+          {loading ? "Searching..." : `Results for "${searchQuery}"`}
         </h3>
+        {!loading && (
+          <p className="text-center text-gray-600 mb-4">
+            Found {searchResults.length} results
+          </p>
+        )}
         <div className=" flex justify-center item-center gap-6  text-[1.2rem] text-[#555050] px-12">
           <span>@Related: </span>
           <span>Bussiness</span>
@@ -138,14 +145,14 @@ function SearchResult() {
               All
             </span>
             <span className=" rounded-[12px] border flex items-center gap-1 text-[#8C8585] px-4  ">
-            <FaLock />
+              <FaLock />
               Factories
             </span>
             <span className=" rounded-[12px] border flex items-center gap-1  text-[#8C8585] px-4  ">
-            <FaLock />
+              <FaLock />
               Agencies Legal
             </span>
-          
+
           </div>
           <div className=" flex justify-end  ">
             <Button>
@@ -177,7 +184,7 @@ function SearchResult() {
             <div key={card.id} className="flex justify-center">
               <Card
                 sx={{
-                    borderRadius:"15px",
+                  borderRadius: "15px",
                   maxWidth: 345,
                   boxShadow: "0px 8.93px 12.79px 0px rgba(0, 0, 0, 0.10)",
                 }}
@@ -194,8 +201,8 @@ function SearchResult() {
                       {card.name}
                     </Typography>
                     <Typography variant="body2" color="text.secondary">
-                        {}
-                      {card.description.slice(0,80)}
+                      { }
+                      {card.description.slice(0, 80)}
                     </Typography>
                     <CardActions>
                       <div className=" w-full  text-[.7rem] flex  items-center text-gray-600">
@@ -221,17 +228,17 @@ function SearchResult() {
                             backgroundColor: "#F1F1F1",
                             width: "35px", // Set the width as needed
                             height: "30px", // Set the height as needed
-                           boxShadow:"none",
+                            boxShadow: "none",
                             zIndex: 4,
                           }}
                           onClick={() => handleClick(card.id)}
                         >
-                          <GoPin 
+                          <GoPin
                             style={{
                               color: clickedCards.includes(card.id)
                                 ? "blue"
                                 : "inherit",
-                               
+
                             }}
                           />
                         </Fab>
@@ -244,7 +251,7 @@ function SearchResult() {
           ))}
         </div>
       </section>
-    
+
     </div>
   );
 }
