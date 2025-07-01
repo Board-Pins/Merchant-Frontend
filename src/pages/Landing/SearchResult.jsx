@@ -1,22 +1,53 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import filter from "../../assets/icons/filtterr.png";
 import img1card from "../../assets/images/merchants/merchantrec.png";
 import { Button, CardActions, Fab, Rating } from "@mui/material";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import CardMedia from "@mui/material/CardMedia";
-import PushPinIcon from "@mui/icons-material/PushPin";
 import Typography from "@mui/material/Typography";
 import { CardActionArea } from "@mui/material";
 import { FaLock } from "react-icons/fa";
 import { GoPin } from "react-icons/go";
+import { useSearch } from '../../hooks/useSearch';
+import { useLocation } from 'react-router-dom';
+import config from '../../config';
+
+function useQuery() {
+  const { search } = useLocation();
+  return React.useMemo(() => new URLSearchParams(search), [search]);
+}
 
 function SearchResult() {
-  const [iconColor, setIconColor] = useState("inherit");
   const [clickedCards, setClickedCards] = useState([]);
-  const [searchQuery, setSearchQuery] = useState("Board Pins"); // Default search query
-  const [searchResults, setSearchResults] = useState([]); // Initialize with an empty array
-  const [loading, setLoading] = useState(false);
+  const query = useQuery();
+  const searchQuery = query.get('q') || '';
+  const apiBaseUrl = config.apiBaseUrl;
+
+  const {
+    searchValue,
+    setSearchValue,
+    loading,
+    handleSearch,
+  } = useSearch({ maxResults: 100 });
+
+  const [searchResults, setSearchResults] = useState([]);
+
+  useEffect(() => {
+    if (searchQuery) {
+      setSearchValue(searchQuery);
+      handleSearch({ preventDefault: () => { } }, (data) => {
+        let results = [];
+        if (Array.isArray(data?.data?.results)) {
+          results = data.data.results;
+        }
+        setSearchResults(results);
+      });
+    } else {
+      setSearchResults([]);
+    }
+    // eslint-disable-next-line
+  }, [searchQuery, setSearchValue, handleSearch]);
 
   const handleClick = (id) => {
     if (clickedCards.includes(id)) {
@@ -25,95 +56,9 @@ function SearchResult() {
       setClickedCards([...clickedCards, id]);
     }
   };
-  const cardsData = [
-    {
-      id: 1,
-      name: "Service Provider Name 1",
-      description:
-        "Lorem ipsum dolor sit amet consectetur. Iaculis donec id et felis morbi neque. Aliquet scelerisque leo lacus et diam congue rhoncus.",
-      image: img1card,
-    },
-    {
-      id: 2,
-      name: "Service Provider Name 2",
-      description:
-        "Lorem ipsum dolor sit amet consectetur. Iaculis donec id et felis morbi neque. Aliquet scelerisque leo lacus et diam congue rhoncus.",
-      image: img1card,
-    },
-    {
-      id: 3,
-      name: "Service Provider Name 3",
-      description:
-        "Lorem ipsum dolor sit amet consectetur. Iaculis donec id et felis morbi neque. Aliquet scelerisque leo lacus et diam congue rhoncus.",
-      image: img1card,
-    },
-    {
-      id: 4,
-      name: "Service Provider Name 4",
-      description:
-        "Lorem ipsum dolor sit amet consectetur. Iaculis donec id et felis morbi neque. Aliquet scelerisque leo lacus et diam congue rhoncus.",
-      image: img1card,
-    },
-    {
-      id: 5,
-      name: "Service Provider Name 1",
-      description:
-        "Lorem ipsum dolor sit amet consectetur. Iaculis donec id et felis morbi neque. Aliquet scelerisque leo lacus et diam congue rhoncus.",
-      image: img1card,
-    },
-    {
-      id: 6,
-      name: "Service Provider Name 2",
-      description:
-        "Lorem ipsum dolor sit amet consectetur. Iaculis donec id et felis morbi neque. Aliquet scelerisque leo lacus et diam congue rhoncus.",
-      image: img1card,
-    },
-    {
-      id: 7,
-      name: "Service Provider Name 3",
-      description:
-        "Lorem ipsum dolor sit amet consectetur. Iaculis donec id et felis morbi neque. Aliquet scelerisque leo lacus et diam congue rhoncus.",
-      image: img1card,
-    },
-    {
-      id: 8,
-      name: "Service Provider Name 4",
-      description:
-        "Lorem ipsum dolor sit amet consectetur. Iaculis donec id et felis morbi neque. Aliquet scelerisque leo lacus et diam congue rhoncus.",
-      image: img1card,
-    },
-    {
-      id: 9,
-      name: "Service Provider Name 1",
-      description:
-        "Lorem ipsum dolor sit amet consectetur. Iaculis donec id et felis morbi neque. Aliquet scelerisque leo lacus et diam congue rhoncus.",
-      image: img1card,
-    },
-    {
-      id: 10,
-      name: "Service Provider Name 2",
-      description:
-        "Lorem ipsum dolor sit amet consectetur. Iaculis donec id et felis morbi neque. Aliquet scelerisque leo lacus et diam congue rhoncus.",
-      image: img1card,
-    },
-    {
-      id: 11,
-      name: "Service Provider Name 3",
-      description:
-        "Lorem ipsum dolor sit amet consectetur. Iaculis donec id et felis morbi neque. Aliquet scelerisque leo lacus et diam congue rhoncus.",
-      image: img1card,
-    },
-    {
-      id: 12,
-      name: "Service Provider Name 4",
-      description:
-        "Lorem ipsum dolor sit amet consectetur. Iaculis donec id et felis morbi neque. Aliquet scelerisque leo lacus et diam congue rhoncus.",
-      image: img1card,
-    },
-  ];
 
   return (
-    <div className=" font-poppins">
+    <div className=" font-poppins relative">
       <header>
         <h3 className=" text-center  text-[1.6rem] py-4">
           {loading ? "Searching..." : `Results for "${searchQuery}"`}
@@ -152,7 +97,6 @@ function SearchResult() {
               <FaLock />
               Agencies Legal
             </span>
-
           </div>
           <div className=" flex justify-end  ">
             <Button>
@@ -170,7 +114,6 @@ function SearchResult() {
               To be able to unlock more results, <br /> you have to signup free
               now
             </p>
-
             <div className="py-5 w-full flex justify-center">
               <button className=" bg-[#6161FF] rounded-[25px] font-[400] text-white py-3  px-10 text-center">
                 {" "}
@@ -180,78 +123,81 @@ function SearchResult() {
           </div>
         </div>
         <div className=" grid md:grid-cols-4  px-6 md:px-24 py-12 gap-4 ">
-          {cardsData.map((card) => (
-            <div key={card.id} className="flex justify-center">
-              <Card
-                sx={{
-                  borderRadius: "15px",
-                  maxWidth: 345,
-                  boxShadow: "0px 8.93px 12.79px 0px rgba(0, 0, 0, 0.10)",
-                }}
-              >
-                <CardActionArea>
-                  <CardMedia
-                    component="img"
-                    height="140"
-                    image={card.image}
-                    alt="green iguana"
-                  />
-                  <CardContent>
-                    <Typography gutterBottom variant="h5" component="div">
-                      {card.name}
-                    </Typography>
-                    <Typography variant="body2" color="text.secondary">
-                      { }
-                      {card.description.slice(0, 80)}
-                    </Typography>
-                    <CardActions>
-                      <div className=" w-full  text-[.7rem] flex  items-center text-gray-600">
-                        <Rating
-                          name="half-rating-read"
-                          defaultValue={2.5}
-                          precision={0.5}
-                          sx={{ fontSize: "1.4rem" }}
-                          readOnly
-                        />
-                        4.7 (150 Reviews)
-                      </div>
-                    </CardActions>
-                    <div className=" grid grid-cols-2 gap-4">
-                      <div className=" flex gap-3 items-center text-sm">
-                        <span className=" border border-[#6161FF] text-[#6161FF] px-2 rounded-xl">Bussiness</span>
-                        <span className=" border border-[#6161FF] text-[#6161FF] px-2 rounded-xl">Tag2</span>
-                      </div>
-                      <div className=" justify-end flex p-3  pt-0">
-                        <Fab
-                          aria-label="like"
-                          style={{
-                            backgroundColor: "#F1F1F1",
-                            width: "35px", // Set the width as needed
-                            height: "30px", // Set the height as needed
-                            boxShadow: "none",
-                            zIndex: 4,
-                          }}
-                          onClick={() => handleClick(card.id)}
-                        >
-                          <GoPin
-                            style={{
-                              color: clickedCards.includes(card.id)
-                                ? "blue"
-                                : "inherit",
-
-                            }}
+          {loading ? (
+            <div className="col-span-4 text-center text-lg">Loading...</div>
+          ) : searchResults.length === 0 ? (
+            <div className="col-span-4 text-center text-lg text-gray-500">No results found.</div>
+          ) : (
+            searchResults.map((card) => (
+              <div key={card.user?.id || card.id || card._id} className="flex justify-center">
+                <Card
+                  sx={{
+                    borderRadius: "15px",
+                    maxWidth: 345,
+                    boxShadow: "0px 8.93px 12.79px 0px rgba(0, 0, 0, 0.10)",
+                  }}
+                >
+                  <CardActionArea>
+                    <CardMedia
+                      component="img"
+                      height="140"
+                      image={card.profile_pic ? `${apiBaseUrl}${card.profile_pic}` : img1card}
+                      alt={card.user?.email || 'Service Provider'}
+                    />
+                    <CardContent>
+                      <Typography gutterBottom variant="h5" component="div">
+                        {card.user?.email || 'No Email'}
+                      </Typography>
+                      <Typography variant="body2" color="text.secondary">
+                        {(card.bio || '').slice(0, 80)}
+                      </Typography>
+                      <CardActions>
+                        <div className=" w-full  text-[.7rem] flex  items-center text-gray-600">
+                          <Rating
+                            name="half-rating-read"
+                            defaultValue={2.5}
+                            precision={0.5}
+                            sx={{ fontSize: "1.4rem" }}
+                            readOnly
                           />
-                        </Fab>
+                          4.7 (150 Reviews)
+                        </div>
+                      </CardActions>
+                      <div className=" grid grid-cols-2 gap-4">
+                        <div className=" flex gap-3 items-center text-sm">
+                          <span className=" border border-[#6161FF] text-[#6161FF] px-2 rounded-xl">{card.profile_type || 'Business'}</span>
+                          <span className=" border border-[#6161FF] text-[#6161FF] px-2 rounded-xl">{card.current_status || 'Tag2'}</span>
+                        </div>
+                        <div className=" justify-end flex p-3  pt-0">
+                          <Fab
+                            aria-label="like"
+                            style={{
+                              backgroundColor: "#F1F1F1",
+                              width: "35px",
+                              height: "30px",
+                              boxShadow: "none",
+                              zIndex: 4,
+                            }}
+                            onClick={() => handleClick(card.user?.id || card.id || card._id)}
+                          >
+                            <GoPin
+                              style={{
+                                color: clickedCards.includes(card.user?.id || card.id || card._id)
+                                  ? "blue"
+                                  : "inherit",
+                              }}
+                            />
+                          </Fab>
+                        </div>
                       </div>
-                    </div>
-                  </CardContent>
-                </CardActionArea>
-              </Card>
-            </div>
-          ))}
+                    </CardContent>
+                  </CardActionArea>
+                </Card>
+              </div>
+            ))
+          )}
         </div>
       </section>
-
     </div>
   );
 }
