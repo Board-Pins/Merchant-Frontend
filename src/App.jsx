@@ -6,9 +6,9 @@ import LayoutLanding from "./utils/LayoutLanding";
 import LayoutAuth from "./utils/LayoutAuth";
 
 import Home from "./pages/Landing/Home";
-import Pricing from "./pages/Landing/Pricing";
-import About from "./pages/Landing/About";
-import SearchResult from "./pages/Landing/SearchResult";
+import About from './pages/Landing/About';
+import Pricing from './pages/Landing/Pricing';
+import SearchResult from './pages/Landing/SearchResult';
 
 import Signup from "./pages/Auth/Signup";
 import Login from "./pages/Auth/Login";
@@ -36,7 +36,6 @@ import MyBids from "./pages/Merchant/MyBids";
 import SavedBiddingProject from "./pages/Merchant/SavedBiddingProject";
 import BiddingProjectDetails from "./pages/Merchant/BiddingProjectDetails";
 import CreateBiddingProject from "./pages/Merchant/CreateBiddingProject";
-import ApiTest from "./components/common/ApiTest";
 
 import CompareInProvider from "./pages/Merchant/CompareInProvider";
 import CompareBetween from "./pages/Merchant/CompareBetween";
@@ -205,7 +204,7 @@ const App = () => {
             <Route path="/home" element={<Home />} />
             <Route path="/pricing" element={<Pricing />} />
             <Route path="/about" element={<About />} />
-            <Route path="/SearchResult" element={<SearchResult />} />
+            <Route path="/search" element={<SearchResult />} />
           </Route>
 
           {/* Protected Routes */}
@@ -252,9 +251,6 @@ const App = () => {
               <Route path="/upgrade" element={<Upgrade />} />
               <Route path="/setting-profile" element={<SettingProfile />} />
               <Route path="/Setting-billing" element={<SettingBilling />} />
-
-              {/* ApiTest */}
-              <Route path="/api-test" element={<ApiTest />} />
             </Route>
           </Route>
 
