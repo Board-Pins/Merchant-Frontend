@@ -28,7 +28,7 @@ export const useSearch = (options = {}) => {
     const fetchSuggestions = useCallback(async (value) => {
         if (!value || value.trim().length < minSearchLength) {
             setSuggestions([]);
-            setShowDropdown(false);
+            setShowDropdown(!!value);
             setLoading(false);
             return;
         }
@@ -37,15 +37,20 @@ export const useSearch = (options = {}) => {
         const ApiURL = config.apiBaseUrl;
 
         try {
-            const response = await fetch(`${ApiURL}${endpoint}?q=${encodeURIComponent(value.trim())}`);
+            const url = `${ApiURL}${endpoint}?q=${encodeURIComponent(value.trim())}`;
+            console.log('Fetching suggestions:', url);
+            const response = await fetch(url, { credentials: 'include' });
+            console.log('Suggestions response status:', response.status);
+            const text = await response.text();
+            console.log('Suggestions raw response:', text);
             if (!response.ok) {
                 console.warn('Search failed with status:', response.status);
                 setSuggestions([]);
-                setShowDropdown(false);
+                setShowDropdown(true);
                 return;
             }
 
-            const data = await response.json();
+            const data = JSON.parse(text);
             const results = Array.isArray(data?.data?.results) ? data.data.results : [];
 
             const formattedResults = results.slice(0, maxResults).map(item => ({
@@ -54,11 +59,11 @@ export const useSearch = (options = {}) => {
             })).filter(item => item.label !== 'Unknown Item');
 
             setSuggestions(formattedResults);
-            setShowDropdown(formattedResults.length > 0);
+            setShowDropdown(true);
         } catch (error) {
             console.error('Search error:', error);
             setSuggestions([]);
-            setShowDropdown(false);
+            setShowDropdown(true);
         } finally {
             setLoading(false);
         }
@@ -94,12 +99,17 @@ export const useSearch = (options = {}) => {
 
         const ApiURL = config.apiBaseUrl;
         try {
-            const response = await fetch(`${ApiURL}${endpoint}?q=${encodeURIComponent(searchValue.trim())}`);
+            const url = `${ApiURL}${endpoint}?q=${encodeURIComponent(searchValue.trim())}`;
+            console.log('Fetching search:', url);
+            const response = await fetch(url, { credentials: 'include' });
+            console.log('Search response status:', response.status);
+            const text = await response.text();
+            console.log('Search raw response:', text);
             if (!response.ok) {
                 console.warn('Search failed with status:', response.status);
                 return null;
             }
-            const data = await response.json();
+            const data = JSON.parse(text);
 
             if (customCallback) {
                 customCallback(data);
