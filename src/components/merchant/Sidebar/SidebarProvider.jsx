@@ -12,7 +12,6 @@ const SidebarProvider = ({ handleIsopen }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [selectedItem, setSelectedItem] = useState(null);
   const [selectedSubItem, setSelectedSubItem] = useState(null);
-  const [workspaces, setWorkspaces] = useState([]);
   const { t, i18n } = useTranslation();
   const [dropdowns, setDropdowns] = useState({
     chat: false,
@@ -24,10 +23,6 @@ const SidebarProvider = ({ handleIsopen }) => {
     Setting: false,
   });
   const [sidebarSearch, setSidebarSearch] = useState("");
-  const [suggestions, setSuggestions] = useState([]);
-  const [showDropdown, setShowDropdown] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const debounceTimeout = useRef(null);
 
   const toggleLanguage = () => {
     i18n.changeLanguage(i18n.language === 'en' ? 'ar' : 'en');
@@ -61,8 +56,8 @@ const SidebarProvider = ({ handleIsopen }) => {
       text: "Chat",
       dropdown: "chat",
       subItems: [
-        { text: "Chat", icon: "fluent:chat-24-regular", path: "/chat" },
-        { text: "knowledge base", icon: "flowbite:brain-solid", path: "/knowledgebase" },
+        { id: 'chat', text: "Chat", icon: "fluent:chat-24-regular", path: "/chat" },
+        { id: 'knowledgebase', text: "knowledge base", icon: "flowbite:brain-solid", path: "/knowledgebase" },
       ],
     },
     {
@@ -71,8 +66,8 @@ const SidebarProvider = ({ handleIsopen }) => {
       text: "Services Provider",
       dropdown: "servicesProvider",
       subItems: [
-        { text: "Connected", icon: "ph:check-bold", path: "/services-provider" },
-        { text: "Pinned", icon: "fluent:pin-28-filled", path: "/services-provider-pinned" },
+        { id: 'connected', text: "Connected", icon: "ph:check-bold", path: "/services-provider" },
+        { id: 'pinned', text: "Pinned", icon: "fluent:pin-28-filled", path: "/services-provider-pinned" },
       ],
     },
     {
@@ -81,8 +76,9 @@ const SidebarProvider = ({ handleIsopen }) => {
       text: "Project Management",
       dropdown: "projectManagement",
       subItems: [
-        { text: "Tasks", icon: "fluent:task-list-square-16-regular", path: "/projectmangement-tasks" },
+        { id: 'tasks', text: "Tasks", icon: "fluent:task-list-square-16-regular", path: "/projectmangement-tasks" },
         {
+          id: 'sharedprojects',
           text: "SharedProjects",
           icon: "icon-park-twotone:correct",
           path: "/projectmangement-SharedProjects",
@@ -96,9 +92,9 @@ const SidebarProvider = ({ handleIsopen }) => {
       dropdown: "biddingProject",
       path: "/bidding-project/offer",
       subItems: [
-        { text: "Create", icon: "ei:plus", path: "/create-bidding-project" },
-        { text: "My Bids", icon: "ph:newspaper-clipping-duotone", path: "/mybids" },
-        { text: "draft Projects", icon: "solar:file-outline", path: "/saved-BiddingProject" },
+        { id: 'create', text: "Create", icon: "ei:plus", path: "/create-bidding-project" },
+        { id: 'mybids', text: "My Bids", icon: "ph:newspaper-clipping-duotone", path: "/mybids" },
+        { id: 'draft', text: "draft Projects", icon: "solar:file-outline", path: "/saved-BiddingProject" },
       ],
     },
     {
@@ -108,8 +104,8 @@ const SidebarProvider = ({ handleIsopen }) => {
       path: "/compare",
       dropdown: "compare",
       subItems: [
-        { text: "Compare", icon: "clarity:analytics-line", path: "/compare-between" },
-        { text: "saved", icon: "ic:twotone-bookmark", path: "/compare/saved" },
+        { id: 'compare', text: "Compare", icon: "clarity:analytics-line", path: "/compare-between" },
+        { id: 'saved', text: "saved", icon: "ic:twotone-bookmark", path: "/compare/saved" },
       ],
     },
     {
@@ -118,38 +114,34 @@ const SidebarProvider = ({ handleIsopen }) => {
       text: "Production Group",
       dropdown: "productionGroup",
       subItems: [
-        { text: "Discover", icon: "hugeicons:discover-square", path: "/production-group" },
-        { text: "My Requests", icon: "material-symbols-light:request-page-outline", path: "/production-group/myrequests" },
-        { text: "saved PG", icon: "ic:twotone-bookmark", path: "/production-group/saved" },
+        { id: 'discover', text: "Discover", icon: "hugeicons:discover-square", path: "/production-group" },
+        { id: 'myrequests', text: "My Requests", icon: "material-symbols-light:request-page-outline", path: "/production-group/myrequests" },
+        { id: 'savedpg', text: "saved PG", icon: "ic:twotone-bookmark", path: "/production-group/saved" },
       ],
     },
-    { id: 9, text: "ACCOUNT" },
+    { id: 9, text: "ACCOUNT", isSection: true },
     {
       id: 10,
       icon: "ci:settings",
       text: "Setting",
       dropdown: "Setting",
       subItems: [
-        { text: "billing", icon: "", path: "/setting-billing" },
-        { text: "profile", icon: "", path: "/setting-profile" },
+        { id: 'billing', text: "billing", icon: "", path: "/setting-billing" },
+        { id: 'profile', text: "profile", icon: "", path: "/setting-profile" },
       ],
     },
     { id: 11, icon: "mdi:invite", text: "Invite", onClick: handleIsopen },
   ];
 
-
   useEffect(() => {
     const currentPath = location.pathname;
-
     // Find the exact or partial match for main items
     const currentItem = menuItems.find((item) =>
-      currentPath.includes(item.path)
+      item.path && currentPath.includes(item.path)
     );
     if (currentItem) {
       setSelectedItem(currentItem.id);
     }
-
-
     // Handle sub-items
     menuItems.forEach((item) => {
       if (item.subItems) {
@@ -162,7 +154,7 @@ const SidebarProvider = ({ handleIsopen }) => {
         }
       }
     });
-  }, [location.pathname, menuItems]); // Ensure menuItems is included in the dependency array
+  }, [location.pathname, menuItems]);
 
   const toggleSidebar = () => setIsOpen(!isOpen);
 
@@ -173,18 +165,13 @@ const SidebarProvider = ({ handleIsopen }) => {
     // Close the sidebar if the clicked item has subitems
     if (clickedItem && !clickedItem.subItems) {
       setIsOpen(false);
-
     }
-
-
   };
 
   const handleSubItemClick = (itemId, subItemId) => {
     setSelectedItem(itemId);
     setSelectedSubItem(subItemId);
-
-    setIsOpen(false)
-
+    setIsOpen(false);
   };
 
   const toggleDropdown = (dropdown) => {
@@ -197,75 +184,31 @@ const SidebarProvider = ({ handleIsopen }) => {
     });
   };
 
-  const fetchSuggestions = async (value) => {
-    if (!value) {
-      setSuggestions([]);
-      setShowDropdown(false);
-      return;
-    }
-    setLoading(true);
-    const ApiURL = config.apiBaseUrl;
-    try {
-      const response = await fetch(`${ApiURL}/users-service/profiles/search/?q=${encodeURIComponent(value)}`);
-      if (!response.ok) {
-        setSuggestions([]);
-        setShowDropdown(true);
-        setLoading(false);
-        return;
-      }
-      const data = await response.json();
-      const results = Array.isArray(data?.data?.results) ? data.data.results : [];
-      const getLabel = (item) => {
-        if (!item) return '';
-        for (const key in item) {
-          if (typeof item[key] === 'string' && item[key].length > 0) return item[key];
-        }
-        if (item.user && item.user.email) return item.user.email;
-        return '';
-      };
-      setSuggestions(results.slice(0, 5).map(item => ({ ...item, label: getLabel(item) })));
-      setShowDropdown(true);
-    } catch (error) {
-      setSuggestions([]);
-      setShowDropdown(false);
-    } finally {
-      setLoading(false);
-    }
-  };
-
   const handleInputChange = (e) => {
-    const value = e.target.value;
-    setSidebarSearch(value);
-    setShowDropdown(false);
-    if (debounceTimeout.current) clearTimeout(debounceTimeout.current);
-    debounceTimeout.current = setTimeout(() => {
-      fetchSuggestions(value);
-    }, 300);
+    setSidebarSearch(e.target.value);
   };
 
-  const handleSuggestionClick = (label) => {
-    setSidebarSearch(label);
-    setShowDropdown(false);
-  };
-
-  const handleSidebarSearch = async (e) => {
-    e.preventDefault();
-    setShowDropdown(false);
-    const ApiURL = config.apiBaseUrl;
-    try {
-      const response = await fetch(`${ApiURL}/users-service/profiles/search/?q=${encodeURIComponent(sidebarSearch)}`);
-      if (!response.ok) {
-        setSuggestions([]);
-        setShowDropdown(true);
-        setLoading(false);
-        return;
+  // Filter menuItems and subItems by search
+  const filteredMenuItems = menuItems
+    .map(item => {
+      if (item.isSection) return item;
+      // Check if main item matches
+      const mainMatch = item.text.toLowerCase().includes(sidebarSearch.toLowerCase());
+      // Check if any subItem matches
+      let filteredSubItems = item.subItems;
+      let subMatch = false;
+      if (item.subItems) {
+        filteredSubItems = item.subItems.filter(subItem =>
+          subItem.text.toLowerCase().includes(sidebarSearch.toLowerCase())
+        );
+        subMatch = filteredSubItems.length > 0;
       }
-      const data = await response.json();
-      console.log('Sidebar Search Results:', data);
-    } catch (error) {
-      console.error('Sidebar search error:', error);
-    }
-  };
+      if (mainMatch || subMatch) {
+        return { ...item, subItems: filteredSubItems };
+      }
+      return null;
+    })
+    .filter(Boolean);
 
   return (
     <>
@@ -296,87 +239,80 @@ const SidebarProvider = ({ handleIsopen }) => {
         >
           <li className="bg-[#F2F2F2] rounded-lg flex items-center text-[#666666] p-4 relative">
             <FiSearch />
-            <form onSubmit={handleSidebarSearch} className="flex-grow flex" autoComplete="off">
+            <form className="flex-grow flex" autoComplete="off" onSubmit={e => e.preventDefault()}>
               <input
                 type="text"
                 value={sidebarSearch}
                 onChange={handleInputChange}
-                onFocus={() => suggestions.length > 0 && setShowDropdown(true)}
-                placeholder="Search"
+                placeholder={t("Search menu...")}
                 className="bg-transparent px-2 outline-0 flex-grow"
               />
             </form>
-            {showDropdown && (
-              <div className="absolute left-0 right-0 top-full mt-1 bg-white border border-gray-200 rounded-b-xl shadow-lg z-10" style={{ maxHeight: '200px', overflowY: 'auto' }}>
-                {loading ? (
-                  <div className="p-2 text-gray-500 text-sm">Loading...</div>
-                ) : suggestions.length === 0 ? (
-                  <div className="p-2 text-gray-500 text-sm">No results</div>
-                ) : suggestions.map((s, idx) => (
-                  <div
-                    key={idx}
-                    className="p-2 cursor-pointer hover:bg-gray-100 text-sm text-black"
-                    onMouseDown={() => handleSuggestionClick(s.label)}
-                  >
-                    {s.label}
-                  </div>
-                ))}
-              </div>
-            )}
           </li>
 
-          {menuItems.map((item) => (
-            <Link
-              to={item.path}
-              key={item.id}
-              className={`flex flex-col gap-1  px-2 py-2  ${selectedItem === item.id
-                ? "bg-white shadow-custom2 rounded-lg py-3  text-[#6161FF]"
-                : " text-dark"
-                }`}
-              onClick={() => {
-                handleItemClick(item.id);
-                if (item.onClick) item.onClick(); // Trigger onClick if available
-              }}
-            >
-              <div
-                className="flex items-center  gap-3 cursor-pointer"
-                onClick={() => item.dropdown && toggleDropdown(item.dropdown)}
+          {filteredMenuItems.map((item) => (
+            item.isSection ? (
+              <li key={item.id} className="px-2 py-2 text-gray-400 font-bold text-xs uppercase tracking-wider">
+                {item.text}
+              </li>
+            ) : (
+              <Link
+                to={item.path || "#"}
+                key={item.id}
+                className={`flex flex-col gap-1  px-2 py-2  ${selectedItem === item.id
+                  ? "bg-white shadow-custom2 rounded-lg py-3  text-[#6161FF]"
+                  : " text-dark"
+                  }`}
+                onClick={(e) => {
+                  if (item.dropdown) {
+                    e.preventDefault();
+                    toggleDropdown(item.dropdown);
+                  } else {
+                    handleItemClick(item.id);
+                    if (item.onClick) item.onClick();
+                  }
+                }}
               >
-                <div className="flex-grow flex items-center w-full gap-3">
-                  {item.icon && <Icon icon={item.icon} width="25px" height="25px" />}
-                  {item.text}
-                </div>
-                {item.dropdown && (
-                  <div className=" flex justify-end  pe-4">
-                    <Icon
-                      icon={
-                        dropdowns[item.dropdown]
-                          ? "mdi:chevron-up"
-                          : "mdi:chevron-down"
-                      }
-                      width="20px"
-                      height="20px"
-                    />
+                <div
+                  className="flex items-center  gap-3 cursor-pointer"
+                >
+                  <div className="flex-grow flex items-center w-full gap-3">
+                    {item.icon && <Icon icon={item.icon} width="25px" height="25px" />}
+                    {item.text}
                   </div>
+                  {item.dropdown && (
+                    <div className=" flex justify-end  pe-4">
+                      <Icon
+                        icon={
+                          dropdowns[item.dropdown]
+                            ? "mdi:chevron-up"
+                            : "mdi:chevron-down"
+                        }
+                        width="20px"
+                        height="20px"
+                      />
+                    </div>
+                  )}
+                </div>
+                {item.subItems && dropdowns[item.dropdown] && item.subItems.length > 0 && (
+                  <ul className=" mt-2 space-y-2">
+                    {item.subItems.map((subItem, subIndex) => (
+                      <Link
+                        to={subItem.path}
+                        key={subItem.id}
+                        className={`flex items-center gap-2 ml-2 py-1 justify-start ${selectedSubItem === subItem.id ? 'bg-gray-100 text-[#6161FF] rounded' : ''}`}
+                        onClick={() => handleSubItemClick(item.id, subItem.id)}
+                      >
+                        {subItem.icon && (
+                          <Icon icon={subItem.icon} width="25px" height="25px" />
+                        )}
+                        <span className="text-xs">{subItem.text}</span>
+                      </Link>
+                    ))}
+                  </ul>
                 )}
-              </div>
-              {item.subItems && dropdowns[item.dropdown] && (
-                <ul className=" mt-2 space-y-2">
-                  {item.subItems.map((subItem, subIndex) => (
-                    <Link
-                      to={subItem.path}
-                      key={subIndex}
-                      className="flex items-center gap-2 ml-2 py-1 justify-start"
-                    >
-                      {subItem.icon && (
-                        <Icon icon={subItem.icon} width="25px" height="25px" />
-                      )}
-                      <span className="text-xs">{subItem.text}</span>
-                    </Link>
-                  ))}
-                </ul>
-              )}
-            </Link>
+              </Link>
+            )
           ))}
 
           <li>
